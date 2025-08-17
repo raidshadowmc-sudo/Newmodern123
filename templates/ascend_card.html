@@ -1,5 +1,3 @@
-
-
 <div class="ascend-performance-card-v3">
     <!-- Enhanced Header with modern design -->
     <div class="ascend-header-v3">
@@ -192,7 +190,7 @@
         </div>
         <div class="brand-info-v3">
             <div class="version-info">
-                <span class="brand-version">v3.0</span>
+                <span class="brand-version">v4.0</span>
                 <span class="version-badge">NEW</span>
             </div>
             <span class="brand-link">elite-squad.bedwars</span>
@@ -336,7 +334,7 @@ let currentGamemode = 'bedwars';
 let currentPlayerId = null;
 
 function loadASCENDDataV3(playerId, gamemode = 'bedwars') {
-    console.log('🎯 Loading ASCEND v3.0 data for player:', playerId, 'gamemode:', gamemode);
+    console.log('🎯 Loading ASCEND v4.0 data for player:', playerId, 'gamemode:', gamemode);
     
     currentPlayerId = playerId;
     currentGamemode = gamemode;
@@ -358,7 +356,7 @@ function loadASCENDDataV3(playerId, gamemode = 'bedwars') {
         return response.json();
     })
     .then(data => {
-        console.log('🎯 ASCEND v3.0 API response:', data);
+        console.log('🎯 ASCEND v4.0 API response:', data);
         if (data && data.success && data.ascend) {
             updateASCENDCardV3(data.ascend);
             loadEvaluationCount(playerId, gamemode);
@@ -430,7 +428,7 @@ function showLoadingStateV3() {
 }
 
 function updateASCENDCardV3(ascendData) {
-    console.log('🎯 Updating ASCEND v3.0 card with data:', ascendData);
+    console.log('🎯 Updating ASCEND v4.0 card with data:', ascendData);
     
     const statsContainer = document.getElementById('ascend-stats-container-v3');
     const commentElement = document.getElementById('ascend-comment-v3');
@@ -656,7 +654,7 @@ function getTierClassV3(tier) {
 }
 
 function showDefaultASCENDDataV3() {
-    console.log('🎯 Showing default ASCEND v3.0 data');
+    console.log('🎯 Showing default ASCEND v4.0 data');
     const defaultData = {
         pvp_tier: 'D',
         pvp_score: 25,
@@ -1137,11 +1135,13 @@ function getSkillIcons(gamemode) {
 function getSkillDescription(skillName) {
     const descriptions = {
         'PVP': 'Combat effectiveness and dueling skills',
+        'PvP': 'Combat effectiveness and dueling skills',
         'Clutching': 'Performance under pressure situations',
         'Block Placement': 'Strategic building and defensive positioning',
         'Gamesense': 'Game awareness and tactical decision making',
         'Aiming': 'Accuracy and target acquisition',
         'Healing (soups/pots)': 'Health management and healing efficiency',
+        'Healing (soups; pots)': 'Health management and healing efficiency',
         'Movement': 'Mobility and positioning',
         'Spacing': 'Distance control and positioning',
         'Looting': 'Efficient resource gathering',

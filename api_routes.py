@@ -324,11 +324,40 @@ def api_get_ascend_data(player_id):
     try:
         gamemode = request.args.get('gamemode', 'bedwars')
         player = Player.query.get_or_404(player_id)
+
+        # Ensure GameMode skills match expected parameters for supported modes
+        expected_skills = {
+            'kitpvp': ['Aiming', 'Healing (soups; pots)', 'Movement', 'Spacing'],
+            'skywars': ['Looting', 'Potting', 'Pearling', 'Melee'],
+            'bridgefight': ['Block Edits', 'Bridge Fights', 'Gamesense', 'PvP'],
+            'sumo': ['Gamesense', 'KB control', 'Mechanics', 'Movement'],
+            'fireball_fight': ['Attack/Defense', 'Fireball usage', 'Gamesense', 'PvP'],
+            'bridge': ['Bypassing', 'Defense', 'Gamesense', 'PvP']
+        }
+
+        game_mode = GameMode.query.filter_by(name=gamemode).first()
+        if game_mode and gamemode in expected_skills:
+            skills = expected_skills[gamemode]
+            updated_gm = False
+            if game_mode.skill1_name != skills[0]:
+                game_mode.skill1_name = skills[0]
+                updated_gm = True
+            if game_mode.skill2_name != skills[1]:
+                game_mode.skill2_name = skills[1]
+                updated_gm = True
+            if game_mode.skill3_name != skills[2]:
+                game_mode.skill3_name = skills[2]
+                updated_gm = True
+            if game_mode.skill4_name != skills[3]:
+                game_mode.skill4_name = skills[3]
+                updated_gm = True
+            if updated_gm:
+                db.session.commit()
+
         ascend_data = ASCENDData.query.filter_by(player_id=player_id, gamemode=gamemode).first()
 
         if not ascend_data:
             # Create default data based on gamemode
-            game_mode = GameMode.query.filter_by(name=gamemode).first()
             if game_mode:
                 ascend_data = ASCENDData(
                     player_id=player_id,
@@ -342,6 +371,24 @@ def api_get_ascend_data(player_id):
                 db.session.commit()
             else:
                 ascend_data = ASCENDData.get_or_create(player_id)
+        else:
+            # Ensure skill names are up-to-date with current GameMode config
+            if game_mode:
+                updated = False
+                if ascend_data.skill1_name != game_mode.skill1_name:
+                    ascend_data.skill1_name = game_mode.skill1_name
+                    updated = True
+                if ascend_data.skill2_name != game_mode.skill2_name:
+                    ascend_data.skill2_name = game_mode.skill2_name
+                    updated = True
+                if ascend_data.skill3_name != game_mode.skill3_name:
+                    ascend_data.skill3_name = game_mode.skill3_name
+                    updated = True
+                if ascend_data.skill4_name != game_mode.skill4_name:
+                    ascend_data.skill4_name = game_mode.skill4_name
+                    updated = True
+                if updated:
+                    db.session.commit()
 
         return jsonify({
             'success': True,
