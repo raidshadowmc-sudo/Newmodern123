@@ -1,0 +1,400 @@
+
+
+{% extends "base.html" %}
+
+{% block title %}Управление магазином - Админ панель{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title">
+            <i class="fas fa-store text-warning me-2 glow-effect"></i>Управление магазином
+        </h2>
+        <div class="btn-group">
+            <a href="{{ url_for('shop') }}" class="btn btn-info">
+                <i class="fas fa-eye me-2"></i>Просмотр магазина
+            </a>
+            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+    </div>
+
+    <!-- Add New Item Form -->
+    <div class="admin-form-card mb-4">
+        <h4 class="text-success mb-4">
+            <i class="fas fa-plus me-2"></i>Добавить новый товар
+        </h4>
+        
+        <form method="POST" action="{{ url_for('admin_add_shop_item') }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Системное название*</label>
+                    <input type="text" class="form-control" name="name" required placeholder="unique_item_name">
+                    <small class="text-muted">Уникальное название без пробелов</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Отображаемое название*</label>
+                    <input type="text" class="form-control" name="display_name" required placeholder="Красивое название">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Описание*</label>
+                    <textarea class="form-control" name="description" required placeholder="Описание товара" rows="3"></textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Категория*</label>
+                    <select class="form-select" name="category" required>
+                        <option value="">Выберите категорию</option>
+                        <option value="title">Титул</option>
+                        <option value="booster">Бустер</option>
+                        <option value="theme">Тема</option>
+                        <option value="gradient">Градиент</option>
+                        <option value="avatar">Аватар</option>
+                        <option value="cursor">Курсор</option>
+                        <option value="cosmetic">Косметика</option>
+                        <option value="unique">Уникальный предмет</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Редкость</label>
+                    <select class="form-select" name="rarity" required>
+                        <option value="common">Обычный</option>
+                        <option value="uncommon">Необычный</option>
+                        <option value="rare">Редкий</option>
+                        <option value="epic">Эпический</option>
+                        <option value="legendary">Легендарный</option>
+                        <option value="mythic">Мифический</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Иконка</label>
+                    <input type="text" class="form-control" name="icon" value="fas fa-star" placeholder="fas fa-star">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Цена (койны)</label>
+                    <input type="number" class="form-control" name="price_coins" min="0" value="0">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Цена (репутация)</label>
+                    <input type="number" class="form-control" name="price_reputation" min="0" value="0">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Требуемый уровень</label>
+                    <input type="number" class="form-control" name="unlock_level" min="1" value="1">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">URL картинки</label>
+                    <input type="url" class="form-control" name="image_url" placeholder="https://example.com/image.png">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Данные товара (JSON)</label>
+                    <textarea class="form-control" name="item_data" placeholder='{"title_text": "Название", "title_color": "#ff0000"}' rows="3"></textarea>
+                    <small class="text-muted">JSON данные для настройки эффектов товара</small>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_limited_time" id="limitedTime">
+                        <label class="form-check-label" for="limitedTime">
+                            Ограниченное предложение
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Добавить товар
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Existing Items -->
+    <div class="admin-form-card">
+        <h4 class="text-info mb-4">
+            <i class="fas fa-list me-2"></i>Существующие товары ({{ shop_items|length }})
+        </h4>
+
+        {% if shop_items %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead class="table-warning">
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>Редкость</th>
+                        <th>Цена</th>
+                        <th>Уровень</th>
+                        <th>Статус</th>
+                        <th>Покупки</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in shop_items %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="{{ item.icon }} me-2 rarity-{{ item.rarity }}"></i>
+                                <div>
+                                    <div class="fw-bold">{{ item.display_name }}</div>
+                                    <div class="text-muted small">{{ item.name }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ item.category.title() }}</span>
+                        </td>
+                        <td>
+                            <span class="badge rarity-{{ item.rarity }}">
+                                {% if item.rarity == 'common' %}Обычный
+                                {% elif item.rarity == 'uncommon' %}Необычный
+                                {% elif item.rarity == 'rare' %}Редкий
+                                {% elif item.rarity == 'epic' %}Эпический
+                                {% elif item.rarity == 'legendary' %}Легендарный
+                                {% elif item.rarity == 'mythic' %}Мифический
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if item.price_coins > 0 %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-coins me-1"></i>{{ "{:,}".format(item.price_coins) }}
+                                </span>
+                            {% endif %}
+                            {% if item.price_reputation > 0 %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-star me-1"></i>{{ item.price_reputation }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ item.unlock_level }}</span>
+                        </td>
+                        <td>
+                            {% if item.is_active %}
+                                <span class="badge bg-success">Активен</span>
+                            {% else %}
+                                <span class="badge bg-danger">Неактивен</span>
+                            {% endif %}
+                            {% if item.is_limited_time %}
+                                <span class="badge bg-warning text-dark">Ограничен</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ item.purchases|length }}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" onclick="editItem({{ item.id }})" title="Редактировать">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form method="POST" action="{{ url_for('admin_toggle_shop_item', item_id=item.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-outline-warning" title="Переключить статус">
+                                        <i class="fas fa-toggle-{{ 'on' if item.is_active else 'off' }}"></i>
+                                    </button>
+                                </form>
+                                <button class="btn btn-outline-danger" onclick="confirmDeleteItem({{ item.id }}, '{{ item.display_name }}')" title="Удалить">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Магазин пуст</h5>
+            <p class="text-muted">Добавьте первый товар используя форму выше</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title">Редактировать товар</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editItemForm" method="POST">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Системное название*</label>
+                            <input type="text" class="form-control" name="name" id="edit_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Отображаемое название*</label>
+                            <input type="text" class="form-control" name="display_name" id="edit_display_name" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Описание*</label>
+                            <textarea class="form-control" name="description" id="edit_description" required rows="3"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Категория*</label>
+                            <select class="form-select" name="category" id="edit_category" required>
+                                <option value="title">Титул</option>
+                                <option value="booster">Бустер</option>
+                                <option value="theme">Тема</option>
+                                <option value="gradient">Градиент</option>
+                                <option value="avatar">Аватар</option>
+                                <option value="cursor">Курсор</option>
+                                <option value="cosmetic">Косметика</option>
+                                <option value="unique">Уникальный предмет</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Редкость</label>
+                            <select class="form-select" name="rarity" id="edit_rarity" required>
+                                <option value="common">Обычный</option>
+                                <option value="uncommon">Необычный</option>
+                                <option value="rare">Редкий</option>
+                                <option value="epic">Эпический</option>
+                                <option value="legendary">Легендарный</option>
+                                <option value="mythic">Мифический</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Иконка</label>
+                            <input type="text" class="form-control" name="icon" id="edit_icon">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Цена (койны)</label>
+                            <input type="number" class="form-control" name="price_coins" id="edit_price_coins" min="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Цена (репутация)</label>
+                            <input type="number" class="form-control" name="price_reputation" id="edit_price_reputation" min="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Требуемый уровень</label>
+                            <input type="number" class="form-control" name="unlock_level" id="edit_unlock_level" min="1">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">URL картинки</label>
+                            <input type="url" class="form-control" name="image_url" id="edit_image_url">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Данные товара (JSON)</label>
+                            <textarea class="form-control" name="item_data" id="edit_item_data" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_limited_time" id="edit_is_limited_time">
+                                <label class="form-check-label" for="edit_is_limited_time">
+                                    Ограниченное предложение
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteItemModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите удалить товар <strong id="deleteItemName"></strong>?</p>
+                <p class="text-muted small">Это действие нельзя отменить. Все связанные покупки также будут удалены.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form id="deleteItemForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Удалить
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Store shop items data for editing
+const shopItemsData = {{ shop_items_data|tojson }};
+
+function editItem(itemId) {
+    const item = shopItemsData.find(i => i.id === itemId);
+    if (!item) return;
+
+    // Fill form fields
+    document.getElementById('edit_name').value = item.name;
+    document.getElementById('edit_display_name').value = item.display_name;
+    document.getElementById('edit_description').value = item.description;
+    document.getElementById('edit_category').value = item.category;
+    document.getElementById('edit_rarity').value = item.rarity;
+    document.getElementById('edit_icon').value = item.icon;
+    document.getElementById('edit_price_coins').value = item.price_coins;
+    document.getElementById('edit_price_reputation').value = item.price_reputation;
+    document.getElementById('edit_unlock_level').value = item.unlock_level;
+    document.getElementById('edit_image_url').value = item.image_url || '';
+    document.getElementById('edit_item_data').value = item.item_data || '';
+    document.getElementById('edit_is_limited_time').checked = item.is_limited_time;
+
+    // Set form action
+    document.getElementById('editItemForm').action = '{{ url_for("admin_edit_shop_item", item_id=0) }}'.replace('0', itemId);
+
+    // Show modal
+    new bootstrap.Modal(document.getElementById('editItemModal')).show();
+}
+
+function confirmDeleteItem(itemId, itemName) {
+    document.getElementById('deleteItemName').textContent = itemName;
+    document.getElementById('deleteItemForm').action = '{{ url_for("admin_delete_shop_item", item_id=0) }}'.replace('0', itemId);
+    new bootstrap.Modal(document.getElementById('deleteItemModal')).show();
+}
+
+// Form validation and examples
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.querySelector('select[name="category"]');
+    const itemDataTextarea = document.querySelector('textarea[name="item_data"]');
+    
+    const examples = {
+        'title': '{"title_text": "Мой Титул", "title_color": "#ff0000", "is_gradient": false}',
+        'booster': '{"booster_type": "xp", "bonus_amount": 1000, "duration_hours": 24}',
+        'theme': '{"theme_colors": {"primary": "#ff0000", "secondary": "#00ff00"}}',
+        'gradient': '{"gradient_colors": "linear-gradient(45deg, #ff0000, #0000ff)"}',
+        'avatar': '{"avatar_url": "https://example.com/avatar.png"}',
+        'cursor': '{"cursor_style": "fire", "cursor_size": "large"}',
+        'cosmetic': '{"cosmetic_type": "skin", "color": "#ff0000"}',
+        'unique': '{"special_effect": "rainbow", "duration": "permanent"}'
+    };
+    
+    if (categorySelect && itemDataTextarea) {
+        categorySelect.addEventListener('change', function() {
+            if (examples[this.value]) {
+                itemDataTextarea.placeholder = examples[this.value];
+            }
+        });
+        
+        // Trigger initial update
+        categorySelect.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+{% endblock %}
+

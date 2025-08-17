@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+
+{% block title %}Minecraft Bedwars Leaderboard - Elite Squad{% endblock %}
+
+{% block content %}
+<div class="leaderboard-container">
+    <!-- Header Section -->
+    <div class="leaderboard-header text-center py-5 mb-4">
+        <h1 class="display-3 fw-bold mb-3">
+            <img src="https://cdn3.emoji.gg/emojis/13064-sword.png" alt="Sword" style="width: 32px; height: 32px; margin-right: 12px;">
+            <span class="gradient-text">Elite Squad Bedwars</span>
+        </h1>
+        <p class="lead text-light">Топ игроков сервера по Bedwars</p>
+
+        <!-- Quick Stats -->
+        {% if stats %}
+        <div class="quick-stats mt-4">
+            <div class="row g-3 justify-content-center">
+                <div class="col-auto">
+                    <div class="stat-pill">
+                        <i class="fas fa-users text-primary me-2"></i>
+                        <span class="fw-bold">{{ stats.total_players }}</span> игроков
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="stat-pill">
+                        <i class="fas fa-sword text-danger me-2"></i>
+                        <span class="fw-bold">{{ "{:,}".format(stats.total_kills) }}</span> киллов
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="stat-pill">
+                        <i class="fas fa-gamepad text-success me-2"></i>
+                        <span class="fw-bold">{{ "{:,}".format(stats.total_games) }}</span> игр
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Controls Section -->
+    <div class="leaderboard-controls mb-4">
+        <div class="row g-3">
+            <!-- Search -->
+            <div class="col-md-4">
+                <form method="GET" class="search-form">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control bg-dark border-secondary text-light"
+                               name="search" value="{{ search_query }}" placeholder="Поиск игрока...">
+                        <input type="hidden" name="sort" value="{{ current_sort }}">
+                        <input type="hidden" name="limit" value="{{ limit }}">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Sort Options -->
+            <div class="col-md-4">
+                <form method="GET" class="sort-form">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary">
+                            <i class="fas fa-sort text-muted"></i>
+                        </span>
+                        <select name="sort" class="form-select bg-dark border-secondary text-light" onchange="this.form.submit()">
+                            <option value="experience" {{ 'selected' if current_sort == 'experience' else '' }}>По опыту</option>
+                            <option value="level" {{ 'selected' if current_sort == 'level' else '' }}>По уровню</option>
+                            <option value="kills" {{ 'selected' if current_sort == 'kills' else '' }}>По киллам</option>
+                            <option value="final_kills" {{ 'selected' if current_sort == 'final_kills' else '' }}>По финальным киллам</option>
+                            <option value="beds_broken" {{ 'selected' if current_sort == 'beds_broken' else '' }}>По кроватям</option>
+                            <option value="wins" {{ 'selected' if current_sort == 'wins' else '' }}>По победам</option>
+                            <option value="kd_ratio" {{ 'selected' if current_sort == 'kd_ratio' else '' }}>По K/D</option>
+                            <option value="win_rate" {{ 'selected' if current_sort == 'win_rate' else '' }}>По проценту побед</option>
+                        </select>
+                        <input type="hidden" name="search" value="{{ search_query }}">
+                        <input type="hidden" name="limit" value="{{ limit }}">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Limit -->
+            <div class="col-md-4">
+                <form method="GET" class="limit-form">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary">
+                            <i class="fas fa-list text-muted"></i>
+                        </span>
+                        <select name="limit" class="form-select bg-dark border-secondary text-light" onchange="this.form.submit()">
+                            <option value="10" {{ 'selected' if limit == 10 else '' }}>10 записей</option>
+                            <option value="25" {{ 'selected' if limit == 25 else '' }}>25 записей</option>
+                            <option value="50" {{ 'selected' if limit == 50 else '' }}>50 записей</option>
+                        </select>
+                        <input type="hidden" name="sort" value="{{ current_sort }}">
+                        <input type="hidden" name="search" value="{{ search_query }}">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Table -->
+    {% if players %}
+    <div class="leaderboard-table-container">
+        <div class="table-responsive">
+            <table class="table leaderboard-table">
+                <thead class="table-dark sticky-top">
+                    <tr>
+                        <th class="rank-column">#</th>
+                        <th class="player-column">Игрок</th>
+                        <th class="level-column">Уровень</th>
+                        <th class="experience-column">Опыт</th>
+                        <th class="stats-column">Статистика</th>
+                        <th class="performance-column">Показатели</th>
+                        <th class="actions-column">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                    <tr class="player-row" data-player-id="{{ player.id }}" data-filter="all">
+                        <!-- Rank -->
+                        <td class="rank-column">
+                            <div class="rank-display">
+                                {% set rank = loop.index %}
+                                {% if rank == 1 %}
+                                    <i class="fas fa-crown text-warning fs-4"></i>
+                                {% elif rank == 2 %}
+                                    <i class="fas fa-medal text-light fs-5"></i>
+                                {% elif rank == 3 %}
+                                    <i class="fas fa-medal text-warning fs-5" style="color: #cd7f32 !important;"></i>
+                                {% else %}
+                                    <span class="rank-number">{{ rank }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+
+                        <!-- Player Info -->
+                        <td class="player-column">
+                            <div class="player-info">
+                                <div class="player-avatar">
+                                    <img src="{{ player.minecraft_skin_url }}" alt="{{ player.nickname }}"
+                                         class="avatar-img" loading="lazy" style="border-radius: 8px; border: 2px solid rgba(255,255,255,0.2);">
+                                </div>
+                                <div class="player-details">
+                                    <div class="player-name">
+                                        <span class="player-nickname gradient-ready" data-player-id="{{ player.id }}" data-element="nickname">
+                                            {{ player.nickname }}
+                                        </span>
+                                    </div>
+                                    <div class="player-role">
+                                        {% set admin_role = player.active_admin_role %}
+                                        {% if admin_role and admin_role.role %}
+                                            {% if admin_role.role.has_gradient and admin_role.role.gradient_end_color %}
+                                            <span class="gradient-text admin-role-display" style="background: linear-gradient(45deg, {{ admin_role.role.color }}, {{ admin_role.role.gradient_end_color }}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: bold;">
+                                                {{ admin_role.role.display_emoji|safe }} {{ admin_role.role.name }}
+                                            </span>
+                                            {% else %}
+                                            <span class="admin-role-display" style="color: {{ admin_role.role.color }}; font-weight: bold;">
+                                                {{ admin_role.role.display_emoji|safe }} {{ admin_role.role.name }}
+                                            </span>
+                                            {% endif %}
+                                        {% elif player.custom_role_purchased and player.custom_role %}
+                                            {% if player.custom_role_gradient %}
+                                            <span class="gradient-text custom-role-display" style="background: {{ player.custom_role_gradient }}; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: bold;">
+                                                {% if player.custom_role_emoji %}{{ player.custom_role_emoji }} {% endif %}{{ player.custom_role }}
+                                            </span>
+                                            {% elif player.custom_role_color %}
+                                            <span class="custom-role-display" style="color: {{ player.custom_role_color }}; font-weight: bold;">
+                                                {% if player.custom_role_emoji %}{{ player.custom_role_emoji }} {% endif %}{{ player.custom_role }}
+                                            </span>
+                                            {% else %}
+                                            <span class="custom-role-display">
+                                                {% if player.custom_role_emoji %}{{ player.custom_role_emoji }} {% endif %}{{ player.custom_role }}
+                                            </span>
+                                            {% endif %}
+                                        {% elif player.role_gradient %}
+                                        <span class="gradient-text" style="background: {{ player.role_gradient }}; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            {{ player.role }}
+                                        </span>
+                                        {% else %}
+                                        <span>{{ player.role }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if player.server_ip %}
+                                    <div class="server-info">
+                                        <small class="text-muted">
+                                            <i class="fas fa-server me-1"></i>{{ player.server_ip }}
+                                        </small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Level -->
+                        <td class="level-column">
+                            <div class="level-display">
+                                <div class="level-circle">
+                                    <span class="level-number gradient-ready" data-player-id="{{ player.id }}" data-element="level">
+                                        {{ player.level }}
+                                    </span>
+                                </div>
+                                <div class="level-progress">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" style="width: {{ player.level_progress }}%"></div>
+                                    </div>
+                                    <small class="text-muted">{{ player.level_progress }}%</small>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Experience -->
+                        <td class="experience-column">
+                            <div class="experience-display">
+                                <span class="experience-value gradient-ready" data-player-id="{{ player.id }}" data-element="experience">
+                                    {{ "{:,}".format(player.experience) }}
+                                </span>
+                                <small class="text-muted d-block">XP</small>
+                            </div>
+                        </td>
+
+                        <!-- Statistics -->
+                        <td class="stats-column">
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-value text-success gradient-ready" data-player-id="{{ player.id }}" data-element="kills">
+                                        {{ player.kills }}
+                                    </span>
+                                    <small class="stat-label">K</small>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value text-warning gradient-ready" data-player-id="{{ player.id }}" data-element="final_kills">
+                                        {{ player.final_kills }}
+                                    </span>
+                                    <small class="stat-label">FK</small>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value text-danger gradient-ready" data-player-id="{{ player.id }}" data-element="deaths">
+                                        {{ player.deaths }}
+                                    </span>
+                                    <small class="stat-label">D</small>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value text-info gradient-ready" data-player-id="{{ player.id }}" data-element="beds_broken">
+                                        {{ player.beds_broken }}
+                                    </span>
+                                    <small class="stat-label">B</small>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Performance -->
+                        <td class="performance-column">
+                            <div class="performance-grid">
+                                <div class="performance-item">
+                                    <span class="performance-label">K/D:</span>
+                                    <span class="performance-value {{ 'text-success' if player.kd_ratio >= 1.5 else 'text-warning' if player.kd_ratio >= 1.0 else 'text-danger' }}">
+                                        {{ player.kd_ratio }}
+                                    </span>
+                                </div>
+                                <div class="performance-item">
+                                    <span class="performance-label">Побед:</span>
+                                    <span class="performance-value gradient-ready" data-player-id="{{ player.id }}" data-element="wins">
+                                        {{ player.wins }}
+                                    </span>
+                                </div>
+                                <div class="performance-item">
+                                    <span class="performance-label">W/R:</span>
+                                    <span class="performance-value {{ 'text-success' if player.win_rate >= 50 else 'text-warning' if player.win_rate >= 40 else 'text-danger' }}">
+                                        {{ player.win_rate }}%
+                                    </span>
+                                </div>
+                                <!-- Star Rating -->
+                                <div class="performance-item">
+                                    <div class="star-rating">
+                                        {% for i in range(1, 6) %}
+                                            <i class="fas fa-star {{ 'text-warning' if i <= player.star_rating else 'text-muted' }}"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="actions-column">
+                            <div class="action-buttons">
+                                <a href="{{ url_for('public_profile', player_id=player.id) }}"
+                                   class="btn btn-sm btn-outline-primary" title="Публичный профиль">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if is_admin %}
+                                <a href="{{ url_for('player_profile', player_id=player.id) }}"
+                                   class="btn btn-sm btn-outline-warning" title="Админ профиль">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="no-results text-center py-5">
+        <i class="fas fa-search fa-5x text-muted mb-3"></i>
+        <h3 class="text-muted">{{ 'Игроки не найдены' if search_query else 'Нет игроков в базе данных' }}</h3>
+        {% if search_query %}
+        <p class="text-muted">По запросу "{{ search_query }}" ничего не найдено</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+            <i class="fas fa-times me-2"></i>Очистить поиск
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Admin Tools -->
+    {% if is_admin %}
+    <div class="admin-tools mt-5 pt-4 border-top border-secondary">
+        <div class="text-center">
+            <h5 class="text-warning mb-3">
+                <i class="fas fa-tools me-2"></i>Административные инструменты
+            </h5>
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('admin') }}" class="btn btn-warning">
+                    <i class="fas fa-cog me-2"></i>Админ-панель
+                </a>
+                <a href="{{ url_for('export_leaderboard') }}" class="btn btn-info">
+                    <i class="fas fa-download me-2"></i>Экспорт CSV
+                </a>
+                <a href="{{ url_for('statistics') }}" class="btn btn-success">
+                    <i class="fas fa-chart-bar me-2"></i>Статистика
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Navigation Links -->
+    <div class="navigation-links mt-5 pt-4 border-top border-secondary">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="{{ url_for('compare_players') }}" class="nav-link-card">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-balance-scale fa-2x text-primary mb-3"></i>
+                            <h6>Сравнить игроков</h6>
+                            <small class="text-muted">Детальное сравнение статистики</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('achievements') }}" class="nav-link-card">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-trophy fa-2x text-warning mb-3"></i>
+                            <h6>Достижения</h6>
+                            <small class="text-muted">Система достижений</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('quests') }}" class="nav-link-card">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-tasks fa-2x text-info mb-3"></i>
+                            <h6>Квесты</h6>
+                            <small class="text-muted">Ежедневные задания</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('shop') }}" class="nav-link-card">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-store fa-2x text-success mb-3"></i>
+                            <h6>Магазин</h6>
+                            <small class="text-muted">Покупки и улучшения</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Initialize leaderboard functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Load gradients for all players on the leaderboard
+    loadAllPlayerGradients();
+
+    // Initialize search functionality
+    initializeLeaderboardSearch();
+
+    // Initialize auto-refresh for live updates (optional)
+    // initializeAutoRefresh();
+});
+
+function loadAllPlayerGradients() {
+    const playerRows = document.querySelectorAll('.player-row[data-player-id]');
+    playerRows.forEach(row => {
+        const playerId = row.getAttribute('data-player-id');
+        loadPlayerGradients(parseInt(playerId));
+    });
+}
+
+function initializeLeaderboardSearch() {
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (this.value.length >= 2 || this.value.length === 0) {
+                    this.form.submit();
+                }
+            }, 500);
+        });
+    }
+}
+
+// Auto-refresh functionality (optional)
+function initializeAutoRefresh() {
+    // Refresh leaderboard every 30 seconds
+    setInterval(() => {
+        if (!document.hidden) {
+            refreshLeaderboardData();
+        }
+    }, 30000);
+}
+
+function refreshLeaderboardData() {
+    fetch(window.location.href, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        // Update only the table content to preserve user interactions
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newTable = doc.querySelector('.leaderboard-table tbody');
+        const currentTable = document.querySelector('.leaderboard-table tbody');
+
+        if (newTable && currentTable) {
+            currentTable.innerHTML = newTable.innerHTML;
+            loadAllPlayerGradients();
+        }
+    })
+    .catch(error => {
+        console.error('Error refreshing leaderboard:', error);
+    });
+}
+
+// Placeholder for achievements and stats page logic
+function loadAchievements() {
+    console.log("Loading achievements...");
+    // Add achievement loading logic here
+}
+
+function updateServerStats() {
+    console.log("Updating server statistics...");
+    // Add server statistics update logic here
+}
+
+// This function will handle the logic for achievements, similar to quests
+function checkAndGrantAchievement(player_id, achievement_id) {
+    console.log(`Checking achievement ${achievement_id} for player ${player_id}`);
+    // Logic to check if a player has met the criteria for an achievement
+    // and grant it if they haven't already.
+    // This would likely involve fetching player achievement data and updating it.
+}
+
+// Example of how achievements might be checked on certain events (e.g., player joining)
+function onPlayerJoin(player_id) {
+    console.log(`Player ${player_id} joined. Checking for initial achievements.`);
+    // Check for achievements that are granted on join
+    checkAndGrantAchievement(player_id, 'welcome_player');
+}
+
+// Example of how quests and achievements might share logic structure
+function updateQuestProgress(player_id, quest_id, progress_increment) {
+    console.log(`Updating progress for quest ${quest_id} for player ${player_id} by ${progress_increment}`);
+    // Logic to update quest progress
+}
+
+function updateAchievementProgress(player_id, achievement_id, progress_increment) {
+    console.log(`Updating progress for achievement ${achievement_id} for player ${player_id} by ${progress_increment}`);
+    // Logic to update achievement progress
+    // This could be similar to quest progress updates
+}
+
+// Function to calculate FK/D ratio, considering deaths as denominator
+function calculateFkdR(final_kills, deaths) {
+    if (deaths === 0) {
+        return final_kills > 0 ? Infinity : 0; // Handle division by zero
+    }
+    return final_kills / deaths;
+}
+
+// Ensure FK/D is displayed correctly in the template if it needs to be dynamic
+// The template currently uses `player.kd_ratio`, which assumes this calculation is done server-side.
+// If client-side calculation is needed, it would be implemented here.
+// For example, to dynamically update the display in the table:
+function updatePerformanceDisplay(row, player) {
+    const fkdR = calculateFkdR(player.final_kills, player.deaths);
+    const kdRatioSpan = row.querySelector('.performance-value[data-element="kd_ratio"]'); // Assuming you add data-element to kd_ratio span
+    if (kdRatioSpan) {
+        kdRatioSpan.textContent = fkdR.toFixed(2); // Or however you want to format it
+        // Update class for color based on fkdR
+        kdRatioSpan.className = `performance-value ${fkdR >= 1.5 ? 'text-success' : fkdR >= 1.0 ? 'text-warning' : 'text-danger'}`;
+    }
+}
+
+// If the user meant to modify how player.kd_ratio is calculated server-side, that would be in the backend code.
+// Assuming the change is related to how FK/D is interpreted or displayed, this JS can help.
+// The original request implies a server-side change for "FK => FK/D Должно быть средним финальных убийств и смертей, как K/D убийства и смерти."
+// This translates to the K/D ratio shown in the table.
+// The template already uses `player.kd_ratio`, so the backend needs to ensure this is calculated correctly as `final_kills / deaths`.
+// The current code does not have backend logic to show, so this is a note for the developer.
+
+</script>
+{% endblock %}

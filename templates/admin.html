@@ -1,0 +1,985 @@
+{% extends "base.html" %}
+
+{% block title %}Панель администратора{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <!-- Enhanced Admin Header -->
+    <div class="admin-header text-center py-4 mb-5 enhanced-admin-header">
+        <div class="header-backdrop"></div>
+        <div class="header-content">
+            <h1 class="display-4 fw-bold admin-title mb-3">
+                <i class="fas fa-crown admin-crown-icon me-3"></i>Панель администратора
+            </h1>
+            <p class="lead header-subtitle">Управление таблицей лидеров и игроками</p>
+            {% if stats %}
+            <div class="admin-stats-quick">
+                <div class="quick-stat-item">
+                    <div class="stat-number">{{ "{:,}".format(stats.total_players) }}</div>
+                    <div class="stat-label">Игроков</div>
+                </div>
+                <div class="quick-stat-item">
+                    <div class="stat-number">{{ "{:,}".format(stats.total_kills) }}</div>
+                    <div class="stat-label">Убийств</div>
+                </div>
+                <div class="quick-stat-item">
+                    <div class="stat-number">{{ "{:,}".format(stats.total_games) }}</div>
+                    <div class="stat-label">Игр</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Enhanced Statistics Overview -->
+    {% if stats %}
+    <div class="enhanced-stats-overview mb-5">
+        <div class="stats-header text-center mb-4">
+            <h3 class="section-title gradient-text">
+                <i class="fas fa-chart-bar text-info me-2 glow-effect"></i>Общая статистика сервера
+            </h3>
+            <p class="text-muted">Живая статистика Bedwars сервера в реальном времени</p>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="modern-stat-card players-card">
+                    <div class="stat-header">
+                        <div class="stat-icon-wrapper">
+                            <i class="fas fa-users stat-icon"></i>
+                        </div>
+                        <div class="stat-trend positive">
+                            <i class="fas fa-arrow-up"></i> +12%
+                        </div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ "{:,}".format(stats.total_players) }}</div>
+                        <div class="stat-label">Всего игроков</div>
+                        <div class="stat-subtitle">Зарегистрированных</div>
+                    </div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="modern-stat-card kills-card">
+                    <div class="stat-header">
+                        <div class="stat-icon-wrapper">
+                            <i class="fas fa-sword kills-icon stat-icon"></i>
+                        </div>
+                        <div class="stat-trend positive">
+                            <i class="fas fa-arrow-up"></i> +8%
+                        </div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ "{:,}".format(stats.total_kills) }}</div>
+                        <div class="stat-label">Всего убийств</div>
+                        <div class="stat-subtitle">За все время</div>
+                    </div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="modern-stat-card games-card">
+                    <div class="stat-header">
+                        <div class="stat-icon-wrapper">
+                            <i class="fas fa-gamepad stat-icon"></i>
+                        </div>
+                        <div class="stat-trend positive">
+                            <i class="fas fa-arrow-up"></i> +15%
+                        </div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ "{:,}".format(stats.total_games) }}</div>
+                        <div class="stat-label">Всего игр</div>
+                        <div class="stat-subtitle">Сыграно</div>
+                    </div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="modern-stat-card beds-card">
+                    <div class="stat-header">
+                        <div class="stat-icon-wrapper">
+                            <i class="fas fa-bed stat-icon"></i>
+                        </div>
+                        <div class="stat-trend positive">
+                            <i class="fas fa-arrow-up"></i> +5%
+                        </div>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ "{:,}".format(stats.total_beds_broken) }}</div>
+                        <div class="stat-label">Кроватей сломано</div>
+                        <div class="stat-subtitle">Всего разрушено</div>
+                    </div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" style="width: 90%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Statistics Row -->
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="secondary-stat-card">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-trophy text-warning"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ "{:,}".format(stats.total_wins) }}</div>
+                        <div class="stat-name">Побед</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="secondary-stat-card">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-coins text-warning"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ "{:,}".format(stats.total_coins) }}</div>
+                        <div class="stat-name">Койнов в обороте</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="secondary-stat-card">
+                    <div class="stat-icon-small">
+                        <i class="fas fa-star text-info"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ "{:,}".format(stats.total_reputation) }}</div>
+                        <div class="stat-name">Репутации</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Full Add Player Section -->
+    <div class="admin-form-card">
+        <h4 class="text-success mb-4">
+            <i class="fas fa-user-plus me-2"></i>Добавить игрока
+        </h4>
+
+        <form method="POST" action="{{ url_for('add_player') }}">
+            <!-- Basic Info -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-info"><i class="fas fa-info-circle me-2"></i>Основная информация</h5>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="nickname" class="form-label text-warning">
+                        <i class="fas fa-user me-2"></i>Ник игрока *
+                    </label>
+                    <input type="text" class="form-control" name="nickname" id="nickname" 
+                           required maxlength="20" placeholder="Введите игровой ник">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="server_ip" class="form-label text-info">
+                        <i class="fas fa-server me-2"></i>Сервер
+                    </label>
+                    <input type="text" class="form-control" name="server_ip" id="server_ip" 
+                           placeholder="IP сервера (необязательно)">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="role" class="form-label text-warning">
+                        <i class="fas fa-crown me-2"></i>Роль
+                    </label>
+                    <select class="form-select" name="role" id="role">
+                        <option value="Игрок">🎮 Игрок</option>
+                        <option value="Модератор">🛡️ Модератор</option>
+                        <option value="Админ">👑 Админ</option>
+                        <option value="VIP">💎 VIP</option>
+                        <option value="MVP">⭐ MVP</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="experience" class="form-label text-warning">
+                        <i class="fas fa-star me-2"></i>Опыт (0 = автовычисление)
+                    </label>
+                    <input type="number" class="form-control" name="experience" id="experience" 
+                           min="0" max="999999" value="0">
+                </div>
+            </div>
+
+            <!-- Combat Stats -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-danger"><i class="fas fa-sword me-2"></i>Боевая статистика</h5>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="kills" class="form-label text-danger">
+                        <i class="fas fa-sword kills-icon me-2"></i>Киллы
+                    </label>
+                    <input type="number" class="form-control" name="kills" id="kills" 
+                           min="0" max="999999" value="0">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="final_kills" class="form-label text-dark">
+                        <i class="fas fa-skull me-2"></i>Финальные киллы
+                    </label>
+                    <input type="number" class="form-control" name="final_kills" id="final_kills" 
+                           min="0" max="999999" value="0">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="deaths" class="form-label text-secondary">
+                        <i class="fas fa-dizzy me-2"></i>Смерти
+                    </label>
+                    <input type="number" class="form-control" name="deaths" id="deaths" 
+                           min="0" max="999999" value="0">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="final_deaths" class="form-label text-muted">
+                        <i class="fas fa-skull-crossbones me-2"></i>Финальные смерти
+                    </label>
+                    <input type="number" class="form-control" name="final_deaths" id="final_deaths" 
+                           min="0" max="999999" value="0">
+                </div>
+            </div>
+
+            <!-- Game Stats -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-success"><i class="fas fa-gamepad me-2"></i>Игровая статистика</h5>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="beds_broken" class="form-label text-info">
+                        <i class="fas fa-bed me-2"></i>Сломанные кровати
+                    </label>
+                    <input type="number" class="form-control" name="beds_broken" id="beds_broken" 
+                           min="0" max="999999" value="0">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="games_played" class="form-label text-success">
+                        <i class="fas fa-gamepad me-2"></i>Всего игр
+                    </label>
+                    <input type="number" class="form-control" name="games_played" id="games_played" 
+                           min="0" max="999999" value="0">
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="wins" class="form-label text-warning">
+                        <i class="fas fa-trophy me-2"></i>Победы
+                    </label>
+                    <input type="number" class="form-control" name="wins" id="wins" 
+                           min="0" max="999999" value="0">
+                </div>
+            </div>
+
+            <!-- Resources -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-primary"><i class="fas fa-gem me-2"></i>Ресурсы</h5>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="iron_collected" class="form-label text-secondary">
+                        <i class="fas fa-circle me-2"></i>Железо
+                    </label>
+                    <input type="number" class="form-control" name="iron_collected" id="iron_collected" 
+                           min="0" max="999999" value="0">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="gold_collected" class="form-label text-warning">
+                        <i class="fas fa-circle me-2"></i>Золото
+                    </label>
+                    <input type="number" class="form-control" name="gold_collected" id="gold_collected" 
+                           min="0" max="999999" value="0">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="diamonds_collected" class="form-label text-info">
+                        <i class="fas fa-gem me-2"></i>Алмазы
+                    </label>
+                    <input type="number" class="form-control" name="diamonds_collected" id="diamonds_collected" 
+                           min="0" max="999999" value="0">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="emeralds_collected" class="form-label text-success">
+                        <i class="fas fa-gem me-2"></i>Изумруды
+                    </label>
+                    <input type="number" class="form-control" name="emeralds_collected" id="emeralds_collected" 
+                           min="0" max="999999" value="0">
+                </div>
+            </div>
+            
+            <!-- Reputation -->
+            <div class="col-md-6 mb-3">
+                <label for="reputation" class="form-label">
+                    <i class="fas fa-heart text-info"></i> Репутация
+                </label>
+                <input type="number" class="form-control bg-dark text-white border-secondary"
+                       id="reputation" name="reputation" value="0" min="0" max="999999">
+                <small class="form-text text-muted">Репутация игрока (0-999,999)</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="karma" class="form-label">
+                    <i class="fas fa-yin-yang text-purple"></i> Карма
+                </label>
+                <input type="number" class="form-control bg-dark text-white border-secondary"
+                       id="karma" name="karma" value="0" min="0" max="999999">
+                <small class="form-text text-muted">Карма игрока (0-999,999)</small>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Добавить игрока
+                </button>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- Recent Players -->
+    <div class="recent-players-section mb-5">
+        <h3 class="section-title mb-4">
+            <i class="fas fa-clock text-warning me-2"></i>Недавно добавленные игроки
+        </h3>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Игрок</th>
+                        <th>Уровень</th>
+                        <th>Опыт</th>
+                        <th>K/D</th>
+                        <th>Карма</th>
+                        <th>Дата добавления</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in recent_players %}
+                    <tr>
+                        <td>
+                            <div class="player-info">
+                                <div class="fw-bold">{{ player.nickname }}</div>
+                                <div class="text-muted small">{{ player.role }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-warning text-dark fs-6">{{ player.level }}</span>
+                        </td>
+                        <td class="text-warning">{{ "{:,}".format(player.experience) }}</td>
+                        <td>
+                            <span class="stat-value {{ 'text-success' if player.kd_ratio >= 1.0 else 'text-danger' }}">
+                                {{ player.kd_ratio }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-purple fs-6">{{ player.karma }}</span>
+                        </td>
+                        <td class="text-muted small">{{ player.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('player_profile', player_id=player.id) }}"
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <button class="btn btn-outline-danger"
+                                        onclick="confirmDelete({{ player.id }}, '{{ player.nickname }}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- Enhanced Admin Actions -->
+    <div class="enhanced-admin-actions mb-5">
+        <div class="section-header text-center mb-4">
+            <h3 class="section-title gradient-text">
+                <i class="fas fa-tools text-danger me-2 glow-effect"></i>Инструменты администратора
+            </h3>
+            <p class="section-subtitle text-muted">Мощные инструменты для управления сервером</p>
+        </div>
+
+        <!-- Action Categories -->
+        <div class="admin-categories mb-4">
+            <div class="category-tab active" data-category="management">
+                <i class="fas fa-users"></i>
+                <span>Управление</span>
+            </div>
+            <div class="category-tab" data-category="content">
+                <i class="fas fa-gamepad"></i>
+                <span>Контент</span>
+            </div>
+            <div class="category-tab" data-category="customization">
+                <i class="fas fa-palette"></i>
+                <span>Кастомизация</span>
+            </div>
+            <div class="category-tab" data-category="system">
+                <i class="fas fa-cogs"></i>
+                <span>Система</span>
+            </div>
+        </div>
+
+        <div class="actions-grid" id="adminActionsGrid">
+            <!-- Management Category -->
+            <div class="action-category active" data-category="management">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-download text-success"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Экспорт данных</h5>
+                                <p class="text-muted small">Скачать данные в различных форматах</p>
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{{ url_for('export_leaderboard') }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-download me-1"></i>Экспорт CSV
+                                    </a>
+                                    <a href="{{ url_for('export_database') }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-database me-1"></i>Экспорт БД (JSON)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-upload text-success mb-2"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Импорт данных</h5>
+                                <p class="text-muted small">Восстановить базу данных из резервной копии</p>
+                                <a href="{{ url_for('import_database') }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-upload me-1"></i>Импорт БД
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-gamepad text-warning"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Демо-данные</h5>
+                                <p class="text-muted">Инициализировать тестовые данные</p>
+                                <form method="POST" action="{{ url_for('init_demo') }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-warning" onclick="return confirm('Создать демо-игроков и квесты?')">
+                                        <i class="fas fa-magic me-1"></i>Создать
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Content Category -->
+            <div class="action-category" data-category="content">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-tasks text-info"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Квесты</h5>
+                                <p class="text-muted">Управление системой квестов</p>
+                                <a href="{{ url_for('admin_quests') }}" class="btn btn-info">
+                                    <i class="fas fa-tasks me-1"></i>Управлять
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-trophy text-purple"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Достижения</h5>
+                                <p class="text-muted">Управление системой достижений</p>
+                                <a href="{{ url_for('admin_achievements') }}" class="btn" style="background-color: #6f42c1; color: white;">
+                                    <i class="fas fa-trophy me-1"></i>Управлять
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon text-primary">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Квесты игроков</h5>
+                                <p class="text-muted">Просмотр прогресса квестов</p>
+                                <a href="{{ url_for('admin_player_quests') }}" class="btn btn-primary">
+                                    <i class="fas fa-tasks me-2"></i>Просмотреть
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon text-success">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Достижения игроков</h5>
+                                <p class="text-muted">Просмотр полученных достижений</p>
+                                <a href="{{ url_for('admin_player_achievements') }}" class="btn btn-success">
+                                    <i class="fas fa-trophy me-2"></i>Просмотреть
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Customization Category -->
+            <div class="action-category" data-category="customization">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon text-warning glow-effect">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Титулы и роли</h5>
+                                <p class="text-muted">Создание и присвоение титулов</p>
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{{ url_for('admin_titles') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-trophy me-2"></i>Управление титулами
+                                    </a>
+                                    <a href="{{ url_for('admin_roles') }}" class="btn btn-outline-success">
+                                        <i class="fas fa-user-tag me-2"></i>{{ 'role_management'|t }}
+                                    </a>
+                                    <a href="{{ url_for('admin_badges') }}" class="btn btn-outline-warning">
+                                        <i class="fas fa-medal me-2"></i>Управление бейджами
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Оформление</h5>
+                                <p class="text-muted">Управление внешним видом</p>
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{{ url_for('admin_themes') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-palette me-2"></i>Темы
+                                    </a>
+                                    <a href="{{ url_for('admin_gradients') }}" class="btn btn-outline-warning">
+                                        <i class="fas fa-magic me-2"></i>Градиенты
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-coins text-warning"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Экономика</h5>
+                                <p class="text-muted">Управление игровой экономикой</p>
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{{ url_for('admin_reputation') }}" class="btn btn-outline-info">
+                                        <i class="fas fa-star me-2"></i>Репутация
+                                    </a>
+                                    <a href="{{ url_for('admin_shop') }}" class="btn btn-outline-success">
+                                        <i class="fas fa-store me-2"></i>Магазин
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- System Category -->
+            <div class="action-category" data-category="system">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-chart-line text-success"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Статистика</h5>
+                                <p class="text-muted">Подробная аналитика</p>
+                                <a href="{{ url_for('statistics') }}" class="btn btn-success">
+                                    <i class="fas fa-chart-bar me-1"></i>Посмотреть
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-trash text-danger"></i>
+                            </div>
+                            <div class="action-content">
+                                <h5>Очистить таблицу</h5>
+                                <p class="text-muted">Удалить всех игроков</p>
+                                <button class="btn btn-danger" onclick="confirmClear()">
+                                    <i class="fas fa-trash me-1"></i>Очистить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите удалить игрока <strong id="deletePlayerName"></strong>?</p>
+                <p class="text-muted small">Это действие нельзя отменить.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clear Confirmation Modal -->
+<div class="modal fade" id="clearModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">Внимание!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы собираетесь удалить <strong>всех игроков</strong> из таблицы лидеров!</p>
+                <p class="text-danger">Это действие нельзя отменить!</p>
+                <p>Для подтверждения введите <strong>ОЧИСТИТЬ</strong>:</p>
+                <input type="text" class="form-control" id="clearConfirmation" placeholder="Введите ОЧИСТИТЬ">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form method="POST" action="{{ url_for('clear_leaderboard') }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" id="clearSubmit" disabled>
+                        Очистить таблицу
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Role Creation Modal -->
+<div class="modal fade" id="customRoleModal" tabindex="-1" aria-labelledby="customRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-primary" id="customRoleModalLabel">
+                    <i class="fas fa-magic me-2"></i>Создать кастомную роль
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="modal_role_name" class="form-label">
+                                <i class="fas fa-tag me-2"></i>Название роли
+                            </label>
+                            <input type="text" class="form-control bg-secondary text-light border-0"
+                                   id="modal_role_name" placeholder="Введите название роли" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="modal_role_emoji" class="form-label">
+                                <i class="fas fa-smile me-2"></i>Эмодзи
+                            </label>
+                            <div class="input-group">
+                                <input type="text" class="form-control bg-secondary text-light border-0"
+                                       id="modal_role_emoji" placeholder="🎭" maxlength="2">
+                                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                    Выбрать
+                                </button>
+                                <ul class="dropdown-menu bg-dark">
+                                    <li><a class="dropdown-item text-light emoji-option" href="#" data-emoji="👑">👑 Корона</a></li>
+                                    <li><a class="dropdown-item text-light emoji-option" href="#" data-emoji="⭐">⭐ Звезда</a></li>
+                                    <li><a class="dropdown-item text-light emoji-option" href="#" data-emoji="🔥">🔥 Огонь</a></li>
+                                    <li><a class="dropdown-item text-light emoji-option" href="#" data-emoji="💎">💎 Алмаз</a></li>
+                                    <li><a class="dropdown-item text-light emoji-option" href="#" data-emoji="⚡">⚡ Молния</a></li>
+                                    <li><a class="dropdown-item text-light emoji-option" href="#" data-emoji="🎭">🎭 Маски</a></li>
+                                    <li><a class="dropdown-item text-light emoji-option" href="#" data-emoji="🏆">🏆 Трофей</a></li>
+                                    <li><a class="dropdown-item text-light emoji-option" href="#" data-emoji="🌟">🌟 Звёздочка</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="modal_role_color" class="form-label">
+                                <i class="fas fa-palette me-2"></i>Цвет
+                            </label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color bg-secondary border-0"
+                                       id="modal_role_color" value="#ffc107">
+                                <div class="input-group-text bg-secondary border-0 text-light" id="color_preview">
+                                    #ffc107
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="modal_has_gradient">
+                                <label class="form-check-label text-light" for="modal_has_gradient">
+                                    <i class="fas fa-gradient me-2"></i>Использовать градиент
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="gradient_end_color_group" style="display: none;">
+                            <label for="modal_gradient_end_color" class="form-label">
+                                <i class="fas fa-fill-drip me-2"></i>Конечный цвет градиента
+                            </label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color bg-secondary border-0"
+                                       id="modal_gradient_end_color" value="#ff6b35">
+                                <div class="input-group-text bg-secondary border-0 text-light" id="gradient_color_preview">
+                                    #ff6b35
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="gradient_animated_group" style="display: none;">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="modal_gradient_animated">
+                                <label class="form-check-label text-light" for="modal_gradient_animated">
+                                    <i class="fas fa-sync-alt me-2"></i>Анимированный градиент
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="preview-section">
+                            <h6 class="text-primary">
+                                <i class="fas fa-eye me-2"></i>Предпросмотр
+                            </h6>
+                            <div class="preview-card bg-secondary p-4 rounded">
+                                <div class="mb-3">
+                                    <small class="text-muted">В лидерборде:</small>
+                                    <div class="leaderboard-preview mt-2">
+                                        <span id="role_preview_display">🎭 Кастомная роль</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">В профиле:</small>
+                                    <div class="profile-preview mt-2">
+                                        <div class="player-info d-flex align-items-center">
+                                            <img src="https://mc-heads.net/avatar/steve/32" class="rounded me-2" alt="Avatar">
+                                            <div>
+                                                <div class="fw-bold">Игрок123</div>
+                                                <div id="profile_role_preview">🎭 Кастомная роль</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Отмена
+                </button>
+                <button type="button" class="btn btn-primary" id="applyCustomRole">
+                    <i class="fas fa-check me-2"></i>Применить роль
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Delete Confirmation Modal
+function confirmDelete(playerId, playerName) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    document.getElementById('deletePlayerName').textContent = playerName;
+    const deleteForm = document.getElementById('deleteForm');
+    deleteForm.action = `/admin/delete_player/${playerId}`; // Assuming the route is like this
+    modal.show();
+}
+
+// Clear Confirmation Modal
+document.getElementById('clearConfirmation').addEventListener('input', function() {
+    const submitButton = document.getElementById('clearSubmit');
+    if (this.value.toUpperCase() === 'ОЧИСТИТЬ') {
+        submitButton.disabled = false;
+    } else {
+        submitButton.disabled = true;
+    }
+});
+
+// Admin Actions - Category Switching
+document.querySelectorAll('.category-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        const category = this.dataset.category;
+        document.querySelectorAll('.action-category').forEach(cat => cat.classList.remove('active'));
+        document.querySelector(`.action-category[data-category="${category}"]`).classList.add('active');
+    });
+});
+
+// Admin Actions - Confirmations
+function confirmClear() {
+    const modal = new bootstrap.Modal(document.getElementById('clearModal'));
+    modal.show();
+}
+
+// Placeholder for any quest system enhancements if needed later
+// Example:
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Quest system initialization or updates
+// });
+
+// Simple Add Player Form Logic
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form[action="{{ url_for('add_player') }}"]');
+    const roleSelect = document.getElementById('role');
+    const customRoleSection = document.getElementById('customRoleSection');
+    const customRoleInput = document.getElementById('custom_role');
+    const customRoleEmojiInput = document.getElementById('custom_role_emoji');
+    const customRoleColorInput = document.getElementById('custom_role_color');
+    const rolePreview = document.getElementById('rolePreview');
+    const enableGradientCheckbox = document.getElementById('enableGradient');
+    const gradientCreator = document.getElementById('gradientCreator');
+    const gradientEndColorInput = document.getElementById('gradient_end_color');
+    const customRoleColorText = document.getElementById('custom_role_color_text');
+    const gradientColorPreview = document.getElementById('gradient_color_preview');
+
+
+    // Toggle custom role section visibility
+    roleSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customRoleSection.style.display = 'block';
+        } else {
+            customRoleSection.style.display = 'none';
+        }
+    });
+
+    // Update role preview
+    function updateRolePreview() {
+        const roleName = customRoleInput.value || 'Игрок';
+        const emoji = customRoleEmojiInput.value || '🎮';
+        const color = customRoleColorInput.value;
+        const useGradient = enableGradientCheckbox.checked;
+
+        let style = '';
+        let displayText = `${emoji} ${roleName}`;
+
+        if (useGradient) {
+            const endColor = gradientEndColorInput.value;
+            style = `
+                background: linear-gradient(to right, ${color}, ${endColor});
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                color: transparent; /* Fallback for browsers that don't support background-clip */
+            `;
+        } else {
+            style = `color: ${color};`;
+        }
+
+        rolePreview.innerHTML = `<span style="${style}">${displayText}</span>`;
+        // Update the text input for color preview
+        customRoleColorText.value = color;
+        gradientColorPreview.textContent = color;
+    }
+
+    // Event listeners for custom role inputs
+    customRoleInput.addEventListener('input', updateRolePreview);
+    customRoleEmojiInput.addEventListener('input', updateRolePreview);
+    customRoleColorInput.addEventListener('input', updateRolePreview);
+    enableGradientCheckbox.addEventListener('change', function() {
+        gradientCreator.style.display = this.checked ? 'block' : 'none';
+        updateRolePreview();
+    });
+    gradientEndColorInput.addEventListener('input', updateRolePreview);
+
+
+    // Initialize preview on load
+    updateRolePreview();
+
+    // Show/hide gradient options on load if already checked
+    if (enableGradientCheckbox.checked) {
+        gradientCreator.style.display = 'block';
+    }
+});
+
+// Emoji picker functionality
+function showEmojiSuggestions() {
+    const suggestions = document.getElementById('emojiSuggestions');
+    suggestions.style.display = suggestions.style.display === 'block' ? 'none' : 'block';
+}
+
+function selectEmoji(emoji) {
+    document.getElementById('custom_role_emoji').value = emoji;
+    document.getElementById('emojiSuggestions').style.display = 'none';
+    // Trigger preview update
+    const event = new Event('input', {
+        bubbles: true,
+        cancelable: true,
+    });
+    document.getElementById('custom_role_emoji').dispatchEvent(event);
+}
+
+// Close emoji suggestions if clicking outside
+document.addEventListener('click', function(event) {
+    const suggestions = document.getElementById('emojiSuggestions');
+    const emojiPickerBtn = document.querySelector('.emoji-picker-btn');
+    if (!suggestions.contains(event.target) && !emojiPickerBtn.contains(event.target)) {
+        suggestions.style.display = 'none';
+    }
+});
+
+</script>
+{% endblock %}

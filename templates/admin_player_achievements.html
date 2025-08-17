@@ -1,0 +1,156 @@
+
+{% extends "base.html" %}
+
+{% block title %}Достижения игроков - Админ панель{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title">
+            <i class="fas fa-trophy text-warning me-2 glow-effect"></i>Достижения игроков
+        </h2>
+        <div class="btn-group">
+            <a href="{{ url_for('admin_achievements') }}" class="btn btn-info">
+                <i class="fas fa-medal me-2"></i>Управление достижениями
+            </a>
+            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+    </div>
+
+    {% if player_achievements %}
+    <div class="row g-4">
+        {% for player, achievements in player_achievements.items() %}
+        <div class="col-12">
+            <div class="admin-form-card">
+                <h4 class="text-warning mb-3">
+                    <img src="{{ player.minecraft_skin_url }}" alt="{{ player.nickname }}" 
+                         class="rounded me-2" style="width: 32px; height: 32px; image-rendering: pixelated;">
+                    {{ player.nickname }} (Уровень {{ player.level }})
+                    <span class="badge bg-success ms-2">{{ achievements|length }} достижений</span>
+                </h4>
+                
+                <div class="row g-3">
+                    {% for player_achievement in achievements %}
+                    {% set achievement = player_achievement.achievement %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="achievement-card {{ achievement.rarity }}">
+                            <div class="achievement-header">
+                                <div class="achievement-icon">
+                                    <i class="{{ achievement.icon }}"></i>
+                                </div>
+                                <div class="achievement-title">
+                                    <h6 class="mb-1">{{ achievement.title }}</h6>
+                                    <small class="text-muted">{{ achievement.description }}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-info mt-2">
+                                <div class="rarity-badge">
+                                    <span class="badge bg-{{ 'warning' if achievement.rarity == 'legendary' else 'info' if achievement.rarity == 'epic' else 'success' if achievement.rarity == 'rare' else 'secondary' }}">
+                                        {{ achievement.rarity.title() }}
+                                    </span>
+                                </div>
+                                
+                                <div class="earned-date mt-2">
+                                    <small class="text-success">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Получено: {{ player_achievement.earned_at.strftime('%d.%m.%Y %H:%M') }}
+                                    </small>
+                                </div>
+                                
+                                {% if achievement.reward_xp > 0 %}
+                                <div class="reward-info mt-1">
+                                    <small class="text-warning">
+                                        <i class="fas fa-star me-1"></i>
+                                        Награда: {{ achievement.reward_xp }} XP
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="display-1 mb-3">🏆</div>
+        <h3>Нет достижений</h3>
+        <p class="text-muted">Игроки пока не получали достижения</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.achievement-card {
+    background: rgba(33, 37, 41, 0.8);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 2px solid #495057;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-card.legendary {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.achievement-card.epic {
+    border-color: #9b59b6;
+    background: rgba(155, 89, 182, 0.1);
+    box-shadow: 0 0 15px rgba(155, 89, 182, 0.3);
+}
+
+.achievement-card.rare {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.1);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+.achievement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.achievement-card.legendary:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 215, 0, 0.5);
+}
+
+.achievement-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.achievement-icon {
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
+}
+
+.achievement-card.legendary .achievement-icon {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.achievement-card.epic .achievement-icon {
+    color: #9b59b6;
+}
+
+.achievement-card.rare .achievement-icon {
+    color: #3498db;
+}
+
+.achievement-title h6 {
+    color: #fff;
+    margin: 0;
+}
+</style>
+{% endblock %}

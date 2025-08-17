@@ -1,0 +1,137 @@
+
+{% extends "base.html" %}
+
+{% block title %}Квесты игроков - Админ панель{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title">
+            <i class="fas fa-tasks text-warning me-2 glow-effect"></i>Квесты игроков
+        </h2>
+        <div class="btn-group">
+            <a href="{{ url_for('admin_quests') }}" class="btn btn-info">
+                <i class="fas fa-list me-2"></i>Управление квестами
+            </a>
+            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+    </div>
+
+    {% if player_quests %}
+    <div class="row g-4">
+        {% for player, quests in player_quests.items() %}
+        <div class="col-12">
+            <div class="admin-form-card">
+                <h4 class="text-warning mb-3">
+                    <img src="{{ player.minecraft_skin_url }}" alt="{{ player.nickname }}" 
+                         class="rounded me-2" style="width: 32px; height: 32px; image-rendering: pixelated;">
+                    {{ player.nickname }} (Уровень {{ player.level }})
+                </h4>
+                
+                <div class="row g-3">
+                    {% for player_quest in quests %}
+                    {% set quest = player_quest.quest %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="quest-card {{ 'completed' if player_quest.is_completed else 'accepted' if player_quest.is_accepted else 'not-accepted' }}">
+                            <div class="quest-header">
+                                <div class="quest-icon">
+                                    <i class="{{ quest.icon }} {{ 'text-success' if player_quest.is_completed else 'text-warning' if player_quest.is_accepted else 'text-muted' }}"></i>
+                                </div>
+                                <div class="quest-title">
+                                    <h6 class="mb-1">{{ quest.title }}</h6>
+                                    <small class="text-muted">{{ quest.description }}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="quest-progress mt-2">
+                                <div class="progress">
+                                    <div class="progress-bar {{ 'bg-success' if player_quest.is_completed else 'bg-warning' }}" 
+                                         style="width: {{ player_quest.progress_percentage }}%"></div>
+                                </div>
+                                <small class="text-muted">
+                                    {{ player_quest.current_progress }} / {{ quest.target_value }}
+                                    ({{ player_quest.progress_percentage }}%)
+                                </small>
+                            </div>
+                            
+                            <div class="quest-status mt-2">
+                                {% if player_quest.is_completed %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>Выполнен
+                                </span>
+                                <small class="text-muted d-block">
+                                    {{ player_quest.completed_at.strftime('%d.%m.%Y %H:%M') if player_quest.completed_at }}
+                                </small>
+                                {% elif player_quest.is_accepted %}
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-clock me-1"></i>В процессе
+                                </span>
+                                <small class="text-muted d-block">
+                                    {{ player_quest.accepted_at.strftime('%d.%m.%Y %H:%M') if player_quest.accepted_at }}
+                                </small>
+                                {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-times me-1"></i>Не принят
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="display-1 mb-3">📋</div>
+        <h3>Нет активных квестов</h3>
+        <p class="text-muted">Игроки пока не принимали квесты</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.quest-card {
+    background: rgba(33, 37, 41, 0.8);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #495057;
+    transition: all 0.3s ease;
+}
+
+.quest-card.completed {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.quest-card.accepted {
+    border-color: #ffc107;
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.quest-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.quest-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.quest-icon {
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
+}
+
+.quest-title h6 {
+    color: #fff;
+    margin: 0;
+}
+</style>
+{% endblock %}

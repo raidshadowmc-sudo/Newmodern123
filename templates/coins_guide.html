@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'coins_guide_title'|t }} - Bedwars Leaderboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center">
+            <div class="hero-section animate-fade-in">
+                <div class="display-4 mb-3">
+                    <i class="fas fa-coins text-warning me-3 animate-bounce"></i>
+                    {{ 'coins_guide_title'|t }}
+                </div>
+                <p class="lead text-light mb-4">
+                    {{ 'coins'|t }} - это игровая валюта, которую можно заработать различными способами и потратить в магазине на полезные предметы.
+                </p>
+                <div class="hero-stats d-flex justify-content-center gap-4">
+                    <div class="stat-item">
+                        <div class="h4 text-warning mb-0">💰</div>
+                        <small class="text-muted">Валюта</small>
+                    </div>
+                    <div class="stat-item">
+                        <div class="h4 text-success mb-0">8+</div>
+                        <small class="text-muted">Способов</small>
+                    </div>
+                    <div class="stat-item">
+                        <div class="h4 text-info mb-0">∞</div>
+                        <small class="text-muted">Возможностей</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Methods Grid -->
+    <div class="row g-4">
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.1s;">
+                <div class="method-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Победы в играх</h5>
+                    <p class="method-description">
+                        За каждую победу в Bedwars вы получаете койны. Чем больше побед, тем больше койнов!
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-warning">50-200 <i class="fas fa-coins"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.2s;">
+                <div class="method-icon bg-primary">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Выполнение квестов</h5>
+                    <p class="method-description">
+                        Многие квесты дают койны в качестве награды. Проверяйте раздел "{{ 'quests'|t }}" регулярно!
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-primary">100-1000 <i class="fas fa-coins"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.3s;">
+                <div class="method-icon bg-success">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Получение достижений</h5>
+                    <p class="method-description">
+                        За выполнение различных достижений вы получите бонусные койны.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-success">150-5000 <i class="fas fa-coins"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.4s;">
+                <div class="method-icon bg-info">
+                    <i class="fas fa-level-up-alt"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Повышение уровня</h5>
+                    <p class="method-description">
+                        С каждым новым уровнем вы автоматически получаете бонусные койны.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-info">25-100 <i class="fas fa-coins"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.5s;">
+                <div class="method-icon bg-purple">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Ежедневные бонусы</h5>
+                    <p class="method-description">
+                        Заходите на сайт каждый день, чтобы получать ежедневные бонусы койнов!
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-purple">10-50 <i class="fas fa-coins"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.6s;">
+                <div class="method-icon bg-danger">
+                    <i class="fas fa-flag-checkered"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Участие в турнирах</h5>
+                    <p class="method-description">
+                        Участвуйте в турнирах и получайте призовые койны за высокие места!
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-danger">500-10000 <i class="fas fa-coins"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.7s;">
+                <div class="method-icon bg-secondary">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Активность в кланах</h5>
+                    <p class="method-description">
+                        Члены активных кланов получают дополнительные бонусы к заработку койнов.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-secondary">+10% к заработку</span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in special-method" style="animation-delay: 0.8s;">
+                <div class="method-icon bg-gradient-warning">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Особые события</h5>
+                    <p class="method-description">
+                        Во время праздников и событий количество получаемых койнов может увеличиваться в 2-5 раз!
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-gradient-warning">x2-x5 бонус</span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-10">
+            <div class="tips-section animate-fade-in" style="animation-delay: 1s;">
+                <div class="tips-header text-center mb-4">
+                    <h3 class="text-warning">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Полезные советы
+                    </h3>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="tip-card">
+                            <div class="tip-icon">💡</div>
+                            <h6>Постоянная активность</h6>
+                            <p>Ежедневная игра увеличивает ваш заработок</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="tip-card">
+                            <div class="tip-icon">🎯</div>
+                            <h6>Комбинируйте способы</h6>
+                            <p>Используйте несколько источников дохода одновременно</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="tip-card">
+                            <div class="tip-icon">⭐</div>
+                            <h6>Следите за событиями</h6>
+                            <p>Особые события дают больше всего койнов</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-6 text-center">
+            <div class="cta-section animate-bounce-in" style="animation-delay: 1.2s;">
+                <h4 class="text-light mb-3">Готовы зарабатывать койны?</h4>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="{{ url_for('shop') }}" class="btn btn-warning btn-lg">
+                        <i class="fas fa-store me-2"></i>{{ 'shop'|t }}
+                    </a>
+                    <a href="{{ url_for('quests') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-tasks me-2"></i>{{ 'quests'|t }}
+                    </a>
+                    <a href="{{ url_for('achievements') }}" class="btn btn-outline-success btn-lg">
+                        <i class="fas fa-medal me-2"></i>{{ 'achievements'|t }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hero-section {
+    padding: 2rem 0;
+    position: relative;
+}
+
+.hero-stats .stat-item {
+    text-align: center;
+}
+
+.method-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1rem;
+    padding: 2rem;
+    height: 100%;
+    position: relative;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.method-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.method-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffc107, #ff8c00);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.method-icon.bg-primary {
+    background: linear-gradient(135deg, #0d6efd, #0056b3);
+}
+
+.method-icon.bg-success {
+    background: linear-gradient(135deg, #198754, #157347);
+}
+
+.method-icon.bg-info {
+    background: linear-gradient(135deg, #0dcaf0, #0987a0);
+}
+
+.method-icon.bg-purple {
+    background: linear-gradient(135deg, #8e44ad, #7f3c98);
+}
+
+.method-icon.bg-danger {
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+}
+
+.method-icon.bg-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+.method-icon.bg-gradient-warning {
+    background: linear-gradient(135deg, #ffd700, #ff8c00, #ff4500);
+}
+
+.method-title {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.method-description {
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.method-reward {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.method-hover-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.method-card:hover .method-hover-effect {
+    opacity: 1;
+}
+
+.special-method {
+    border: 2px solid #ffd700;
+    animation: special-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes special-glow {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    }
+}
+
+.tips-section {
+    background: rgba(255,255,255,0.05);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.tip-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+}
+
+.tip-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.tip-card h6 {
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+}
+
+.tip-card p {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.cta-section {
+    background: linear-gradient(135deg, rgba(255,193,7,0.1), rgba(255,140,0,0.1));
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(255,193,7,0.3);
+}
+
+/* Animations */
+@keyframes animate-fade-in {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes animate-slide-in {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes animate-bounce-in {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes animate-bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.animate-fade-in { animation: animate-fade-in 0.8s ease-out forwards; }
+.animate-slide-in { animation: animate-slide-in 0.8s ease-out forwards; }
+.animate-bounce-in { animation: animate-bounce-in 1s ease-out forwards; }
+.animate-bounce { animation: animate-bounce 2s infinite; }
+</style>
+{% endblock %}

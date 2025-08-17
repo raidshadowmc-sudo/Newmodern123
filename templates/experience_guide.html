@@ -1,0 +1,431 @@
+
+{% extends "base.html" %}
+
+{% block title %}Гайд по зарабатыванию опыта{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-warning">
+            <i class="fas fa-star me-3 glow-effect"></i>Гайд по опыту
+        </h1>
+        <p class="lead text-muted">Узнайте, как эффективно зарабатывать опыт и повышать уровень</p>
+    </div>
+
+    <!-- Experience Sources -->
+    <div class="experience-sources mb-5">
+        <h2 class="text-warning mb-4">
+            <i class="fas fa-chart-line me-2"></i>Источники опыта
+        </h2>
+        
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="exp-source-card">
+                    <div class="exp-icon">
+                        <i class="fas fa-sword text-danger"></i>
+                    </div>
+                    <div class="exp-content">
+                        <h5 class="text-danger">Убийства</h5>
+                        <p class="text-muted mb-2">За каждое убийство игрока</p>
+                        <div class="exp-amount">+15 XP</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="exp-source-card">
+                    <div class="exp-icon">
+                        <i class="fas fa-crosshairs text-warning"></i>
+                    </div>
+                    <div class="exp-content">
+                        <h5 class="text-warning">Финальные убийства</h5>
+                        <p class="text-muted mb-2">За каждое финальное убийство</p>
+                        <div class="exp-amount">+75 XP</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="exp-source-card">
+                    <div class="exp-icon">
+                        <i class="fas fa-bed text-info"></i>
+                    </div>
+                    <div class="exp-content">
+                        <h5 class="text-info">Разрушение кроватей</h5>
+                        <p class="text-muted mb-2">За каждую сломанную кровать</p>
+                        <div class="exp-amount">+150 XP</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="exp-source-card">
+                    <div class="exp-icon">
+                        <i class="fas fa-trophy text-success"></i>
+                    </div>
+                    <div class="exp-content">
+                        <h5 class="text-success">Победы</h5>
+                        <p class="text-muted mb-2">За каждую выигранную игру</p>
+                        <div class="exp-amount">+300 XP</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="exp-source-card">
+                    <div class="exp-icon">
+                        <i class="fas fa-gamepad text-primary"></i>
+                    </div>
+                    <div class="exp-content">
+                        <h5 class="text-primary">Участие в играх</h5>
+                        <p class="text-muted mb-2">За каждую сыгранную игру</p>
+                        <div class="exp-amount">+40 XP</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="exp-source-card">
+                    <div class="exp-icon">
+                        <i class="fas fa-gem text-purple"></i>
+                    </div>
+                    <div class="exp-content">
+                        <h5 class="text-purple">Сбор ресурсов</h5>
+                        <p class="text-muted mb-2">За каждые 8 собранных ресурсов</p>
+                        <div class="exp-amount">+1 XP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Bonuses -->
+    <div class="performance-bonuses mb-5">
+        <h2 class="text-warning mb-4">
+            <i class="fas fa-fire me-2"></i>Бонусы за результативность
+        </h2>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="bonus-card kd-bonus">
+                    <div class="bonus-header">
+                        <i class="fas fa-chart-line text-danger"></i>
+                        <h5>K/D Бонусы</h5>
+                    </div>
+                    <div class="bonus-list">
+                        <div class="bonus-item">
+                            <span class="bonus-condition">K/D ≥ 3.0</span>
+                            <span class="bonus-value text-success">+40%</span>
+                        </div>
+                        <div class="bonus-item">
+                            <span class="bonus-condition">K/D ≥ 2.0</span>
+                            <span class="bonus-value text-info">+25%</span>
+                        </div>
+                        <div class="bonus-item">
+                            <span class="bonus-condition">K/D ≥ 1.5</span>
+                            <span class="bonus-value text-warning">+15%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="bonus-card winrate-bonus">
+                    <div class="bonus-header">
+                        <i class="fas fa-trophy text-success"></i>
+                        <h5>Процент побед</h5>
+                    </div>
+                    <div class="bonus-list">
+                        <div class="bonus-item">
+                            <span class="bonus-condition">≥ 50%</span>
+                            <span class="bonus-value text-success">+50%</span>
+                        </div>
+                        <div class="bonus-item">
+                            <span class="bonus-condition">≥ 40%</span>
+                            <span class="bonus-value text-info">+35%</span>
+                        </div>
+                        <div class="bonus-item">
+                            <span class="bonus-condition">≥ 25%</span>
+                            <span class="bonus-value text-warning">+20%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="bonus-card bed-bonus">
+                    <div class="bonus-header">
+                        <i class="fas fa-bed text-info"></i>
+                        <h5>Разрушение кроватей</h5>
+                    </div>
+                    <div class="bonus-list">
+                        <div class="bonus-item">
+                            <span class="bonus-condition">≥ 1 кровать/игра</span>
+                            <span class="bonus-value text-warning">+20%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level System -->
+    <div class="level-system mb-5">
+        <h2 class="text-warning mb-4">
+            <i class="fas fa-star me-2"></i>Система уровней
+        </h2>
+        
+        <div class="level-info-card mb-4">
+            <h4 class="text-info mb-3">Как работает система уровней?</h4>
+            <p class="text-light mb-3">
+                Система уровней основана на опыте Hypixel Bedwars. Каждый уровень требует определенного количества опыта:
+            </p>
+            <ul class="text-muted">
+                <li>Уровни 1-100: Прогрессивное увеличение требуемого опыта</li>
+                <li>Уровни 100+: Каждый уровень требует дополнительно 2,500 опыта</li>
+                <li>Максимальный уровень: 1000</li>
+            </ul>
+        </div>
+
+        <!-- Level Rewards -->
+        <div class="level-rewards">
+            <h4 class="text-success mb-3">Награды за уровни</h4>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="reward-item">
+                        <div class="reward-level">20+</div>
+                        <div class="reward-content">
+                            <i class="fas fa-user-circle text-info"></i>
+                            <span>Кастомные аватары</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="reward-item">
+                        <div class="reward-level">30+</div>
+                        <div class="reward-content">
+                            <i class="fas fa-image text-warning"></i>
+                            <span>Кастомные баннеры</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="reward-item">
+                        <div class="reward-level">50+</div>
+                        <div class="reward-content">
+                            <i class="fas fa-palette text-primary"></i>
+                            <span>Градиенты в лидерборде</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="reward-item">
+                        <div class="reward-level">70+</div>
+                        <div class="reward-content">
+                            <i class="fas fa-magic text-purple"></i>
+                            <span>Анимированные аватары</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="reward-item">
+                        <div class="reward-level">80+</div>
+                        <div class="reward-content">
+                            <i class="fas fa-fill-drip text-info"></i>
+                            <span>Статические градиенты</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="reward-item">
+                        <div class="reward-level">150+</div>
+                        <div class="reward-content">
+                            <i class="fas fa-sparkles text-warning"></i>
+                            <span>Анимированные градиенты</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="reward-item">
+                        <div class="reward-level">500+</div>
+                        <div class="reward-content">
+                            <i class="fas fa-crown text-warning"></i>
+                            <span>Бесплатная кастомная роль</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="tips-section">
+        <h2 class="text-warning mb-4">
+            <i class="fas fa-lightbulb me-2"></i>Советы по быстрому получению опыта
+        </h2>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-crosshairs text-danger"></i>
+                    </div>
+                    <h5>Фокус на финальных убийствах</h5>
+                    <p class="text-muted">
+                        Финальные убийства дают в 5 раз больше опыта, чем обычные убийства. 
+                        Концентрируйтесь на устранении игроков без кровати.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-bed text-info"></i>
+                    </div>
+                    <h5>Разрушайте кровати</h5>
+                    <p class="text-muted">
+                        Разрушение кроватей дает много опыта и позволяет получать бонус 
+                        за высокий коэффициент кроватей на игру.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-trophy text-success"></i>
+                    </div>
+                    <h5>Побеждайте чаще</h5>
+                    <p class="text-muted">
+                        Высокий процент побед дает существенный бонус к опыту. 
+                        Играйте тактично и стремитесь к победе.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.exp-source-card, .bonus-card, .tip-card, .level-info-card {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    padding: 25px;
+    height: 100%;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    transition: all 0.3s ease;
+}
+
+.exp-source-card:hover, .bonus-card:hover, .tip-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--warning-color);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.exp-source-card {
+    display: flex;
+    align-items: center;
+}
+
+.exp-icon {
+    font-size: 3rem;
+    margin-right: 20px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.exp-content h5 {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.exp-amount {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--warning-color);
+}
+
+.bonus-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.bonus-header i {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.bonus-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bonus-item:last-child {
+    border-bottom: none;
+}
+
+.bonus-condition {
+    color: #adb5bd;
+}
+
+.bonus-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.tip-card {
+    text-align: center;
+}
+
+.tip-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.tip-card h5 {
+    color: var(--warning-color);
+    margin-bottom: 15px;
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.reward-level {
+    background: var(--warning-color);
+    color: #212529;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 15px;
+    min-width: 50px;
+}
+
+.reward-content {
+    display: flex;
+    align-items: center;
+}
+
+.reward-content i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.text-purple {
+    color: #9333ea !important;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,538 @@
+{% extends "base.html" %}
+
+{% block title %}Инвентарь - {{ current_player.nickname if current_player else 'Minecraft Bedwars Leaderboard' }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Enhanced Header -->
+    <div class="inventory-hero">
+        <div class="hero-background">
+            <div class="floating-item item-1">💎</div>
+            <div class="floating-item item-2">⚔️</div>
+            <div class="floating-item item-3">🛡️</div>
+            <div class="floating-item item-4">🏹</div>
+        </div>
+
+        <div class="hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            <i class="fas fa-treasure-chest hero-icon"></i>
+                            <span class="gradient-text">Инвентарь игрока</span>
+                        </h1>
+                        <p class="hero-subtitle">Управляйте своими предметами, градиентами и ресурсами</p>
+
+                        {% if current_player %}
+                        <div class="player-info-badge">
+                            <img src="{{ current_player.minecraft_skin_url }}" alt="{{ current_player.nickname }}" class="player-avatar">
+                            <div class="player-details">
+                                <div class="player-name">{{ current_player.nickname }}</div>
+                                <div class="player-level">Уровень {{ current_player.level }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    {% if current_player %}
+                    <div class="currency-dashboard">
+                        <div class="currency-card coins-card">
+                            <div class="currency-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="currency-info">
+                                <div class="currency-amount">{{ "{:,}".format(current_player.coins) }}</div>
+                                <div class="currency-label">Койны</div>
+                            </div>
+                            <div class="currency-trend">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                        </div>
+
+                        <div class="currency-card reputation-card">
+                            <div class="currency-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="currency-info">
+                                <div class="currency-amount">{{ "{:,}".format(current_player.reputation) }}</div>
+                                <div class="currency-label">Репутация</div>
+                            </div>
+                            <div class="currency-trend">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not current_player %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Необходимо <a href="{{ url_for('player_login') }}" class="alert-link">войти в систему</a> для доступа к инвентарю!
+    </div>
+    {% else %}
+
+    {% set inventory = current_player.get_inventory() %}
+
+    <div class="inventory-grid">
+        <!-- Weapons Section -->
+        {% if inventory.get('weapons') %}
+        <div class="inventory-section mb-4">
+            <div class="card border-0" style="background: var(--bg-secondary);">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="text-danger mb-0">
+                        <i class="fas fa-sword me-2"></i>Оружие
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for item_id, quantity in inventory['weapons'].items() %}
+                        <div class="col-md-4">
+                            <div class="inventory-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-sword"></i>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">{{ item_id|title }}</div>
+                                    <div class="item-quantity">x{{ quantity }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Armor Section -->
+        {% if inventory.get('armor') %}
+        <div class="inventory-section mb-4">
+            <div class="card border-0" style="background: var(--bg-secondary);">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="text-info mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Броня
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for item_id, quantity in inventory['armor'].items() %}
+                        <div class="col-md-4">
+                            <div class="inventory-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">{{ item_id|title }}</div>
+                                    <div class="item-quantity">x{{ quantity }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Resources Section -->
+        {% if inventory.get('resources') %}
+        <div class="inventory-section mb-4">
+            <div class="card border-0" style="background: var(--bg-secondary);">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="text-warning mb-0">
+                        <i class="fas fa-gem me-2"></i>Ресурсы
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for item_id, quantity in inventory['resources'].items() %}
+                        <div class="col-md-3">
+                            <div class="inventory-item">
+                                <div class="item-icon">
+                                    {% if item_id == 'iron' %}
+                                        <i class="fas fa-cube text-secondary"></i>
+                                    {% elif item_id == 'gold' %}
+                                        <i class="fas fa-cube text-warning"></i>
+                                    {% elif item_id == 'diamond' %}
+                                        <i class="fas fa-gem text-info"></i>
+                                    {% elif item_id == 'emerald' %}
+                                        <i class="fas fa-gem text-success"></i>
+                                    {% else %}
+                                        <i class="fas fa-cube"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">{{ item_id|title }}</div>
+                                    <div class="item-quantity">x{{ quantity }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tools Section -->
+        {% if inventory.get('tools') %}
+        <div class="inventory-section mb-4">
+            <div class="card border-0" style="background: var(--bg-secondary);">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="text-success mb-0">
+                        <i class="fas fa-tools me-2"></i>Инструменты
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for item_id, quantity in inventory['tools'].items() %}
+                        <div class="col-md-4">
+                            <div class="inventory-item">
+                                <div class="item-icon">
+                                    {% if 'pickaxe' in item_id %}
+                                        <i class="fas fa-hammer"></i>
+                                    {% elif 'axe' in item_id %}
+                                        <i class="fas fa-tools"></i>
+                                    {% elif 'shear' in item_id %}
+                                        <i class="fas fa-cut"></i>
+                                    {% else %}
+                                        <i class="fas fa-tools"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">{{ item_id|title }}</div>
+                                    <div class="item-quantity">x{{ quantity }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Special Items Section -->
+        {% if inventory.get('special') %}
+        <div class="inventory-section mb-4">
+            <div class="card border-0" style="background: var(--bg-secondary);">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="text-purple mb-0">
+                        <i class="fas fa-magic me-2"></i>Особые предметы
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for item_id, quantity in inventory['special'].items() %}
+                        <div class="col-md-4">
+                            <div class="inventory-item special-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-star text-warning"></i>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">{{ item_id|title }}</div>
+                                    <div class="item-quantity">x{{ quantity }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Empty Inventory -->
+        {% if not inventory %}
+        <div class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <h4>Инвентарь пуст</h4>
+            <p class="text-muted">Играйте в игры и выполняйте квесты, чтобы получить предметы!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Inventory Stats -->
+    <div class="inventory-stats mt-4">
+        <div class="card border-0" style="background: var(--bg-secondary);">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-pie me-2 text-info"></i>Статистика инвентаря
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <div class="stat-number text-warning">{{ inventory|length }}</div>
+                            <div class="stat-label">Категорий</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <div class="stat-number text-success">
+                                {% set total_items = [] %}
+                                {% for category, items in inventory.items() %}
+                                    {% for item, quantity in items.items() %}
+                                        {% if total_items.append(quantity) %}{% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                {{ total_items|sum if total_items else 0 }}
+                            </div>
+                            <div class="stat-label">Всего предметов</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <div class="stat-number text-info">
+                                {% set unique_items = [] %}
+                                {% for category, items in inventory.items() %}
+                                    {% for item in items.keys() %}
+                                        {% if unique_items.append(item) %}{% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                {{ unique_items|length if unique_items else 0 }}
+                            </div>
+                            <div class="stat-label">Уникальных</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <div class="stat-number text-purple">
+                                {{ inventory.get('special', {})|length }}
+                            </div>
+                            <div class="stat-label">Особых</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Existing styles for .inventory-item, .item-icon, .item-name, .item-quantity, .text-purple, .stat-card */
+.inventory-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.inventory-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--warning-color);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.inventory-item.special-item {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.2));
+    border-color: #9333ea;
+}
+
+.item-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.item-name {
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 5px;
+}
+
+.item-quantity {
+    color: var(--warning-color);
+    font-weight: 500;
+}
+
+.text-purple {
+    color: #9333ea !important;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+/* New styles for the enhanced inventory hero section */
+.inventory-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a202c, #2d3748);
+    color: #e2e8f0;
+    padding: 60px 0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    margin-bottom: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.7;
+}
+
+.floating-item {
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0.3;
+    animation: float 6s ease-in-out infinite;
+}
+
+.floating-item.item-1 { top: 10%; left: 15%; animation-delay: -2s; color: #38b2ac; }
+.floating-item.item-2 { top: 70%; left: 25%; animation-delay: -4s; color: #f56565; }
+.floating-item.item-3 { top: 40%; left: 60%; animation-delay: -3s; color: #4299e1; }
+.floating-item.item-4 { top: 20%; left: 80%; animation-delay: -5s; color: #ecc94b; }
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 0 30px;
+}
+
+.hero-text .hero-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.hero-text .hero-icon {
+    color: #ecc94b;
+    margin-right: 20px;
+    text-shadow: 0 0 15px #ecc94b;
+}
+
+.hero-text .gradient-text {
+    background: linear-gradient(90deg, #ffec9c, #ffc107);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-text .hero-subtitle {
+    font-size: 1.25rem;
+    color: #a0aec0;
+    margin-bottom: 30px;
+}
+
+.player-info-badge {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 15px 25px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    max-width: 350px;
+}
+
+.player-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 20px;
+    border: 3px solid #4299e1;
+    box-shadow: 0 0 10px rgba(66, 153, 225, 0.7);
+}
+
+.player-details .player-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.player-details .player-level {
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.currency-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.currency-card {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.currency-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.currency-card.coins-card { border-left: 5px solid #ecc94b; }
+.currency-card.reputation-card { border-left: 5px solid #38b2ac; }
+
+.currency-icon {
+    font-size: 1.8rem;
+    margin-right: 15px;
+    color: #cbd5e0;
+    width: 40px; /* Fixed width for alignment */
+    text-align: center;
+}
+
+.currency-info .currency-amount {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.currency-info .currency-label {
+    font-size: 0.85rem;
+    color: #a0aec0;
+}
+
+.currency-trend {
+    margin-left: auto;
+    font-size: 1.1rem;
+}
+.currency-trend .fa-arrow-up { color: #48bb78; }
+.currency-trend .fa-arrow-down { color: #f56565; }
+
+
+/* Animation for floating items */
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-text .hero-title { font-size: 2.8rem; }
+    .player-info-badge { flex-direction: column; text-align: center; }
+    .player-avatar { margin-right: 0; margin-bottom: 15px; }
+    .currency-dashboard { align-items: center; }
+    .currency-card { width: 90%; }
+}
+</style>
+{% endblock %}

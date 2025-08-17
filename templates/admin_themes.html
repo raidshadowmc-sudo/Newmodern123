@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block title %}Управление темами - Админ панель{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title">
+            <i class="fas fa-palette text-warning me-2 glow-effect"></i>Управление темами оформления
+        </h2>
+        <div class="btn-group">
+            <a href="{{ url_for('themes') }}" class="btn btn-info">
+                <i class="fas fa-eye me-2"></i>Просмотр тем
+            </a>
+            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+    </div>
+
+    <!-- Create New Theme Form -->
+    <div class="admin-form-card mb-4">
+        <h4 class="text-success mb-4">
+            <i class="fas fa-plus me-2"></i>Создать новую тему
+        </h4>
+
+        <form method="POST" action="{{ url_for('admin_create_theme') }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Системное название*</label>
+                    <input type="text" class="form-control" name="name" required placeholder="dark_theme">
+                    <div class="form-text">Уникальное название без пробелов</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Отображаемое название*</label>
+                    <input type="text" class="form-control" name="display_name" required placeholder="Темная тема">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Основной цвет</label>
+                    <input type="color" class="form-control form-control-color" name="primary_color" value="#ffc107">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Вторичный цвет</label>
+                    <input type="color" class="form-control form-control-color" name="secondary_color" value="#17a2b8">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Цвет фона</label>
+                    <input type="color" class="form-control form-control-color" name="background_color" value="#121212">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Цвет карточек</label>
+                    <input type="color" class="form-control form-control-color" name="card_background" value="#1e1e1e">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Цвет текста</label>
+                    <input type="color" class="form-control form-control-color" name="text_color" value="#ffffff">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Акцентный цвет</label>
+                    <input type="color" class="form-control form-control-color" name="accent_color" value="#28a745">
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_default" id="isDefault">
+                        <label class="form-check-label" for="isDefault">
+                            Сделать темой по умолчанию
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Создать тему
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Existing Themes -->
+    <div class="admin-form-card">
+        <h4 class="text-info mb-4">
+            <i class="fas fa-list me-2"></i>Существующие темы
+        </h4>
+
+        {% if themes %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Название</th>
+                        <th>Отображаемое название</th>
+                        <th>Превью</th>
+                        <th>По умолчанию</th>
+                        <th>Активна</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for theme in themes %}
+                    <tr>
+                        <td><code>{{ theme.name }}</code></td>
+                        <td>{{ theme.display_name }}</td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <div class="color-preview" style="background-color: {{ theme.primary_color }};" title="Основной"></div>
+                                <div class="color-preview" style="background-color: {{ theme.secondary_color }};" title="Вторичный"></div>
+                                <div class="color-preview" style="background-color: {{ theme.background_color }};" title="Фон"></div>
+                                <div class="color-preview" style="background-color: {{ theme.accent_color }};" title="Акцент"></div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if theme.is_default %}
+                            <span class="badge bg-success">Да</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Нет</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if theme.is_active %}
+                            <span class="badge bg-success">Да</span>
+                            {% else %}
+                            <span class="badge bg-danger">Нет</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                {% if not theme.is_default %}
+                                <button class="btn btn-outline-danger" 
+                                        onclick="deleteTheme({{ theme.id }}, '{{ theme.display_name }}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-palette fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Темы не найдены</h5>
+            <p class="text-muted">Создайте первую тему оформления</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.color-preview {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.3);
+    display: inline-block;
+}
+
+.form-control-color {
+    width: 100%;
+    height: 40px;
+}
+
+.admin-form-card {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.page-title {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.glow-effect {
+    text-shadow: 0 0 10px currentColor;
+}
+</style>
+
+<script>
+function deleteTheme(themeId, themeName) {
+    if (confirm(`Удалить тему "${themeName}"?`)) {
+        fetch(`/admin/delete_theme/${themeId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Ошибка при удалении темы: ' + (data.error || 'Неизвестная ошибка'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ошибка при удалении темы');
+        });
+    }
+}
+</script>
+{% endblock %}

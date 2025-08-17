@@ -1,0 +1,2863 @@
+
+
+<div class="ascend-performance-card-v3">
+    <!-- Enhanced Header with modern design -->
+    <div class="ascend-header-v3">
+        <div class="ascend-title-section">
+            <div class="ascend-crown-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h2 class="ascend-main-title">ASCEND Performance Card</h2>
+        </div>
+        
+        <div class="ascend-player-main-info">
+            <div class="ascend-avatar-container-v3">
+                <img src="{{ player.minecraft_skin_url }}" alt="{{ player.nickname }}" class="ascend-avatar-v3">
+                <div class="ascend-avatar-glow-v3"></div>
+            </div>
+            <div class="ascend-player-details-v3">
+                <h3 class="ascend-nickname-v3">{{ player.nickname }}</h3>
+                <div class="ascend-gamemode-selector">
+                    <span class="gamemode-label">GAMEMODE</span>
+                    <select class="form-select form-select-sm gamemode-dropdown" id="gamemode-selector">
+                        <option value="bedwars">Bedwars</option>
+                        <option value="kitpvp">KitPVP</option>
+                        <option value="skywars">SkyWars</option>
+                        <option value="bridgefight">BridgeFight</option>
+                        <option value="sumo">Sumo</option>
+                        <option value="fireball_fight">Fireball Fight</option>
+                        <option value="bridge">Bridge</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ascend-stats-summary">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">AVERAGE SCORE</span>
+                    <span class="stat-value" id="average-score-v3">25</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">LAST UPDATED</span>
+                    <span class="stat-value" id="last-updated-v3">15.08.2025</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ascend-tier-display">
+            <div class="tier-badge-container" id="overall-tier-badge-v3">
+                <span class="tier-rank-v3 tier-d" id="overall-tier-text-v3">D TIER</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Stats grid with radar chart preview -->
+    <div class="ascend-stats-section-v3">
+        <div class="stats-header">
+            <h4>Performance Breakdown</h4>
+            <div class="stats-view-toggle">
+                <button class="view-btn active" data-view="detailed">
+                    <i class="fas fa-list"></i>
+                </button>
+                <button class="view-btn" data-view="radar">
+                    <i class="fas fa-chart-area"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="ascend-stats-grid-v3" id="ascend-stats-container-v3">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <div class="ascend-radar-chart-v3" id="ascend-radar-container" style="display: none;">
+            <div class="radar-chart-wrapper">
+                <canvas id="ascend-radar-canvas" width="300" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Comment section with rating and tags -->
+    <div class="ascend-comment-section-v3">
+        <div class="comment-header-v3">
+            <div class="comment-title">
+                <span class="comment-label">ASCEND EVALUATION</span>
+                <div class="evaluation-rating" id="evaluation-rating">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <span class="rating-text">3.0/5.0</span>
+                </div>
+            </div>
+            <div class="comment-icon-v3">
+                <i class="fas fa-quote-left"></i>
+            </div>
+        </div>
+        
+        <div class="comment-tags" id="performance-tags">
+            <span class="performance-tag tag-strength">Aggressive</span>
+            <span class="performance-tag tag-neutral">Consistent</span>
+            <span class="performance-tag tag-weakness">Needs Work: Defense</span>
+        </div>
+        
+        <div class="comment-text-v3" id="ascend-comment-v3">
+            <div class="loading-placeholder-v3">
+                <div class="loading-bar-v3"></div>
+                <div class="loading-bar-v3"></div>
+                <div class="loading-bar-v3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Footer with evaluator and comprehensive history -->
+    <div class="ascend-footer-v3">
+        <div class="evaluator-section">
+            <div class="evaluator-info-v3">
+                <span class="evaluator-label">EVALUATED BY</span>
+                <div class="evaluator-details-v3">
+                    <div class="evaluator-avatar-container-v3">
+                        <img src="https://mc-heads.net/avatar/EliteSquad/24" alt="Elite Squad" class="evaluator-avatar-v3" id="evaluator-avatar-v3">
+                        <div class="evaluator-status-dot"></div>
+                    </div>
+                    <div class="evaluator-text">
+                        <span class="evaluator-name" id="ascend-evaluator-v3">Elite Squad</span>
+                        <span class="evaluator-role">Senior Analyst</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="evaluation-stats">
+                <div class="eval-stat">
+                    <span class="eval-stat-value" id="total-evaluations">12</span>
+                    <span class="eval-stat-label">Evaluations</span>
+                </div>
+                <div class="eval-stat">
+                    <span class="eval-stat-value" id="evaluation-accuracy">94%</span>
+                    <span class="eval-stat-label">Accuracy</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tier-history-v3">
+            <span class="tier-label">TIER HISTORY</span>
+            <div class="tier-timeline" id="tier-timeline">
+                <div class="tier-point current" data-tier="D">D</div>
+                <div class="tier-line"></div>
+                <div class="tier-point previous" data-tier="D">D</div>
+                <div class="tier-line"></div>
+                <div class="tier-point older" data-tier="C">C</div>
+            </div>
+        </div>
+        
+        <div class="ascend-actions-v3">
+            <button class="btn btn-sm btn-outline-warning" onclick="showASCENDHistoryV3()" title="Detailed History">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </button>
+            <button class="btn btn-sm btn-outline-info" onclick="exportASCENDData()" title="Export Data">
+                <i class="fas fa-download"></i>
+                <span>Export</span>
+            </button>
+            {% if is_admin %}
+            <button class="btn btn-sm btn-outline-success" onclick="editASCENDDataV3()" title="Edit Evaluation">
+                <i class="fas fa-edit"></i>
+                <span>Edit</span>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Enhanced Branding with version info -->
+    <div class="ascend-branding-v3">
+        <div class="brand-logo-v3">
+            <div class="logo-circle-v3">
+                <i class="fas fa-arrow-up"></i>
+            </div>
+            <div class="brand-text">
+                <span class="brand-name">Elite Squad ASCEND</span>
+                <span class="brand-tagline">Advanced Combat & Strategy Evaluation Network Database</span>
+            </div>
+        </div>
+        <div class="brand-info-v3">
+            <div class="version-info">
+                <span class="brand-version">v3.0</span>
+                <span class="version-badge">NEW</span>
+            </div>
+            <span class="brand-link">elite-squad.bedwars</span>
+            <div class="powered-by">
+                <span>Powered by AI Analytics</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced ASCEND History Modal -->
+<div class="modal fade" id="ascendHistoryModalV3" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">
+                    <i class="fas fa-history text-warning me-2"></i>ASCEND Evaluation History
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="history-filters mb-3">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="upgrade">Upgrades</button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="downgrade">Downgrades</button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="update">Updates</button>
+                    </div>
+                    <select class="form-select ms-3" style="width: auto;" id="timeframe-filter">
+                        <option value="30">Last 30 days</option>
+                        <option value="90">Last 3 months</option>
+                        <option value="365">Last year</option>
+                        <option value="all">All time</option>
+                    </select>
+                    <select class="form-select ms-3" style="width: auto;" id="gamemode-history-filter">
+                        <option value="all">All Modes</option>
+                        <option value="bedwars">Bedwars</option>
+                        <option value="kitpvp">KitPVP</option>
+                        <option value="skywars">SkyWars</option>
+                        <option value="bridgefight">BridgeFight</option>
+                        <option value="sumo">Sumo</option>
+                        <option value="fireball_fight">Fireball Fight</option>
+                        <option value="bridge">Bridge</option>
+                    </select>
+                </div>
+                <div id="ascendHistoryContentV3">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                        <p>Loading evaluation history...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Global Leaderboard Modal -->
+<div class="modal fade" id="globalLeaderboardModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">
+                    <i class="fas fa-globe text-warning me-2"></i>Global ASCEND Leaderboard
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="leaderboard-filters mb-3">
+                    <select class="form-select" style="width: auto;" id="leaderboard-gamemode-filter">
+                        <option value="bedwars">Bedwars</option>
+                        <option value="kitpvp">KitPVP</option>
+                        <option value="skywars">SkyWars</option>
+                        <option value="bridgefight">BridgeFight</option>
+                        <option value="sumo">Sumo</option>
+                        <option value="fireball_fight">Fireball Fight</option>
+                        <option value="bridge">Bridge</option>
+                    </select>
+                </div>
+                <div id="globalLeaderboardContent">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                        <p>Loading global leaderboard...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const playerId = {{ player.id }};
+    currentPlayerId = playerId;
+    loadASCENDDataV3(playerId, currentGamemode);
+    
+    // Listen for ASCEND updates from admin panel
+    window.addEventListener('ascend-updated', function() {
+        setTimeout(() => loadASCENDDataV3(playerId, currentGamemode), 500);
+    });
+    
+    // Initialize tooltips
+    initializeTooltips();
+    
+    // Initialize view toggle
+    initializeViewToggle();
+    
+    // Initialize gamemode selector
+    const gamemodeSelector = document.getElementById('gamemode-selector');
+    if (gamemodeSelector) {
+        gamemodeSelector.addEventListener('change', function() {
+            currentGamemode = this.value;
+            loadASCENDDataV3(playerId, currentGamemode);
+        });
+    }
+    
+    // Initialize history filters
+    const historyGamemodeFilter = document.getElementById('gamemode-history-filter');
+    if (historyGamemodeFilter) {
+        historyGamemodeFilter.addEventListener('change', function() {
+            loadASCENDHistoryV3();
+        });
+    }
+    
+    // Initialize leaderboard filters
+    const leaderboardGamemodeFilter = document.getElementById('leaderboard-gamemode-filter');
+    if (leaderboardGamemodeFilter) {
+        leaderboardGamemodeFilter.addEventListener('change', function() {
+            loadGlobalLeaderboard();
+        });
+    }
+    
+    // Add click handler for global rank
+    const globalRankElement = document.getElementById('global-rank');
+    if (globalRankElement) {
+        globalRankElement.style.cursor = 'pointer';
+        globalRankElement.addEventListener('click', showGlobalLeaderboard);
+    }
+});
+
+let currentGamemode = 'bedwars';
+let currentPlayerId = null;
+
+function loadASCENDDataV3(playerId, gamemode = 'bedwars') {
+    console.log('🎯 Loading ASCEND v3.0 data for player:', playerId, 'gamemode:', gamemode);
+    
+    currentPlayerId = playerId;
+    currentGamemode = gamemode;
+    
+    showLoadingStateV3();
+    
+    fetch(`/api/player/${playerId}/ascend-data?gamemode=${gamemode}&t=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('🎯 ASCEND v3.0 API response:', data);
+        if (data && data.success && data.ascend) {
+            updateASCENDCardV3(data.ascend);
+            loadEvaluationCount(playerId, gamemode);
+        } else {
+            console.warn('⚠️ No ASCEND data available, showing default');
+            showDefaultASCENDDataV3();
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error loading ASCEND data:', error);
+        showDefaultASCENDDataV3();
+    });
+}
+
+function loadEvaluationCount(playerId, gamemode) {
+    fetch(`/api/player/${playerId}/ascend-history?gamemode=${gamemode}&limit=1000`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.history) {
+            const countElement = document.getElementById('evaluation-count');
+            if (countElement) {
+                countElement.textContent = data.history.length;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error loading evaluation count:', error);
+    });
+}
+
+function showLoadingStateV3() {
+    const statsContainer = document.getElementById('ascend-stats-container-v3');
+    if (statsContainer) {
+        statsContainer.innerHTML = `
+            <div class="ascend-stat-row-v3 loading">
+                <div class="stat-icon-skeleton"></div>
+                <div class="stat-content-skeleton">
+                    <div class="stat-name-skeleton"></div>
+                    <div class="stat-bar-skeleton"></div>
+                </div>
+                <div class="stat-value-skeleton"></div>
+            </div>
+            <div class="ascend-stat-row-v3 loading">
+                <div class="stat-icon-skeleton"></div>
+                <div class="stat-content-skeleton">
+                    <div class="stat-name-skeleton"></div>
+                    <div class="stat-bar-skeleton"></div>
+                </div>
+                <div class="stat-value-skeleton"></div>
+            </div>
+            <div class="ascend-stat-row-v3 loading">
+                <div class="stat-icon-skeleton"></div>
+                <div class="stat-content-skeleton">
+                    <div class="stat-name-skeleton"></div>
+                    <div class="stat-bar-skeleton"></div>
+                </div>
+                <div class="stat-value-skeleton"></div>
+            </div>
+            <div class="ascend-stat-row-v3 loading">
+                <div class="stat-icon-skeleton"></div>
+                <div class="stat-content-skeleton">
+                    <div class="stat-name-skeleton"></div>
+                    <div class="stat-bar-skeleton"></div>
+                </div>
+                <div class="stat-value-skeleton"></div>
+            </div>
+        `;
+    }
+}
+
+function updateASCENDCardV3(ascendData) {
+    console.log('🎯 Updating ASCEND v3.0 card with data:', ascendData);
+    
+    const statsContainer = document.getElementById('ascend-stats-container-v3');
+    const commentElement = document.getElementById('ascend-comment-v3');
+    const evaluatorElement = document.getElementById('ascend-evaluator-v3');
+    const averageScoreElement = document.getElementById('average-score-v3');
+    const lastUpdatedElement = document.getElementById('last-updated-v3');
+    
+    // Calculate average score
+    const avgScore = Math.round((ascendData.pvp_score + ascendData.clutching_score + 
+                                ascendData.block_placement_score + ascendData.gamesense_score) / 4);
+    
+    // Update average score with trend
+    if (averageScoreElement) {
+        averageScoreElement.textContent = avgScore;
+        averageScoreElement.className = `summary-value tier-${getTierClassV3(avgScore)}`;
+        
+        // Show trend (mock data - implement proper trend calculation)
+        const trendElement = document.getElementById('score-trend');
+        if (trendElement) {
+            const trendValue = Math.floor(Math.random() * 10) - 5; // Mock trend
+            trendElement.innerHTML = `
+                <i class="fas fa-arrow-${trendValue >= 0 ? 'up text-success' : 'down text-danger'}"></i>
+                <span>${trendValue >= 0 ? '+' : ''}${trendValue}</span>
+            `;
+        }
+    }
+    
+    // Update last updated
+    if (lastUpdatedElement && ascendData.updated_at) {
+        const date = new Date(ascendData.updated_at);
+        lastUpdatedElement.textContent = date.toLocaleDateString('ru-RU');
+        
+        // Update status indicator
+        const statusElement = document.getElementById('update-status');
+        if (statusElement) {
+            const daysSinceUpdate = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+            let statusClass = 'status-active';
+            let statusText = 'Recent';
+            
+            if (daysSinceUpdate > 7) {
+                statusClass = 'status-warning';
+                statusText = 'Outdated';
+            } else if (daysSinceUpdate > 30) {
+                statusClass = 'status-danger';
+                statusText = 'Very Old';
+            }
+            
+            statusElement.innerHTML = `
+                <span class="status-dot ${statusClass}"></span>
+                <span>${statusText}</span>
+            `;
+        }
+    }
+    
+    // Update global rank
+    const globalRankElement = document.getElementById('global-rank');
+    if (globalRankElement && ascendData.global_rank) {
+        globalRankElement.textContent = `#${ascendData.global_rank}`;
+        globalRankElement.title = 'Click to view global leaderboard';
+    }
+
+    // Get skill icons based on gamemode
+    const skillIcons = getSkillIcons(currentGamemode);
+    
+    // Update stats with enhanced design - support dynamic skills
+    const stats = [
+        { 
+            name: ascendData.skill1_name || 'PVP', 
+            tier: ascendData.skill1_tier || ascendData.pvp_tier, 
+            score: ascendData.skill1_score || ascendData.pvp_score, 
+            icon: skillIcons[0] || 'fas fa-sword',
+            color: '#e74c3c',
+            description: getSkillDescription(ascendData.skill1_name || 'PVP')
+        },
+        { 
+            name: ascendData.skill2_name || 'CLUTCHING', 
+            tier: ascendData.skill2_tier || ascendData.clutching_tier, 
+            score: ascendData.skill2_score || ascendData.clutching_score, 
+            icon: skillIcons[1] || 'fas fa-fire',
+            color: '#f39c12',
+            description: getSkillDescription(ascendData.skill2_name || 'CLUTCHING')
+        },
+        { 
+            name: ascendData.skill3_name || 'BLOCK PLACEMENT', 
+            tier: ascendData.skill3_tier || ascendData.block_placement_tier, 
+            score: ascendData.skill3_score || ascendData.block_placement_score, 
+            icon: skillIcons[2] || 'fas fa-cube',
+            color: '#3498db',
+            description: getSkillDescription(ascendData.skill3_name || 'BLOCK PLACEMENT')
+        },
+        { 
+            name: ascendData.skill4_name || 'GAMESENSE', 
+            tier: ascendData.skill4_tier || ascendData.gamesense_tier, 
+            score: ascendData.skill4_score || ascendData.gamesense_score, 
+            icon: skillIcons[3] || 'fas fa-brain',
+            color: '#9b59b6',
+            description: getSkillDescription(ascendData.skill4_name || 'GAMESENSE')
+        }
+    ];
+    
+    if (statsContainer) {
+        statsContainer.innerHTML = stats.map((stat, index) => `
+            <div class="ascend-stat-row-v3" style="animation-delay: ${index * 0.1}s">
+                <div class="stat-icon-v3" style="color: ${stat.color}">
+                    <i class="${stat.icon}"></i>
+                    <div class="stat-icon-glow" style="background: ${stat.color}20"></div>
+                </div>
+                <div class="stat-content-v3">
+                    <div class="stat-header">
+                        <span class="stat-name-v3">${stat.name}</span>
+                        <div class="stat-info-tooltip" title="${stat.description}">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-bar-container-v3">
+                        <div class="stat-bar-v3">
+                            <div class="stat-fill-v3 tier-${getTierClassV3(stat.tier)}" 
+                                 style="width: ${Math.min(stat.score, 100)}%; background: linear-gradient(90deg, ${stat.color}40, ${stat.color})">
+                                <div class="stat-fill-glow-v3"></div>
+                                <div class="stat-progress-indicator" style="left: ${Math.min(stat.score, 100)}%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-labels">
+                            <span class="stat-tier-v3 tier-${getTierClassV3(stat.tier)}">${stat.tier}</span>
+                            <span class="stat-score-v3">${stat.score}/100</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-trend-v3">
+                    <div class="trend-indicator trend-${Math.random() > 0.5 ? 'up' : 'down'}">
+                        <i class="fas fa-arrow-${Math.random() > 0.5 ? 'up' : 'down'}"></i>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    // Update overall tier in header with enhanced animation
+    const tierBadge = document.getElementById('overall-tier-text-v3');
+    const tierBadgeContainer = document.getElementById('overall-tier-badge-v3');
+    if (tierBadge && tierBadgeContainer) {
+        tierBadge.textContent = `${ascendData.overall_tier} TIER`;
+        tierBadge.className = `tier-rank-v3 tier-${getTierClassV3(ascendData.overall_tier)}`;
+        tierBadgeContainer.className = `ascend-tier-badge-v3 tier-${getTierClassV3(ascendData.overall_tier)}`;
+        
+        // Trigger tier update animation
+        tierBadgeContainer.classList.add('tier-updated');
+        setTimeout(() => tierBadgeContainer.classList.remove('tier-updated'), 1000);
+    }
+    
+    // Update rank progress (mock calculation)
+    const progressElement = document.getElementById('rank-progress');
+    if (progressElement) {
+        const progress = (avgScore % 20) * 5; // Mock progress calculation
+        progressElement.style.width = `${progress}%`;
+    }
+    
+    // Update comment with enhanced styling
+    if (commentElement) {
+        if (ascendData.comment && ascendData.comment.trim()) {
+            commentElement.innerHTML = `<p>${ascendData.comment}</p>`;
+        } else {
+            commentElement.innerHTML = '<p class="text-muted">Detailed evaluation report will be available after next analysis cycle.</p>';
+        }
+        
+        // Add typewriter effect
+        commentElement.classList.add('typewriter-effect');
+    }
+    
+    // Update evaluator
+    if (evaluatorElement) {
+        evaluatorElement.textContent = ascendData.evaluator_name || 'Elite Squad AI';
+    }
+    
+    // Update performance tags (mock data)
+    const tagsElement = document.getElementById('performance-tags');
+    if (tagsElement) {
+        const tags = generatePerformanceTags(stats);
+        tagsElement.innerHTML = tags.map(tag => 
+            `<span class="performance-tag tag-${tag.type}">${tag.text}</span>`
+        ).join('');
+    }
+    
+    // Update evaluation rating (mock calculation)
+    const ratingElement = document.getElementById('evaluation-rating');
+    if (ratingElement) {
+        const rating = Math.max(1, Math.min(5, Math.floor(avgScore / 20) + 1));
+        updateStarRating(ratingElement, rating);
+    }
+    
+    // Update tier timeline
+    updateTierTimeline(ascendData.overall_tier, ascendData.previous_tier);
+    
+    // Initialize radar chart
+    if (document.querySelector('.view-btn[data-view="radar"]')) {
+        initializeRadarChart(stats);
+    }
+    
+    // Add entry animations
+    setTimeout(() => {
+        const statRows = document.querySelectorAll('.ascend-stat-row-v3');
+        statRows.forEach((row, index) => {
+            setTimeout(() => {
+                row.classList.add('animate-in-v3');
+            }, index * 150);
+        });
+    }, 100);
+}
+
+function getTierClassV3(tier) {
+    const tierMap = {
+        'S+': 's-plus',
+        'S': 's',
+        'A+': 'a-plus',
+        'A': 'a',
+        'B+': 'b-plus',
+        'B': 'b',
+        'C+': 'c-plus',
+        'C': 'c',
+        'D': 'd'
+    };
+    return tierMap[tier] || 'd';
+}
+
+function showDefaultASCENDDataV3() {
+    console.log('🎯 Showing default ASCEND v3.0 data');
+    const defaultData = {
+        pvp_tier: 'D',
+        pvp_score: 25,
+        clutching_tier: 'D',
+        clutching_score: 25,
+        block_placement_tier: 'D',
+        block_placement_score: 25,
+        gamesense_tier: 'D',
+        gamesense_score: 25,
+        overall_tier: 'D',
+        comment: 'Initial evaluation. More data needed for comprehensive analysis.',
+        evaluator_name: 'Elite Squad AI',
+        previous_tier: null
+    };
+    
+    updateASCENDCardV3(defaultData);
+}
+
+function generatePerformanceTags(stats) {
+    const tags = [];
+    const avgScore = stats.reduce((sum, stat) => sum + stat.score, 0) / stats.length;
+    
+    if (avgScore > 75) {
+        tags.push({ type: 'strength', text: 'Exceptional Player' });
+    } else if (avgScore > 50) {
+        tags.push({ type: 'neutral', text: 'Solid Performer' });
+    } else {
+        tags.push({ type: 'weakness', text: 'Developing Skills' });
+    }
+    
+    // Find strongest and weakest stats
+    const sortedStats = [...stats].sort((a, b) => b.score - a.score);
+    const strongest = sortedStats[0];
+    const weakest = sortedStats[sortedStats.length - 1];
+    
+    if (strongest.score > 60) {
+        tags.push({ type: 'strength', text: `Strong: ${strongest.name}` });
+    }
+    
+    if (weakest.score < 40) {
+        tags.push({ type: 'weakness', text: `Focus: ${weakest.name}` });
+    }
+    
+    return tags.slice(0, 3); // Limit to 3 tags
+}
+
+function updateStarRating(element, rating) {
+    const starsContainer = element.querySelector('.stars');
+    const ratingText = element.querySelector('.rating-text');
+    
+    if (starsContainer && ratingText) {
+        const stars = starsContainer.querySelectorAll('i');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.className = 'fas fa-star';
+            } else {
+                star.className = 'far fa-star';
+            }
+        });
+        ratingText.textContent = `${rating}.0/5.0`;
+    }
+}
+
+function updateTierTimeline(currentTier, previousTier) {
+    const timeline = document.getElementById('tier-timeline');
+    if (timeline) {
+        const tiers = ['D', 'C', 'C+', 'B', 'B+', 'A', 'A+', 'S', 'S+'];
+        const currentIndex = tiers.indexOf(currentTier);
+        const previousIndex = previousTier ? tiers.indexOf(previousTier) : currentIndex;
+        
+        timeline.innerHTML = `
+            <div class="tier-point current" data-tier="${currentTier}" title="Current Tier">${currentTier}</div>
+            <div class="tier-line ${currentIndex > previousIndex ? 'improvement' : currentIndex < previousIndex ? 'decline' : 'stable'}"></div>
+            <div class="tier-point previous" data-tier="${previousTier || currentTier}" title="Previous Tier">${previousTier || '–'}</div>
+        `;
+    }
+}
+
+function initializeViewToggle() {
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const detailedView = document.getElementById('ascend-stats-container-v3');
+    const radarView = document.getElementById('ascend-radar-container');
+    
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            viewButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const view = btn.dataset.view;
+            if (view === 'detailed') {
+                detailedView.style.display = 'block';
+                radarView.style.display = 'none';
+            } else if (view === 'radar') {
+                detailedView.style.display = 'none';
+                radarView.style.display = 'block';
+                // Initialize radar chart if not already done
+                setTimeout(() => initializeRadarChart([]), 100);
+            }
+        });
+    });
+}
+
+function initializeRadarChart(stats) {
+    const canvas = document.getElementById('ascend-radar-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 40;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Set up chart data
+    const data = stats.length > 0 ? stats : [
+        { name: 'PVP', score: 25, color: '#e74c3c' },
+        { name: 'Clutching', score: 25, color: '#f39c12' },
+        { name: 'Block Placement', score: 25, color: '#3498db' },
+        { name: 'Gamesense', score: 25, color: '#9b59b6' }
+    ];
+    
+    const angles = data.map((_, i) => (i * 2 * Math.PI) / data.length - Math.PI / 2);
+    
+    // Draw background grid
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    
+    // Draw concentric circles
+    for (let i = 1; i <= 5; i++) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, (radius * i) / 5, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+    
+    // Draw axes
+    angles.forEach(angle => {
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(
+            centerX + Math.cos(angle) * radius,
+            centerY + Math.sin(angle) * radius
+        );
+        ctx.stroke();
+    });
+    
+    // Draw data polygon
+    ctx.beginPath();
+    ctx.strokeStyle = '#48dbfb';
+    ctx.fillStyle = 'rgba(72, 219, 251, 0.2)';
+    ctx.lineWidth = 2;
+    
+    angles.forEach((angle, i) => {
+        const value = (data[i].score / 100) * radius;
+        const x = centerX + Math.cos(angle) * value;
+        const y = centerY + Math.sin(angle) * value;
+        
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    });
+    
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    
+    // Draw data points
+    angles.forEach((angle, i) => {
+        const value = (data[i].score / 100) * radius;
+        const x = centerX + Math.cos(angle) * value;
+        const y = centerY + Math.sin(angle) * value;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = data[i].color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+    
+    // Draw labels
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    
+    angles.forEach((angle, i) => {
+        const labelRadius = radius + 20;
+        const x = centerX + Math.cos(angle) * labelRadius;
+        const y = centerY + Math.sin(angle) * labelRadius;
+        
+        ctx.fillText(data[i].name, x, y + 4);
+        
+        // Draw score values
+        ctx.fillStyle = data[i].color;
+        ctx.font = 'bold 10px Arial';
+        ctx.fillText(data[i].score, x, y + 16);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '12px Arial';
+    });
+}
+
+function initializeTooltips() {
+    if (typeof bootstrap !== 'undefined') {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+}
+
+function showEvaluationHistory() {
+    const modal = new bootstrap.Modal(document.getElementById('ascendHistoryModalV3'));
+    modal.show();
+    loadASCENDHistoryV3();
+}
+
+function showASCENDHistoryV3() {
+    showEvaluationHistory();
+}
+
+function loadASCENDHistoryV3() {
+    const historyContent = document.getElementById('ascendHistoryContentV3');
+    const gamemode = document.getElementById('gamemode-history-filter')?.value || currentGamemode;
+    
+    if (!historyContent || !currentPlayerId) return;
+    
+    historyContent.innerHTML = `
+        <div class="text-center text-muted">
+            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+            <p>Loading evaluation history...</p>
+        </div>
+    `;
+    
+    fetch(`/api/player/${currentPlayerId}/ascend-history?gamemode=${gamemode}&limit=50`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.history) {
+            renderHistoryTimeline(data.history);
+        } else {
+            historyContent.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="fas fa-history fa-2x mb-3"></i>
+                    <p>No evaluation history found</p>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading history:', error);
+        historyContent.innerHTML = `
+            <div class="text-center text-danger">
+                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                <p>Failed to load evaluation history</p>
+            </div>
+        `;
+    });
+}
+
+function renderHistoryTimeline(history) {
+    const historyContent = document.getElementById('ascendHistoryContentV3');
+    
+    if (history.length === 0) {
+        historyContent.innerHTML = `
+            <div class="text-center text-muted">
+                <i class="fas fa-history fa-2x mb-3"></i>
+                <p>No evaluation history found</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const timelineHtml = `
+        <div class="timeline-v3">
+            ${history.map(entry => {
+                const changeType = entry.change_type;
+                const markerClass = changeType === 'upgrade' ? 'improvement' : 
+                                  changeType === 'downgrade' ? 'decline' : 'stable';
+                
+                const tierChange = entry.old_overall_tier ? 
+                    `${entry.old_overall_tier} → ${entry.new_overall_tier}` : 
+                    `New: ${entry.new_overall_tier}`;
+                
+                const tierChangeClass = changeType === 'upgrade' ? 'tier-improvement' :
+                                       changeType === 'downgrade' ? 'tier-decline' : 'tier-stable';
+                
+                const date = new Date(entry.created_at).toLocaleDateString('ru-RU');
+                
+                let statsChanges = '';
+                if (entry.old_scores && entry.new_scores) {
+                    const oldScores = entry.old_scores;
+                    const newScores = entry.new_scores;
+                    const changes = [];
+                    
+                    ['skill1', 'skill2', 'skill3', 'skill4'].forEach(skill => {
+                        if (oldScores[skill] !== undefined && newScores[skill] !== undefined) {
+                            const diff = newScores[skill] - oldScores[skill];
+                            if (diff !== 0) {
+                                changes.push(`${skill}: ${diff > 0 ? '+' : ''}${diff}`);
+                            }
+                        }
+                    });
+                    
+                    if (changes.length > 0) {
+                        statsChanges = `<div class="timeline-stats">${changes.map(change => 
+                            `<span class="stat-change">${change}</span>`
+                        ).join('')}</div>`;
+                    }
+                }
+                
+                return `
+                    <div class="timeline-item-v3">
+                        <div class="timeline-marker ${markerClass}"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-date">${date}</span>
+                                <span class="timeline-change ${tierChangeClass}">${tierChange}</span>
+                            </div>
+                            <p>${entry.comment || 'Evaluation updated'}</p>
+                            ${statsChanges}
+                            <div class="timeline-meta">
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>${entry.evaluator_name}
+                                    <i class="fas fa-gamepad ms-2 me-1"></i>${entry.gamemode}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+    
+    historyContent.innerHTML = timelineHtml;
+}
+
+function showGlobalLeaderboard() {
+    const modal = new bootstrap.Modal(document.getElementById('globalLeaderboardModal'));
+    modal.show();
+    loadGlobalLeaderboard();
+}
+
+function loadGlobalLeaderboard() {
+    const leaderboardContent = document.getElementById('globalLeaderboardContent');
+    const gamemode = document.getElementById('leaderboard-gamemode-filter')?.value || currentGamemode;
+    
+    if (!leaderboardContent) return;
+    
+    leaderboardContent.innerHTML = `
+        <div class="text-center text-muted">
+            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+            <p>Loading global leaderboard...</p>
+        </div>
+    `;
+    
+    fetch(`/api/global-leaderboard?gamemode=${gamemode}&limit=50`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.leaderboard) {
+            renderGlobalLeaderboard(data.leaderboard);
+        } else {
+            leaderboardContent.innerHTML = `
+                <div class="text-center text-muted">
+                    <i class="fas fa-trophy fa-2x mb-3"></i>
+                    <p>No leaderboard data found</p>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading leaderboard:', error);
+        leaderboardContent.innerHTML = `
+            <div class="text-center text-danger">
+                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                <p>Failed to load global leaderboard</p>
+            </div>
+        `;
+    });
+}
+
+function renderGlobalLeaderboard(leaderboard) {
+    const leaderboardContent = document.getElementById('globalLeaderboardContent');
+    
+    if (leaderboard.length === 0) {
+        leaderboardContent.innerHTML = `
+            <div class="text-center text-muted">
+                <i class="fas fa-trophy fa-2x mb-3"></i>
+                <p>No players found</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const leaderboardHtml = `
+        <div class="leaderboard-list">
+            ${leaderboard.map(entry => {
+                const rankClass = entry.rank <= 3 ? `top-${entry.rank}` : '';
+                const tierClass = getTierClassV3(entry.ascend.overall_tier);
+                
+                return `
+                    <div class="leaderboard-entry ${rankClass}">
+                        <div class="rank-section">
+                            <div class="rank-number">#${entry.rank}</div>
+                            ${entry.rank <= 3 ? `<div class="rank-crown">${entry.rank === 1 ? '👑' : entry.rank === 2 ? '🥈' : '🥉'}</div>` : ''}
+                        </div>
+                        <div class="player-section">
+                            <img src="${entry.player.skin_url}" alt="${entry.player.nickname}" class="player-avatar">
+                            <div class="player-info">
+                                <div class="player-name">${entry.player.nickname}</div>
+                                <div class="player-level">Level ${entry.player.level}</div>
+                            </div>
+                        </div>
+                        <div class="tier-section">
+                            <div class="tier-badge tier-${tierClass}">
+                                ${entry.ascend.overall_tier}
+                            </div>
+                        </div>
+                        <div class="score-section">
+                            <div class="average-score">${entry.average_score}</div>
+                            <div class="score-label">Avg Score</div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+    
+    leaderboardContent.innerHTML = leaderboardHtml;
+}
+
+function exportASCENDData() {
+    // Mock export functionality
+    const data = {
+        player: '{{ player.nickname }}',
+        evaluation_date: new Date().toISOString(),
+        overall_tier: document.getElementById('overall-tier-text-v3').textContent,
+        average_score: document.getElementById('average-score-v3').textContent
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ascend_data_{{ player.nickname }}_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function editASCENDDataV3() {
+    if (typeof window.editASCENDData === 'function') {
+        window.editASCENDData();
+    } else {
+        const adminSection = document.querySelector('.ascend-editor');
+        if (adminSection) {
+            adminSection.scrollIntoView({ behavior: 'smooth' });
+            // Highlight the editor
+            adminSection.classList.add('highlight-editor');
+            setTimeout(() => adminSection.classList.remove('highlight-editor'), 2000);
+        }
+    }
+}
+
+function getSkillIcons(gamemode) {
+    const iconMaps = {
+        'bedwars': ['fas fa-sword', 'fas fa-fire', 'fas fa-cube', 'fas fa-brain'],
+        'kitpvp': ['fas fa-crosshairs', 'fas fa-heart', 'fas fa-running', 'fas fa-expand-arrows-alt'],
+        'skywars': ['fas fa-search', 'fas fa-flask', 'fas fa-circle', 'fas fa-fist-raised'],
+        'bridgefight': ['fas fa-edit', 'fas fa-bridge', 'fas fa-brain', 'fas fa-sword'],
+        'sumo': ['fas fa-brain', 'fas fa-hand-paper', 'fas fa-cogs', 'fas fa-running'],
+        'fireball_fight': ['fas fa-shield-alt', 'fas fa-fire-alt', 'fas fa-brain', 'fas fa-sword'],
+        'bridge': ['fas fa-forward', 'fas fa-shield', 'fas fa-brain', 'fas fa-sword']
+    };
+    return iconMaps[gamemode] || iconMaps['bedwars'];
+}
+
+function getSkillDescription(skillName) {
+    const descriptions = {
+        'PVP': 'Combat effectiveness and dueling skills',
+        'Clutching': 'Performance under pressure situations',
+        'Block Placement': 'Strategic building and defensive positioning',
+        'Gamesense': 'Game awareness and tactical decision making',
+        'Aiming': 'Accuracy and target acquisition',
+        'Healing (soups/pots)': 'Health management and healing efficiency',
+        'Movement': 'Mobility and positioning',
+        'Spacing': 'Distance control and positioning',
+        'Looting': 'Efficient resource gathering',
+        'Potting': 'Potion usage and timing',
+        'Pearling': 'Ender pearl mechanics and timing',
+        'Melee': 'Close combat effectiveness',
+        'Block Edits': 'Building and editing proficiency',
+        'Bridge Fights': 'Combat on narrow bridges',
+        'KB control': 'Knockback manipulation and resistance',
+        'Mechanics': 'Technical execution and timing',
+        'Attack/Defense': 'Offensive and defensive strategies',
+        'Fireball usage': 'Projectile accuracy and timing',
+        'Bypassing': 'Efficient bridging techniques',
+        'Defense': 'Defensive positioning and blocking'
+    };
+    return descriptions[skillName] || 'Skill proficiency';
+}
+
+// Make functions globally available
+window.reloadASCENDDataV3 = function(playerId) {
+    loadASCENDDataV3(playerId, currentGamemode);
+};
+
+window.updateASCENDCardV3 = updateASCENDCardV3;
+window.showEvaluationHistory = showEvaluationHistory;
+window.showGlobalLeaderboard = showGlobalLeaderboard;
+</script>
+
+<style>
+/* ASCEND v3.0 Enhanced Styles */
+.ascend-performance-card-v3 {
+    background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 25%, #16213e 75%, #0f3460 100%);
+    border-radius: 24px;
+    padding: 3rem;
+    color: white;
+    max-width: 900px;
+    margin: 0 auto;
+    box-shadow: 
+        0 25px 50px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        0 0 0 1px rgba(255, 193, 7, 0.2);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.ascend-performance-card-v3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #0abde3 75%, #54a0ff 100%);
+    animation: gradientFlow 4s ease-in-out infinite;
+}
+
+.ascend-performance-card-v3::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 193, 7, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(72, 219, 251, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(84, 160, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Enhanced Header Styles */
+.ascend-header-v3 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.ascend-title-section {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.ascend-crown-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #ffd700, #ffb347);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.ascend-main-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #ffc107;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.ascend-player-main-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.ascend-stats-summary {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: rgba(255,255,255,0.08);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    min-width: 160px;
+}
+
+.stat-card .stat-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #48dbfb, #0abde3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+.stat-card .stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card .stat-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.stat-card .stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #48dbfb;
+    margin-top: 0.2rem;
+}
+
+.ascend-tier-display {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.tier-badge-container {
+    background: rgba(255,255,255,0.1);
+    padding: 1.5rem 3rem;
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.tier-badge-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+.ascend-gamemode-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.gamemode-dropdown {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    min-width: 140px;
+}
+
+.gamemode-dropdown:focus {
+    outline: none;
+    border-color: rgba(255, 193, 7, 0.5);
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+    background: rgba(255,255,255,0.15);
+}
+
+.gamemode-dropdown option {
+    background: #1a1a2e;
+    color: white;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ascend-header-v3 {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .ascend-player-main-info {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .ascend-stats-summary {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .stat-card {
+        min-width: 140px;
+    }
+}
+
+/* Header Controls Styles */
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.gamemode-selector select {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    min-width: 120px;
+}
+
+.gamemode-selector select:focus {
+    outline: none;
+    border-color: rgba(255, 193, 7, 0.5);
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+}
+
+.gamemode-selector option {
+    background: #1a1a2e;
+    color: white;
+}
+
+/* Leaderboard Modal Styles */
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.leaderboard-entry {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+.leaderboard-entry:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+}
+
+.leaderboard-entry.top-1 {
+    border-color: #ffd700;
+    background: linear-gradient(90deg, rgba(255,215,0,0.1), rgba(255,255,255,0.05));
+}
+
+.leaderboard-entry.top-2 {
+    border-color: #c0c0c0;
+    background: linear-gradient(90deg, rgba(192,192,192,0.1), rgba(255,255,255,0.05));
+}
+
+.leaderboard-entry.top-3 {
+    border-color: #cd7f32;
+    background: linear-gradient(90deg, rgba(205,127,50,0.1), rgba(255,255,255,0.05));
+}
+
+.rank-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    margin-right: 1rem;
+}
+
+.rank-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+}
+
+.rank-crown {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
+}
+
+.player-section {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 0.8rem;
+}
+
+.player-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    image-rendering: pixelated;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.player-level {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.tier-section {
+    margin: 0 1rem;
+}
+
+.tier-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+    min-width: 40px;
+}
+
+.score-section {
+    text-align: right;
+    min-width: 80px;
+}
+
+.average-score {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffd700;
+}
+
+.score-label {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+}
+
+/* Timeline Meta Styles */
+.timeline-meta {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* History Link Button */
+.history-link .btn {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.ascend-player-info-v3 {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.ascend-avatar-container-v3 {
+    position: relative;
+}
+
+.ascend-avatar-v3 {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    image-rendering: pixelated;
+    border: 4px solid rgba(255, 193, 7, 0.4);
+    transition: all 0.4s ease;
+    z-index: 2;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.ascend-avatar-v3:hover {
+    transform: scale(1.05) rotate(2deg);
+    border-color: rgba(255, 193, 7, 0.8);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+.ascend-avatar-glow-v3 {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    right: -15px;
+    bottom: -15px;
+    background: radial-gradient(circle, rgba(255, 193, 7, 0.4) 0%, transparent 70%);
+    border-radius: 25px;
+    filter: blur(15px);
+    animation: avatarPulse 3s ease-in-out infinite alternate;
+}
+
+.ascend-level-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #000;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.2);
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    z-index: 3;
+}
+
+.ascend-player-details-v3 h3 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 0 0 1rem 0;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    background: linear-gradient(135deg, #fff, #f0f0f0, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+}
+
+.ascend-tier-badge-v3 {
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.ascend-tier-badge-v3.tier-updated {
+    animation: tierUpdateAnimation 1s ease-out;
+}
+
+.tier-rank-v3 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    padding: 0.7rem 1.5rem;
+    border-radius: 15px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.tier-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 15px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.tier-particles::before,
+.tier-particles::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    animation: particleFloat 3s linear infinite;
+}
+
+.tier-particles::before {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.tier-particles::after {
+    top: 60%;
+    right: 15%;
+    animation-delay: 1.5s;
+}
+
+.ascend-rank-progress {
+    margin-top: 0.8rem;
+}
+
+.rank-progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.rank-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #48dbfb, #0abde3);
+    border-radius: 4px;
+    transition: width 1s ease-out;
+    position: relative;
+}
+
+.rank-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: progressShimmer 2s linear infinite;
+}
+
+.rank-progress-text {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 0.3rem;
+    display: block;
+}
+
+/* Enhanced Summary Styles */
+.ascend-summary-v3 {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: right;
+}
+
+.summary-item-v3 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: relative;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+.summary-item-v3:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.summary-icon {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #48dbfb, #0abde3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.summary-label {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+.summary-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.summary-trend, .rank-change, .summary-status {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-active { background: #28a745; }
+.status-warning { background: #ffc107; }
+.status-danger { background: #dc3545; }
+
+/* Enhanced Stats Section */
+.ascend-stats-section-v3 {
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.stats-header h4 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.stats-view-toggle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.view-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.view-btn.active {
+    background: linear-gradient(135deg, #48dbfb, #0abde3);
+    color: white;
+    border-color: #48dbfb;
+}
+
+.ascend-stats-grid-v3 {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.ascend-stat-row-v3 {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.4s ease;
+    opacity: 0;
+    transform: translateY(30px);
+    position: relative;
+    overflow: hidden;
+}
+
+.ascend-stat-row-v3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transition: left 0.5s ease;
+}
+
+.ascend-stat-row-v3:hover::before {
+    left: 100%;
+}
+
+.ascend-stat-row-v3:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255, 193, 7, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+}
+
+.ascend-stat-row-v3.animate-in-v3 {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.stat-icon-v3 {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    border-radius: 12px;
+    position: relative;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stat-icon-glow {
+    position: absolute;
+    inset: -4px;
+    border-radius: 16px;
+    filter: blur(8px);
+    opacity: 0.6;
+    z-index: -1;
+}
+
+.stat-content-v3 {
+    flex: 1;
+}
+
+.stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+}
+
+.stat-name-v3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.95);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-info-tooltip {
+    color: rgba(255,255,255,0.5);
+    cursor: help;
+    transition: color 0.3s ease;
+}
+
+.stat-info-tooltip:hover {
+    color: rgba(255,255,255,0.8);
+}
+
+.stat-bar-container-v3 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-bar-v3 {
+    height: 18px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 9px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.stat-fill-v3 {
+    height: 100%;
+    border-radius: 9px;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-fill-glow-v3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: statFillGlow 2.5s ease-in-out infinite;
+}
+
+.stat-progress-indicator {
+    position: absolute;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px white;
+    animation: indicatorPulse 2s ease-in-out infinite;
+}
+
+.stat-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-tier-v3 {
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.stat-score-v3 {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+}
+
+.stat-trend-v3 {
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.trend-indicator {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.trend-up {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+
+.trend-down {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+/* Enhanced Comment Section */
+.ascend-comment-section-v3 {
+    background: rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    border-left: 6px solid #48dbfb;
+    position: relative;
+    overflow: hidden;
+}
+
+.ascend-comment-section-v3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 70%, rgba(72, 219, 251, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.comment-header-v3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.comment-title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.comment-label {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #48dbfb;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.evaluation-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.stars {
+    display: flex;
+    gap: 0.2rem;
+}
+
+.stars i {
+    color: #ffc107;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.rating-text {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+}
+
+.comment-icon-v3 {
+    width: 40px;
+    height: 40px;
+    background: rgba(72, 219, 251, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #48dbfb;
+    font-size: 1.2rem;
+}
+
+.comment-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.performance-tag {
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tag-strength {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.tag-weakness {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.tag-neutral {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.comment-text-v3 {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.9);
+    position: relative;
+    z-index: 2;
+}
+
+.comment-text-v3 p {
+    margin: 0;
+}
+
+.typewriter-effect {
+    overflow: hidden;
+    animation: typewriter 2s steps(40, end);
+}
+
+/* Enhanced Footer */
+.ascend-footer-v3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.evaluator-section {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.evaluator-info-v3 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.evaluator-label {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.evaluator-details-v3 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.evaluator-avatar-container-v3 {
+    position: relative;
+}
+
+.evaluator-avatar-v3 {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    image-rendering: pixelated;
+    border: 2px solid rgba(255, 193, 7, 0.4);
+}
+
+.evaluator-status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background: #28a745;
+    border-radius: 50%;
+    border: 2px solid #0f0f1e;
+}
+
+.evaluator-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.evaluator-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.evaluator-role {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.evaluation-stats {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.eval-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.eval-stat-value {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #48dbfb;
+}
+
+.eval-stat-label {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+}
+
+.tier-history-v3 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.tier-timeline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tier-point {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+    border: 2px solid rgba(255,255,255,0.3);
+    position: relative;
+}
+
+.tier-point.current {
+    background: linear-gradient(135deg, #48dbfb, #0abde3);
+    color: white;
+    border-color: #48dbfb;
+    box-shadow: 0 0 15px rgba(72, 219, 251, 0.5);
+}
+
+.tier-point.previous {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
+}
+
+.tier-line {
+    width: 20px;
+    height: 2px;
+    background: rgba(255,255,255,0.3);
+}
+
+.tier-line.improvement {
+    background: linear-gradient(90deg, rgba(40, 167, 69, 0.3), #28a745);
+}
+
+.tier-line.decline {
+    background: linear-gradient(90deg, rgba(220, 53, 69, 0.3), #dc3545);
+}
+
+.ascend-actions-v3 {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.ascend-actions-v3 .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ascend-actions-v3 .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+/* Enhanced Branding */
+.ascend-branding-v3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+}
+
+.brand-logo-v3 {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.logo-circle-v3 {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: white;
+    font-weight: bold;
+    position: relative;
+    animation: logoRotate 10s linear infinite;
+}
+
+.logo-circle-v3::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+    filter: blur(8px);
+    opacity: 0.6;
+    z-index: -1;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.brand-name {
+    font-size: 1.4rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff, #f0f0f0, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.brand-tagline {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.brand-info-v3 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.version-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.brand-version {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 700;
+    background: rgba(255,255,255,0.1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+}
+
+.version-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    animation: badgePulse 2s ease-in-out infinite;
+}
+
+.brand-link {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.7);
+}
+
+.powered-by {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Radar Chart Placeholder */
+.ascend-radar-chart-v3 {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 2rem;
+}
+
+.radar-chart-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.radar-chart-wrapper canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+.radar-placeholder {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.radar-grid {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+}
+
+.radar-axis {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+    transform-origin: left center;
+}
+
+.radar-labels {
+    position: absolute;
+    inset: 0;
+}
+
+.radar-label {
+    position: absolute;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+}
+
+.radar-label-top { top: 0; left: 50%; transform: translateX(-50%); }
+.radar-label-right { right: 0; top: 50%; transform: translateY(-50%); }
+.radar-label-bottom { bottom: 0; left: 50%; transform: translateX(-50%); }
+.radar-label-left { left: 0; top: 50%; transform: translateY(-50%); }
+
+/* Loading States */
+.loading-placeholder-v3 {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.loading-bar-v3 {
+    height: 14px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+}
+
+.loading-bar-v3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: loadingShimmer 1.8s ease-in-out infinite;
+}
+
+.stat-icon-skeleton, .stat-content-skeleton, .stat-value-skeleton {
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-icon-skeleton {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+}
+
+.stat-content-skeleton {
+    flex: 1;
+    height: 60px;
+}
+
+.stat-value-skeleton {
+    width: 40px;
+    height: 60px;
+}
+
+.stat-name-skeleton, .stat-bar-skeleton {
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.stat-name-skeleton {
+    height: 16px;
+    width: 120px;
+}
+
+.stat-bar-skeleton {
+    height: 18px;
+    width: 100%;
+}
+
+/* Timeline Styles for History Modal */
+.timeline-v3 {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline-v3::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #48dbfb, rgba(72, 219, 251, 0.3));
+}
+
+.timeline-item-v3 {
+    position: relative;
+    margin-bottom: 2rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2.5rem;
+    top: 1.5rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid #0f0f1e;
+}
+
+.timeline-marker.improvement {
+    background: #28a745;
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+}
+
+.timeline-marker.stable {
+    background: #ffc107;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+}
+
+.timeline-marker.decline {
+    background: #dc3545;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.5);
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.timeline-date {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+}
+
+.timeline-change {
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.tier-improvement {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.tier-stable {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.tier-decline {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.timeline-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-change {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
+}
+
+.stat-change.neutral {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+
+/* Animations */
+@keyframes gradientFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes avatarPulse {
+    0% { opacity: 0.4; transform: scale(1); }
+    100% { opacity: 0.7; transform: scale(1.05); }
+}
+
+@keyframes tierUpdateAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes particleFloat {
+    0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-20px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes progressShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+@keyframes statFillGlow {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+}
+
+@keyframes indicatorPulse {
+    0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+@keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes logoRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes loadingShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.highlight-editor {
+    animation: highlightPulse 2s ease-in-out;
+}
+
+@keyframes highlightPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+    50% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .ascend-performance-card-v3 {
+        padding: 2rem;
+        max-width: 100%;
+    }
+    
+    .ascend-header-v3 {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .ascend-player-info-v3 {
+        justify-content: center;
+    }
+    
+    .ascend-summary-v3 {
+        flex-direction: row;
+        justify-content: space-around;
+        text-align: center;
+    }
+    
+    .ascend-footer-v3 {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .evaluator-section {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .ascend-performance-card-v3 {
+        padding: 1.5rem;
+        margin: 1rem;
+        border-radius: 16px;
+    }
+    
+    .ascend-player-info-v3 {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .ascend-avatar-v3 {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .ascend-player-details-v3 h3 {
+        font-size: 2rem;
+    }
+    
+    .summary-value {
+        font-size: 1.5rem;
+    }
+    
+    .ascend-stat-row-v3 {
+        padding: 1rem;
+    }
+    
+    .stat-icon-v3 {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+    }
+    
+    .brand-logo-v3 {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .brand-info-v3 {
+        align-items: center;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .ascend-performance-card-v3 {
+        padding: 1rem;
+    }
+    
+    .ascend-stat-row-v3 {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .stat-content-v3 {
+        width: 100%;
+    }
+    
+    .stat-bar-container-v3 {
+        align-items: center;
+    }
+    
+    .ascend-actions-v3 {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .ascend-actions-v3 .btn {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+</style>

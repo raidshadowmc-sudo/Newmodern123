@@ -1,0 +1,21 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "gunicorn -w 4 -b 0.0.0.0:$PORT --timeout 120 app:app",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "FLASK_ENV": "production",
+        "ADMIN_PASSWORD": "admin",
+        "PYTHONPATH": "/app"
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+
+{% extends "base.html" %}
+
+{% block title %}Создать турнир - Bedwars Leaderboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-crown me-2"></i>Создать новый турнир
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Название турнира *</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Введите название турнира" maxlength="200" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Описание турнира</label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="3" placeholder="Опишите турнир..."></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tournament_type" class="form-label">Тип турнира</label>
+                                <select class="form-select" id="tournament_type" name="tournament_type">
+                                    <option value="singles">👤 Одиночный</option>
+                                    <option value="teams">👥 Командный</option>
+                                    <option value="clans">🏰 Кланы</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="start_date" class="form-label">Дата и время начала *</label>
+                                <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="entry_fee" class="form-label">Взнос (койны)</label>
+                                <input type="number" class="form-control" id="entry_fee" name="entry_fee" 
+                                       value="0" min="0" max="10000">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="prize_pool" class="form-label">Призовой фонд (койны)</label>
+                                <input type="number" class="form-control" id="prize_pool" name="prize_pool" 
+                                       value="0" min="0" max="100000">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="max_participants" class="form-label">Максимум участников</label>
+                                <input type="number" class="form-control" id="max_participants" name="max_participants" 
+                                       value="100" min="2" max="1000">
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Информация:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Требуется минимум <strong>15 уровень</strong> для создания турнира</li>
+                                <li>Минимальный призовой фонд: <strong>500 койнов</strong> (1500 для клановых)</li>
+                                <li>Призовой фонд списывается с вашего баланса и блокируется до завершения</li>
+                                <li>Для клановых турниров средства списываются с кланового кошелька</li>
+                                <li>Турнир будет иметь статус "Предстоящий" до указанной даты</li>
+                                <li>Участники смогут регистрироваться до начала турнира</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('tournaments') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>Создать турнир
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set minimum date to current time
+document.addEventListener('DOMContentLoaded', function() {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('start_date').min = now.toISOString().slice(0, 16);
+});
+</script>
+{% endblock %}

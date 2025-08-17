@@ -1,0 +1,523 @@
+{% extends "base.html" %}
+
+{% block title %}Турниры - Bedwars Leaderboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title">
+                    <i class="fas fa-crown text-warning me-2"></i>Турниры
+                </h2>
+                {% if is_admin %}
+                <a href="{{ url_for('create_tournament') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Создать турнир
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="btn-group w-100" role="group">
+                        <a href="{{ url_for('tournaments', status='all') }}"
+                           class="btn {% if current_status == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            <i class="fas fa-list me-1"></i>Все турниры
+                        </a>
+                        <a href="{{ url_for('tournaments', status='upcoming') }}"
+                           class="btn {% if current_status == 'upcoming' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            <i class="fas fa-calendar me-1"></i>Предстоящие
+                        </a>
+                        <a href="{{ url_for('tournaments', status='active') }}"
+                           class="btn {% if current_status == 'active' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            <i class="fas fa-fire me-1"></i>Активные
+                        </a>
+                        <a href="{{ url_for('tournaments', status='completed') }}"
+                           class="btn {% if current_status == 'completed' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            <i class="fas fa-trophy me-1"></i>Завершённые
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tournament Overview Stats -->
+            <div class="tournament-overview mb-5">
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="tournament-stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar text-info"></i>
+                            </div>
+                            <div class="stat-number">{{ tournaments|selectattr('status', 'equalto', 'upcoming')|list|length }}</div>
+                            <div class="stat-label">Предстоящих</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tournament-stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-fire text-danger"></i>
+                            </div>
+                            <div class="stat-number">{{ tournaments|selectattr('status', 'equalto', 'active')|list|length }}</div>
+                            <div class="stat-label">Активных</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tournament-stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-trophy text-warning"></i>
+                            </div>
+                            <div class="stat-number">{{ tournaments|selectattr('status', 'equalto', 'completed')|list|length }}</div>
+                            <div class="stat-label">Завершённых</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tournament-stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users text-success"></i>
+                            </div>
+                            <div class="stat-number">{{ tournaments|map(attribute='participant_count')|sum or 0 }}</div>
+                            <div class="stat-label">Участников</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Tournaments List -->
+            <div class="tournaments-grid">
+                {% for tournament in tournaments %}
+                <div class="tournament-card-wrapper">
+                    <div class="tournament-card h-100 tournament-status-{{ tournament.status }}">
+                        <div class="tournament-card-header">
+                            <div class="tournament-type-badge">
+                                <i class="fas fa-gamepad"></i>
+                                {{ tournament.type_display }}
+                            </div>
+                            <div class="tournament-status-badge tournament-status-{{ tournament.status }}">
+                                {% if tournament.status == 'upcoming' %}
+                                    <i class="fas fa-clock"></i>
+                                {% elif tournament.status == 'active' %}
+                                    <i class="fas fa-fire"></i>
+                                {% else %}
+                                    <i class="fas fa-trophy"></i>
+                                {% endif %}
+                                {{ tournament.status_display }}
+                            </div>
+                        </div>
+                        
+                        <div class="tournament-card-body">
+                            <h4 class="tournament-name">{{ tournament.name }}</h4>
+                            <p class="tournament-description">{{ tournament.description or 'Эпическое сражение за славу и награды!' }}</p>
+
+                            <!-- Tournament Progress -->
+                            <div class="tournament-progress mb-4">
+                                <div class="progress-info">
+                                    <span class="progress-label">
+                                        <i class="fas fa-users"></i>
+                                        Участники
+                                    </span>
+                                    <span class="progress-count">{{ tournament.participant_count }}/{{ tournament.max_participants }}</span>
+                                </div>
+                                <div class="progress tournament-progress-bar">
+                                    <div class="progress-bar 
+                                        {% if tournament.participant_count / tournament.max_participants < 0.5 %}bg-danger
+                                        {% elif tournament.participant_count / tournament.max_participants < 0.8 %}bg-warning
+                                        {% else %}bg-success{% endif %}"
+                                        style="width: {{ (tournament.participant_count / tournament.max_participants * 100) if tournament.max_participants > 0 else 0 }}%">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tournament Details Grid -->
+                            <div class="tournament-details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-calendar-alt text-info"></i>
+                                    </div>
+                                    <div class="detail-content">
+                                        <div class="detail-label">Дата начала</div>
+                                        <div class="detail-value">{{ tournament.start_date.strftime('%d.%m.%Y') }}</div>
+                                        <div class="detail-time">{{ tournament.start_date.strftime('%H:%M') }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-coins text-warning"></i>
+                                    </div>
+                                    <div class="detail-content">
+                                        <div class="detail-label">Взнос</div>
+                                        <div class="detail-value">{{ tournament.entry_fee }}</div>
+                                        <div class="detail-time">койнов</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fas fa-gem text-success"></i>
+                                    </div>
+                                    <div class="detail-content">
+                                        <div class="detail-label">Призовой фонд</div>
+                                        <div class="detail-value">{{ tournament.prize_pool }}</div>
+                                        <div class="detail-time">койнов</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tournament Timeline for Active Tournaments -->
+                            {% if tournament.status == 'active' %}
+                            <div class="tournament-timeline">
+                                <div class="timeline-item active">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <small>Регистрация завершена</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item active">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <small>Турнир начался</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <small>Финал</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="tournament-card-footer">
+                            <a href="{{ url_for('tournament_detail', tournament_id=tournament.id) }}" 
+                               class="btn btn-tournament-view btn-tournament-{{ tournament.status }}">
+                                {% if tournament.status == 'upcoming' %}
+                                    <i class="fas fa-sign-up-alt me-2"></i>Регистрация
+                                {% elif tournament.status == 'active' %}
+                                    <i class="fas fa-eye me-2"></i>Следить
+                                {% else %}
+                                    <i class="fas fa-trophy me-2"></i>Результаты
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if not tournaments %}
+            <div class="text-center py-5">
+                <i class="fas fa-crown fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">Турниры не найдены</h4>
+                <p class="text-muted">
+                    {% if current_status == 'upcoming' %}Нет предстоящих турниров
+                    {% elif current_status == 'active' %}Нет активных турниров
+                    {% elif current_status == 'completed' %}Нет завершённых турниров
+                    {% else %}Нет турниров{% endif %}
+                </p>
+                {% if is_admin %}
+                <a href="{{ url_for('create_tournament') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Создать турнир
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+/* Custom cursor */
+body {
+    cursor: url('/static/cursors/default.png'), auto; /* Replace with your cursor file path */
+}
+
+.tournament-card {
+    transition: transform 0.2s;
+}
+
+.tournament-card:hover {
+    transform: translateY(-2px);
+}
+
+.tournament-info .info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.tournament-info .info-item i {
+    width: 20px;
+    margin-right: 0.5rem;
+}
+
+.stat-box {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+/* Role Shop Styles */
+.role-shop-container {
+    background-color: #1a1a2e; /* Dark background */
+    border-radius: 8px;
+    padding: 30px;
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(128, 0, 128, 0.4); /* Purple border */
+}
+
+.role-shop-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.role-shop-header h2 {
+    color: #e0aaff; /* Light purple */
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.role-shop-header p {
+    color: #cccccc; /* Lighter grey */
+    font-size: 0.95em;
+}
+
+.role-item {
+    background-color: #2a2a40; /* Slightly lighter dark */
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(128, 0, 128, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.role-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(128, 0, 128, 0.4);
+}
+
+.role-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.role-name {
+    color: #c8a2c8; /* Lilac */
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.role-rarity {
+    font-size: 0.85em;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.rarity-common { background-color: #808080; color: #fff; } /* Grey */
+.rarity-special { background-color: #8a2be2; color: #fff; } /* Blue Violet */
+.rarity-animated { background-color: #ff69b4; color: #fff; } /* Hot Pink */
+
+.role-description {
+    color: #bbb;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.role-price {
+    color: #ffff00; /* Yellow */
+    font-size: 1.1em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.role-price i {
+    margin-right: 5px;
+}
+
+.buy-button {
+    background-color: #9370db; /* Medium Purple */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.buy-button:hover {
+    background-color: #8a2be2; /* Blue Violet */
+}
+
+.buy-button:disabled {
+    background-color: #6a5acd; /* Slate Blue */
+    cursor: not-allowed;
+}
+
+.rank-requirement {
+    color: #ffcc00; /* Gold */
+    font-size: 0.85em;
+    margin-top: 10px;
+}
+
+.rank-requirement i {
+    margin-right: 5px;
+}
+
+/* Specific styling for animated roles */
+.animated-role-preview {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-image: linear-gradient(45deg, #ff69b4, #8a2be2, #ff69b4);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+    display: inline-block;
+    margin-right: 15px;
+    border: 2px solid #fff;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* For profile section */
+.profile-role-display {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: inline-block; /* To allow gradient on text */
+}
+
+.profile-role-display.custom-role {
+    /* Apply gradient styles here or via JavaScript */
+    background: linear-gradient(45deg, #ff69b4, #8a2be2); /* Example gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.profile-role-display.animated-custom-role {
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+.rank-indicator {
+    color: #fff;
+    font-weight: normal;
+    font-size: 0.8em;
+    margin-left: 10px;
+    background-color: rgba(255, 165, 0, 0.7); /* Orange background for rank */
+    padding: 3px 6px;
+    border-radius: 3px;
+}
+
+/* Ensure no scrollbars from fixed elements */
+body.no-scroll-bars::-webkit-scrollbar {
+    display: none;
+}
+body.no-scroll-bars {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+</style>
+
+<script>
+// Placeholder for JavaScript functionality related to role shop and profile
+// This would typically involve fetching data, handling purchases, and updating UI
+
+// Example: Function to handle role purchase
+function purchaseRole(roleId) {
+    const userRank = {{ current_player.level if current_player else 0 }}; // Using current_player instead of current_user
+    const roleRequirements = {
+        1: { rank: 0, price: 5000 }, // Common Role
+        2: { rank: 40, price: 50000 }, // Special Role (static gradient)
+        3: { rank: 60, price: 75000 }, // Special Role (animated gradient)
+        4: { rank: 80, price: 100000 } // Special Role (animated gradient + emoji)
+    };
+
+    const requirement = roleRequirements[roleId];
+
+    if (!requirement) {
+        alert('Invalid role selected.');
+        return;
+    }
+
+    if (userRank < requirement.rank) {
+        alert(`You need to reach rank ${requirement.rank} to purchase this role.`);
+        return;
+    }
+
+    // Using current_player coins instead of current_user
+    // const userCoins = {{ current_player.coins if current_player else 0 }};
+    // if (userCoins < requirement.price) {
+    //     alert('Not enough coins!');
+    //     return;
+    // }
+
+    // Simulate purchase confirmation
+    if (confirm(`Are you sure you want to buy this role for ${requirement.price} coins?`)) {
+        // Here you would make an API call to process the purchase
+        console.log(`Purchasing role ${roleId} for ${requirement.price} coins.`);
+        alert('Purchase successful! Role will be applied shortly.');
+        // Update UI or user coins after successful purchase
+    }
+}
+
+// Example: Function to update role display in profile
+function updateProfileRole(roleName, roleType = 'static', emoji = '') {
+    const roleDisplay = document.querySelector('.profile-role-display');
+    if (roleDisplay) {
+        roleDisplay.innerHTML = `${emoji ? emoji + ' ' : ''}${roleName}`;
+        roleDisplay.classList.remove('custom-role', 'animated-custom-role'); // Reset classes
+
+        if (roleType === 'animated') {
+            roleDisplay.classList.add('animated-custom-role');
+        } else if (roleType === 'gradient') {
+            roleDisplay.classList.add('custom-role');
+        }
+    }
+}
+
+// Example: Function to check and unlock role customization at rank 500
+document.addEventListener('DOMContentLoaded', () => {
+    const userRank = {{ current_player.level if current_player else 0 }};
+    const roleCustomizationToggle = document.getElementById('role-customization-toggle'); // Assume a toggle exists
+
+    if (userRank >= 500) {
+        // Enable role customization features
+        console.log('Rank 500 achieved! Role customization unlocked.');
+        if (roleCustomizationToggle) {
+            roleCustomizationToggle.style.display = 'block'; // Show customization options
+        }
+    } else {
+        // Keep role customization locked
+        console.log(`Rank ${userRank}. Need rank 500 for full role customization.`);
+        if (roleCustomizationToggle) {
+            roleCustomizationToggle.style.display = 'none'; // Hide customization options
+        }
+    }
+});
+
+</script>
+{% endblock %}

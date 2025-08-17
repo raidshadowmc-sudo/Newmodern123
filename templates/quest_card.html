@@ -1,0 +1,120 @@
+
+<div class="quest-card h-100 p-4 {% if quest.id in player_progress and player_progress[quest.id].is_completed %}completed{% endif %}">
+    {% if quest.id in player_progress and player_progress[quest.id].is_completed %}
+    <div class="completed-badge">
+        <i class="fas fa-check"></i> Выполнено
+    </div>
+    {% endif %}
+
+    <div class="quest-difficulty difficulty-{{ quest.difficulty }}">
+        {{ quest.difficulty|title }}
+        {% if quest.difficulty == 'medium' %}
+            <small class="d-block">Уровень 10+</small>
+        {% elif quest.difficulty == 'hard' %}
+            <small class="d-block">Уровень 20+</small>
+        {% elif quest.difficulty == 'epic' %}
+            <small class="d-block">Уровень 40+</small>
+        {% endif %}
+    </div>
+
+    <div class="text-center mb-3">
+        <div class="quest-icon {% if quest.id in player_progress and player_progress[quest.id].is_completed %}animate-bounce{% endif %}">
+            <i class="{{ quest.icon }}"></i>
+        </div>
+        <h4 class="mb-2">{{ quest.title }}</h4>
+        <p class="text-muted mb-3">{{ quest.description }}</p>
+    </div>
+
+    {% if quest.id in player_progress %}
+    {% set progress = player_progress[quest.id] %}
+    <div class="quest-progress mb-3">
+        {% if progress.is_accepted %}
+            <div class="quest-progress-bar" style="width: {{ progress.progress_percentage }}%"></div>
+            <div class="quest-progress-text">
+                {{ progress.current_progress }} / {{ quest.target_value }}
+                ({{ progress.progress_percentage }}%)
+            </div>
+        {% else %}
+            <div class="quest-progress-bar" style="width: 0%"></div>
+            <div class="quest-progress-text">Не принят</div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="quest-progress mb-3">
+        <div class="quest-progress-bar" style="width: 0%"></div>
+        <div class="quest-progress-text">Не принят</div>
+    </div>
+    {% endif %}
+
+    <div class="quest-rewards mb-3">
+        {% if quest.reward_xp > 0 %}
+        <div class="reward-item">
+            <i class="fas fa-star text-warning"></i>
+            <strong>{{ quest.reward_xp }} XP</strong>
+        </div>
+        {% endif %}
+        {% if quest.reward_coins > 0 %}
+        <div class="reward-item">
+            <i class="fas fa-coins text-warning"></i>
+            <strong>{{ quest.reward_coins }} койнов</strong>
+        </div>
+        {% endif %}
+        {% if quest.reward_reputation > 0 %}
+        <div class="reward-item">
+            <i class="fas fa-gem text-info"></i>
+            <strong>{{ quest.reward_reputation }} репутации</strong>
+        </div>
+        {% endif %}
+        {% if quest.reward_title %}
+        <div class="reward-item">
+            <i class="fas fa-crown text-warning"></i>
+            <strong>{{ quest.reward_title }}</strong>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if current_player %}
+        {% if quest.id in player_progress %}
+            {% set progress = player_progress[quest.id] %}
+            {% if not progress.is_accepted %}
+                <form method="POST" action="{{ url_for('accept_quest', quest_id=quest.id) }}" class="mt-3">
+                    <button type="submit" class="btn btn-sm btn-warning w-100 clickable">
+                        <i class="fas fa-play"></i> Принять квест
+                    </button>
+                </form>
+            {% elif progress.is_completed %}
+                <div class="mt-3">
+                    <button class="btn btn-sm btn-success w-100" disabled>
+                        <i class="fas fa-check"></i> Выполнен
+                    </button>
+                </div>
+            {% else %}
+                <div class="mt-3">
+                    <button class="btn btn-sm btn-info w-100" disabled>
+                        <i class="fas fa-hourglass-half"></i> В процессе
+                    </button>
+                </div>
+            {% endif %}
+        {% else %}
+            <form method="POST" action="{{ url_for('accept_quest', quest_id=quest.id) }}" class="mt-3">
+                <button type="submit" class="btn btn-sm btn-warning w-100 clickable">
+                    <i class="fas fa-play"></i> Принять квест
+                </button>
+            </form>
+        {% endif %}
+    {% else %}
+        <div class="mt-3">
+            <a href="{{ url_for('player_login') }}" class="btn btn-sm btn-outline-info w-100">
+                <i class="fas fa-sign-in-alt"></i> Войти для участия
+            </a>
+        </div>
+    {% endif %}
+
+    {% if is_admin and quest.id in player_progress and player_progress[quest.id].is_accepted and not player_progress[quest.id].is_completed %}
+    <form method="POST" action="{{ url_for('complete_quest', quest_id=quest.id) }}" class="mt-2">
+        <button type="submit" class="btn btn-sm btn-success w-100 clickable">
+            <i class="fas fa-check"></i> Завершить (Админ)
+        </button>
+    </form>
+    {% endif %}
+</div>

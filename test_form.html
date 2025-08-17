@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест формы</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .form-step {
+            display: none;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .form-step.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .form-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .form-progress::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1;
+        }
+        
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .progress-step.active {
+            background: linear-gradient(45deg, #ffc107, #ffca2c);
+            border-color: #ffc107;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+            transform: scale(1.1);
+        }
+        
+        .step-number {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 60px;
+            font-size: 0.8rem;
+            color: #adb5bd;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .progress-step.active .step-label {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        .btn-step {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .btn-step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-step:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        
+        .card-header {
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="text-center mb-5">
+                    <h1 class="display-4 text-warning">
+                        <i class="fas fa-user-plus me-3"></i>Тест многошаговой формы
+                    </h1>
+                    <p class="lead text-muted">Проверка работы навигации между шагами</p>
+                </div>
+                
+                <form class="multi-step-form" id="testForm">
+                    <div class="form-progress mb-4">
+                        <div class="progress-step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Шаг 1</div>
+                        </div>
+                        <div class="progress-step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Шаг 2</div>
+                        </div>
+                        <div class="progress-step" data-step="3">
+                            <div class="step-number">3</div>
+                            <div class="step-label">Шаг 3</div>
+                        </div>
+                        <div class="progress-step" data-step="4">
+                            <div class="step-number">4</div>
+                            <div class="step-label">Шаг 4</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 1 -->
+                    <div class="form-step active" data-step="1">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-warning">
+                                    <i class="fas fa-info-circle me-2"></i>Шаг 1: Основная информация
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Это первый шаг формы. Здесь должна быть основная информация.</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Тестовое поле 1</label>
+                                        <input type="text" class="form-control" placeholder="Введите текст">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Тестовое поле 2</label>
+                                        <input type="text" class="form-control" placeholder="Введите текст">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2 -->
+                    <div class="form-step" data-step="2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-success">
+                                    <i class="fas fa-chart-bar me-2"></i>Шаг 2: Статистика
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Это второй шаг формы. Здесь должна быть статистика.</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Числовое поле 1</label>
+                                        <input type="number" class="form-control" value="0">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Числовое поле 2</label>
+                                        <input type="number" class="form-control" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3 -->
+                    <div class="form-step" data-step="3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-info">
+                                    <i class="fas fa-cog me-2"></i>Шаг 3: Настройки
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Это третий шаг формы. Здесь должны быть настройки.</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Выбор 1</label>
+                                        <select class="form-select">
+                                            <option>Опция 1</option>
+                                            <option>Опция 2</option>
+                                            <option>Опция 3</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Выбор 2</label>
+                                        <select class="form-select">
+                                            <option>Вариант A</option>
+                                            <option>Вариант B</option>
+                                            <option>Вариант C</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4 -->
+                    <div class="form-step" data-step="4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-primary">
+                                    <i class="fas fa-check-circle me-2"></i>Шаг 4: Завершение
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Это последний шаг формы. Здесь должно быть завершение.</p>
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check me-2"></i>
+                                    Все шаги заполнены! Форма готова к отправке.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-secondary btn-lg prev-step" disabled>
+                            <i class="fas fa-arrow-left me-2"></i>Назад
+                        </button>
+                        <button type="button" class="btn btn-primary btn-lg next-step">
+                            Далее<i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                        <button type="submit" class="btn btn-success btn-lg" style="display: none;">
+                            <i class="fas fa-paper-plane me-2"></i>Отправить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Test form navigation
+        function initializeTestForm() {
+            console.log('🎯 Initializing test form...');
+            
+            const formSteps = document.querySelectorAll('.form-step');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const prevBtn = document.querySelector('.prev-step');
+            const nextBtn = document.querySelector('.next-step');
+            const submitBtn = document.querySelector('button[type="submit"]');
+            
+            console.log('📋 Found elements:', {
+                formSteps: formSteps.length,
+                progressSteps: progressSteps.length,
+                prevBtn: !!prevBtn,
+                nextBtn: !!nextBtn,
+                submitBtn: !!submitBtn
+            });
+            
+            let currentStep = 1;
+            
+            function showStep(step) {
+                console.log(`🎯 Showing step ${step}`);
+                
+                formSteps.forEach(s => s.classList.remove('active'));
+                progressSteps.forEach(s => s.classList.remove('active'));
+                
+                const targetStep = document.querySelector(`[data-step="${step}"]`);
+                const targetProgress = document.querySelector(`.progress-step[data-step="${step}"]`);
+                
+                if (targetStep) targetStep.classList.add('active');
+                if (targetProgress) targetProgress.classList.add('active');
+                
+                currentStep = step;
+                updateNavigationButtons();
+            }
+            
+            function updateNavigationButtons() {
+                console.log(`🎯 Updating navigation for step ${currentStep}`);
+                
+                if (prevBtn) {
+                    prevBtn.disabled = currentStep === 1;
+                    console.log(`⬅️ Prev button disabled: ${currentStep === 1}`);
+                }
+                
+                if (nextBtn && submitBtn) {
+                    if (currentStep < 4) {
+                        nextBtn.style.display = 'inline-block';
+                        submitBtn.style.display = 'none';
+                        console.log(`➡️ Showing next button`);
+                    } else {
+                        nextBtn.style.display = 'none';
+                        submitBtn.style.display = 'inline-block';
+                        console.log(`✅ Showing submit button`);
+                    }
+                }
+                
+                progressSteps.forEach((step, index) => {
+                    if (index + 1 <= currentStep) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+            }
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    console.log(`⬅️ Prev button clicked, current step: ${currentStep}`);
+                    if (currentStep > 1) {
+                        showStep(currentStep - 1);
+                    }
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    console.log(`➡️ Next button clicked, current step: ${currentStep}`);
+                    if (currentStep < 4) {
+                        showStep(currentStep + 1);
+                    }
+                });
+            }
+            
+            console.log('🎯 Initializing form with step 1');
+            showStep(1);
+            console.log('✅ Test form initialization complete');
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeTestForm);
+    </script>
+</body>
+</html>

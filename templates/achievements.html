@@ -1,0 +1,604 @@
+
+{% extends "base.html" %}
+
+{% block title %}Достижения - Minecraft Bedwars Leaderboard{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Enhanced Achievement System Styles */
+.achievements-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+    padding: 4rem 0;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievements-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="achievements" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="2" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23achievements)"/></svg>');
+    animation: patternFloat 20s linear infinite;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-icon {
+    font-size: 4rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    animation: heroIconBounce 2s ease-in-out infinite;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 2rem;
+}
+
+.hero-nav {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.hero-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.hero-nav-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    color: white;
+}
+
+/* Enhanced Achievement Cards */
+.achievement-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    height: 100%;
+}
+
+.achievement-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.achievement-card:hover::before {
+    opacity: 1;
+}
+
+.achievement-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color, #48dbfb);
+}
+
+.achievement-card.earned {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 193, 7, 0.15));
+    border-color: #ffd700;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.achievement-content {
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.achievement-rarity {
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.achievement-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.achievement-card.earned .achievement-icon {
+    color: #ffd700;
+    animation: achievementGlow 2s ease-in-out infinite alternate;
+}
+
+.achievement-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+.achievement-description {
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.achievement-rewards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(255,255,255,0.1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.achievement-progress {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.achievement-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #48dbfb, #0abde3);
+    transition: width 0.8s ease;
+    border-radius: 10px;
+}
+
+.achievement-date {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    margin-top: auto;
+}
+
+/* Enhanced Stats Display */
+.achievement-stats {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.1);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+}
+
+/* Enhanced Filtering */
+.filter-section {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-btn {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.filter-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #48dbfb, #0abde3);
+    border-color: #48dbfb;
+    color: white;
+}
+
+/* Rarity Colors */
+.rarity-common { background: rgba(108, 117, 125, 0.8); }
+.rarity-uncommon { background: rgba(40, 167, 69, 0.8); }
+.rarity-rare { background: rgba(13, 202, 240, 0.8); }
+.rarity-epic { background: rgba(111, 66, 193, 0.8); }
+.rarity-legendary { background: linear-gradient(45deg, #ff6b6b, #feca57); }
+.rarity-mythic { 
+    background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff); 
+    animation: mythicGlow 3s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes patternFloat {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(-20px) translateY(-20px); }
+}
+
+@keyframes heroIconBounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+@keyframes achievementGlow {
+    from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+    to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700, 0 0 40px #ffd700; }
+}
+
+@keyframes mythicGlow {
+    0%, 100% { 
+        background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+    }
+    50% { 
+        background: linear-gradient(45deg, #00ffff, #ffff00, #ff00ff, #00ffff);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.5rem; }
+    .hero-nav { gap: 0.5rem; }
+    .hero-nav-btn { padding: 0.6rem 1rem; font-size: 0.9rem; }
+    .achievement-content { padding: 1.5rem; }
+    .achievement-icon { font-size: 3rem; }
+    .stats-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="achievements-page">
+    <!-- Enhanced Hero Section -->
+    <div class="achievements-hero">
+        <div class="hero-content text-center">
+            <div class="hero-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h1 class="hero-title gradient-text">Система достижений</h1>
+            <p class="hero-subtitle">Покоряйте новые высоты и получайте эксклюзивные награды</p>
+            
+            <div class="hero-nav">
+                <a href="{{ url_for('shop') }}" class="hero-nav-btn">
+                    <i class="fas fa-store"></i>
+                    <span>Магазин</span>
+                </a>
+                <a href="{{ url_for('quests') }}" class="hero-nav-btn">
+                    <i class="fas fa-scroll"></i>
+                    <span>Квесты</span>
+                </a>
+                <a href="{{ url_for('index') }}" class="hero-nav-btn">
+                    <i class="fas fa-trophy"></i>
+                    <span>Лидеры</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        {% if current_player %}
+        <!-- Enhanced Player Stats -->
+        <div class="achievement-stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <i class="fas fa-user stat-icon text-info"></i>
+                    <span class="stat-value">{{ current_player.nickname }}</span>
+                    <span class="stat-label">{{ current_player.role }}</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-trophy stat-icon text-warning"></i>
+                    <span class="stat-value">{{ player_achievements|length }}</span>
+                    <span class="stat-label">Получено достижений</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-percentage stat-icon text-success"></i>
+                    <span class="stat-value">{{ ((player_achievements|length / achievements|length) * 100)|round(1) if achievements else 0 }}%</span>
+                    <span class="stat-label">Прогресс завершения</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-coins stat-icon text-warning"></i>
+                    <span class="stat-value">{{ current_player.coins }}</span>
+                    <span class="stat-label">Койны</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-star stat-icon" style="color: #8B4FA5;"></i>
+                    <span class="stat-value" style="color: #8B4FA5;">{{ current_player.reputation }}</span>
+                    <span class="stat-label">Карма</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Enhanced Filter Section -->
+        <div class="filter-section">
+            <div class="filter-controls">
+                <span class="me-3"><strong>Фильтр:</strong></span>
+                <button class="filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn" data-filter="earned">Получено</button>
+                <button class="filter-btn" data-filter="locked">Заблокировано</button>
+                <button class="filter-btn" data-filter="common">Обычные</button>
+                <button class="filter-btn" data-filter="uncommon">Необычные</button>
+                <button class="filter-btn" data-filter="rare">Редкие</button>
+                <button class="filter-btn" data-filter="epic">Эпические</button>
+                <button class="filter-btn" data-filter="legendary">Легендарные</button>
+                <button class="filter-btn" data-filter="mythic">Мифические</button>
+            </div>
+        </div>
+
+        <!-- Enhanced Achievements Grid -->
+        <div class="row" id="achievements-grid">
+            {% for achievement in achievements %}
+            {% set is_earned = achievement.id in (player_achievements | map(attribute='achievement_id') | list) %}
+            {% set is_hidden = achievement.is_hidden and not is_earned %}
+
+            <div class="col-lg-4 col-md-6 mb-4 achievement-item" 
+                 data-rarity="{{ achievement.rarity }}" 
+                 data-earned="{{ is_earned|lower }}"
+                 data-hidden="{{ is_hidden|lower }}">
+
+                <div class="achievement-card {% if is_earned %}earned{% else %}locked{% endif %}">
+                    <div class="achievement-content">
+                        {% if not is_hidden %}
+                        <div class="achievement-header">
+                            {% if is_earned %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>Получено
+                            </span>
+                            {% endif %}
+                            <span class="achievement-rarity rarity-{{ achievement.rarity }}">
+                                {{ achievement.rarity.title() }}
+                            </span>
+                        </div>
+
+                        <div class="achievement-icon">
+                            <i class="{{ achievement.icon }}"></i>
+                        </div>
+                        
+                        <h4 class="achievement-title">{{ achievement.title }}</h4>
+                        <p class="achievement-description">{{ achievement.description }}</p>
+
+                        {% if achievement.reward_xp > 0 or achievement.reward_coins > 0 or achievement.reward_reputation > 0 %}
+                        <div class="achievement-rewards">
+                            {% if achievement.reward_xp > 0 %}
+                            <div class="reward-item">
+                                <i class="fas fa-star text-warning"></i>
+                                <span>{{ achievement.reward_xp }} XP</span>
+                            </div>
+                            {% endif %}
+                            {% if achievement.reward_coins > 0 %}
+                            <div class="reward-item">
+                                <i class="fas fa-coins text-warning"></i>
+                                <span>{{ achievement.reward_coins }}</span>
+                            </div>
+                            {% endif %}
+                            {% if achievement.reward_reputation > 0 %}
+                            <div class="reward-item">
+                                <i class="fas fa-star" style="color: #8B4FA5;"></i>
+                                <span>{{ achievement.reward_reputation }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if is_earned and player_achievements %}
+                        {% for pa in player_achievements %}
+                        {% if pa.achievement_id == achievement.id %}
+                        <div class="achievement-date">
+                            <i class="fas fa-calendar"></i>
+                            Получено: {{ pa.earned_at.strftime('%d.%m.%Y %H:%M') if pa.earned_at else 'Давно' }}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+
+                        {% else %}
+                        <div class="achievement-icon">
+                            <i class="fas fa-question"></i>
+                        </div>
+                        <h4 class="achievement-title text-muted">Скрытое достижение</h4>
+                        <p class="achievement-description">Выполните определенные условия для разблокировки</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if not achievements %}
+        <div class="text-center py-5">
+            <i class="fas fa-trophy fa-5x text-muted mb-3"></i>
+            <h3 class="text-muted">Достижения не найдены</h3>
+            <p class="text-muted">Система достижений временно недоступна</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced filter functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const achievementItems = document.querySelectorAll('.achievement-item');
+
+    function filterAchievements() {
+        const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+
+        achievementItems.forEach((item, index) => {
+            const rarity = item.dataset.rarity;
+            const isEarned = item.dataset.earned === 'true';
+            const isHidden = item.dataset.hidden === 'true';
+
+            let show = false;
+
+            switch(activeFilter) {
+                case 'all':
+                    show = !isHidden;
+                    break;
+                case 'earned':
+                    show = isEarned;
+                    break;
+                case 'locked':
+                    show = !isEarned && !isHidden;
+                    break;
+                default:
+                    show = rarity === activeFilter && !isHidden;
+                    break;
+            }
+
+            if (show) {
+                item.style.display = '';
+                setTimeout(() => {
+                    item.style.animation = `fadeInUp 0.6s ease ${index * 0.1}s forwards`;
+                }, 10);
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            filterAchievements();
+        });
+    });
+
+    // Initial filter
+    filterAchievements();
+
+    // Achievement card hover effects
+    const cards = document.querySelectorAll('.achievement-card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.zIndex = '1';
+        });
+    });
+});
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

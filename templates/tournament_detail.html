@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tournament.name }} - Турниры{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Tournament Header -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                {{ tournament.name }}
+                                <span class="badge
+                                    {% if tournament.status == 'upcoming' %}bg-info
+                                    {% elif tournament.status == 'active' %}bg-success
+                                    {% else %}bg-secondary{% endif %} fs-6">
+                                    {{ tournament.status_display }}
+                                </span>
+                            </h2>
+                            <p class="text-muted mb-3">{{ tournament.description or 'Нет описания' }}</p>
+
+                            <div class="row">
+                                <div class="col-auto">
+                                    <small><i class="fas fa-calendar text-muted"></i> Начало {{ tournament.start_date.strftime('%d.%m.%Y в %H:%M') }}</small>
+                                </div>
+                                <div class="col-auto">
+                                    <small><i class="fas fa-gamepad text-muted"></i> {{ tournament.type_display }}</small>
+                                </div>
+                                <div class="col-auto">
+                                    {% if tournament.organizer_type == 'clan' and tournament.organizer_clan_id %}
+                                        {% set organizer_clan = tournament.organizer_clan %}
+                                        <small><i class="fas fa-shield-alt text-warning"></i> Организатор: {{ organizer_clan.name }} [{{ organizer_clan.tag }}]</small>
+                                    {% else %}
+                                        <small><i class="fas fa-user text-success"></i> Организатор: {{ tournament.organizer.nickname }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            {% if current_player and tournament.can_join and not is_participant %}
+                                <form method="POST" action="{{ url_for('join_tournament', tournament_id=tournament.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-plus me-1"></i>Участвовать
+                                    </button>
+                                </form>
+                            {% elif is_participant %}
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-check me-1"></i>Вы участвуете
+                                </span>
+                            {% elif not tournament.can_join %}
+                                <span class="badge bg-secondary fs-6">
+                                    <i class="fas fa-ban me-1"></i>Регистрация закрыта
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Tournament Info -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Информация о турнире
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-item mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-coins text-warning"></i> Взнос</span>
+                                    <strong>{{ tournament.entry_fee }} койнов</strong>
+                                </div>
+                            </div>
+                            <div class="info-item mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-trophy text-success"></i> Призовой фонд</span>
+                                    <strong>{{ tournament.prize_pool }} койнов</strong>
+                                </div>
+                            </div>
+                            <div class="info-item mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-users text-primary"></i> Участники</span>
+                                    <strong>{{ tournament.participant_count }}/{{ tournament.max_participants }}</strong>
+                                </div>
+                            </div>
+                            <div class="info-item mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-calendar text-info"></i> Статус</span>
+                                    <strong>{{ tournament.status_display }}</strong>
+                                </div>
+                            </div>
+                            {% if tournament.end_date %}
+                            <div class="info-item">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-flag text-danger"></i> Окончание</span>
+                                    <strong>{{ tournament.end_date.strftime('%d.%m.%Y %H:%M') }}</strong>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participants -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-users me-2"></i>Участники ({{ participants|length }})
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if participants %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Игрок</th>
+                                            <th>Уровень</th>
+                                            <th>Рейтинг</th>
+                                            <th>Дата регистрации</th>
+                                            {% if tournament.status == 'completed' %}
+                                            <th>Место</th>
+                                            <th>Приз</th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for participant in participants %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for('player_profile', player_id=participant.player.id) }}" class="text-decoration-none">
+                                                    <img src="{{ participant.player.minecraft_skin_url }}"
+                                                         alt="{{ participant.player.nickname }}"
+                                                         class="player-avatar me-2" width="24" height="24">
+                                                    {{ participant.player.nickname }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ participant.player.level }}</span>
+                                            </td>
+                                            <td>{{ participant.player.reputation }}</td>
+                                            <td>{{ participant.joined_at.strftime('%d.%m.%Y') }}</td>
+                                            {% if tournament.status == 'completed' %}
+                                            <td>
+                                                {% if participant.placement %}
+                                                    {% if participant.placement == 1 %}
+                                                        <span class="badge bg-warning">🥇 {{ participant.placement }}</span>
+                                                    {% elif participant.placement == 2 %}
+                                                        <span class="badge bg-secondary">🥈 {{ participant.placement }}</span>
+                                                    {% elif participant.placement == 3 %}
+                                                        <span class="badge bg-warning">🥉 {{ participant.placement }}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-light text-dark">{{ participant.placement }}</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ participant.prize_won }} койнов</td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-users fa-2x text-muted mb-2"></i>
+                                <p class="text-muted">Нет участников в турнире</p>
+                                {% if current_player and tournament.can_join %}
+                                <form method="POST" action="{{ url_for('join_tournament', tournament_id=tournament.id) }}">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-plus me-1"></i>Стать первым участником
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.info-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.player-avatar {
+    border-radius: 4px;
+}
+</style>
+{% endblock %}

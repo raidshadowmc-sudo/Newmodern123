@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Управление репутацией - Админ панель{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title">
+            <i class="fas fa-star text-info me-2"></i>Управление репутацией
+        </h2>
+        <div class="btn-group">
+            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="admin-form-card">
+                <h4 class="text-info mb-3">Изменить репутацию игрока</h4>
+                <form method="POST" action="{{ url_for('admin_update_reputation') }}">
+                    <div class="mb-3">
+                        <label for="target_player" class="form-label">Игрок (никнейм)</label>
+                        <input type="text" class="form-control" id="target_player" name="target_player" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reputation_change" class="form-label">Изменение репутации</label>
+                        <input type="number" class="form-control" id="reputation_change" name="reputation_change" value="0" required>
+                        <div class="form-text">Положительное число для добавления, отрицательное для убавления</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Причина (необязательно)</label>
+                        <input type="text" class="form-control" id="reason" name="reason">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Изменить репутацию</button>
+                </form></old_str>ion_change" name="reputation_change" placeholder="Например: +50 или -20" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Причина</label>
+                        <input type="text" class="form-control" id="reason" name="reason" placeholder="Причина изменения репутации" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Изменить репутацию
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="admin-form-card">
+                <h4 class="text-warning mb-3">Выдать койны игроку</h4>
+                <form method="POST" action="{{ url_for('admin_give_coins') }}">
+                    <div class="mb-3">
+                        <label for="target_player_coins" class="form-label">Игрок (никнейм)</label>
+                        <input type="text" class="form-control" id="target_player_coins" name="target_player" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="coins_amount" class="form-label">Количество койнов</label>
+                        <input type="number" class="form-control" id="coins_amount" name="coins_amount" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="coins_reason" class="form-label">Причина</label>
+                        <input type="text" class="form-control" id="coins_reason" name="reason" placeholder="Причина выдачи койнов" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-coins me-2"></i>Выдать койны
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="admin-form-card">
+                <h4 class="text-success mb-3">Список игроков</h4>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Игрок</th>
+                                <th>Уровень</th>
+                                <th>Репутация</th>
+                                <th>Койны</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for player in players %}
+                            <tr>
+                                <td>
+                                    <img src="{{ player.minecraft_skin_url }}" alt="{{ player.nickname }}" 
+                                         class="rounded me-2" style="width: 24px; height: 24px; image-rendering: pixelated;">
+                                    {{ player.nickname }}
+                                </td>
+                                <td>{{ player.level }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ player.reputation }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">{{ player.coins }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-info btn-sm" onclick="quickReputation('{{ player.nickname }}', 100)">
+                                            +100 Rep
+                                        </button>
+                                        <button class="btn btn-outline-warning btn-sm" onclick="quickCoins('{{ player.nickname }}', 500)">
+                                            +500 Coins
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function quickReputation(nickname, amount) {
+    if (confirm(`Выдать ${amount} репутации игроку ${nickname}?`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("admin_update_reputation") }}';
+
+        const playerInput = document.createElement('input');
+        playerInput.type = 'hidden';
+        playerInput.name = 'target_player';
+        playerInput.value = nickname;
+
+        const repInput = document.createElement('input');
+        repInput.type = 'hidden';
+        repInput.name = 'reputation_change';
+        repInput.value = amount;
+
+        const reasonInput = document.createElement('input');
+        reasonInput.type = 'hidden';
+        reasonInput.name = 'reason';
+        reasonInput.value = 'Быстрая выдача администратором';
+
+        form.appendChild(playerInput);
+        form.appendChild(repInput);
+        form.appendChild(reasonInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function quickCoins(nickname, amount) {
+    if (confirm(`Выдать ${amount} койнов игроку ${nickname}?`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("admin_give_coins") }}';
+
+        const playerInput = document.createElement('input');
+        playerInput.type = 'hidden';
+        playerInput.name = 'target_player';
+        playerInput.value = nickname;
+
+        const coinsInput = document.createElement('input');
+        coinsInput.type = 'hidden';
+        coinsInput.name = 'coins_amount';
+        coinsInput.value = amount;
+
+        const reasonInput = document.createElement('input');
+        reasonInput.type = 'hidden';
+        reasonInput.name = 'reason';
+        reasonInput.value = 'Быстрая выдача администратором';
+
+        form.appendChild(playerInput);
+        form.appendChild(coinsInput);
+        form.appendChild(reasonInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,789 @@
+
+{% extends "base.html" %}
+
+{% block title %}Статистика - Minecraft Bedwars{% endblock %}
+
+{% block content %}
+<div class="statistics-page">
+    <!-- Header -->
+    <div class="stats-header text-center py-4 mb-5">
+        <h1 class="display-4 fw-bold text-warning mb-3">
+            <i class="fas fa-chart-bar me-3"></i>Статистика сервера
+        </h1>
+        <p class="lead text-muted">Детальная аналитика игроков Bedwars</p>
+    </div>
+
+    <!-- Overall Stats -->
+    {% if stats %}
+    <div class="overall-stats mb-5">
+        <h3 class="section-title mb-4">
+            <i class="fas fa-globe text-info me-2"></i>Общая статистика
+        </h3>
+        <div class="row g-4">
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box modern-stat-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-users stat-icon text-primary"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value gradient-text" data-target="{{ stats.total_players }}">{{ stats.total_players }}</div>
+                        <div class="stat-label">Игроков</div>
+                        <div class="stat-change">+12% за месяц</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box modern-stat-card">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-sword kills-icon stat-icon text-danger"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value gradient-text">{{ "{:,}".format(stats.total_kills) }}</div>
+                        <div class="stat-label">Киллов</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box modern-stat-card">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-skull stat-icon text-secondary"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value gradient-text">{{ "{:,}".format(stats.total_deaths) }}</div>
+                        <div class="stat-label">Смертей</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box modern-stat-card">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-gamepad stat-icon text-success"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value gradient-text">{{ "{:,}".format(stats.total_games) }}</div>
+                        <div class="stat-label">Игр</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box modern-stat-card">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-trophy stat-icon text-warning"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value gradient-text">{{ "{:,}".format(stats.total_wins) }}</div>
+                        <div class="stat-label">Побед</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="stat-box modern-stat-card">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-bed stat-icon text-info"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value gradient-text">{{ stats.total_beds_broken }}</div>
+                        <div class="stat-label">Кроватей</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Economic Statistics -->
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <h4 class="section-title mb-4">
+                    <i class="fas fa-coins text-warning me-2"></i>Экономическая статистика
+                </h4>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-coins stat-icon text-warning"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ "{:,}".format(stats.total_coins) }}</div>
+                        <div class="stat-label">Всего койнов</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-star stat-icon text-purple"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ "{:,}".format(stats.total_reputation) }}</div>
+                        <div class="stat-label">Всего репутации</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-chart-line stat-icon text-success"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.average_coins }}</div>
+                        <div class="stat-label">Средние койны</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-box">
+                    <div class="stat-icon-container">
+                        <i class="fas fa-medal stat-icon text-info"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{{ stats.average_reputation }}</div>
+                        <div class="stat-label">Средняя репутация</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Economic Players -->
+        {% if stats.richest_player or stats.most_reputable_player %}
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <h4 class="section-title mb-4">
+                    <i class="fas fa-crown text-warning me-2"></i>Экономические лидеры
+                </h4>
+            </div>
+            {% if stats.richest_player %}
+            <div class="col-md-6">
+                <div class="stat-box text-center">
+                    <div class="stat-icon-container mx-auto mb-3">
+                        <i class="fas fa-money-bill-wave stat-icon text-warning"></i>
+                    </div>
+                    <h5 class="text-warning">Самый богатый игрок</h5>
+                    <div class="stat-value">{{ stats.richest_player.nickname }}</div>
+                    <div class="stat-label">{{ "{:,}".format(stats.richest_player.coins) }} койнов</div>
+                </div>
+            </div>
+            {% endif %}
+            {% if stats.most_reputable_player %}
+            <div class="col-md-6">
+                <div class="stat-box text-center">
+                    <div class="stat-icon-container mx-auto mb-3">
+                        <i class="fas fa-gem stat-icon text-purple"></i>
+                    </div>
+                    <h5 class="text-purple">Самый уважаемый игрок</h5>
+                    <div class="stat-value">{{ stats.most_reputable_player.nickname }}</div>
+                    <div class="stat-label">{{ "{:,}".format(stats.most_reputable_player.reputation) }} репутации</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Top Players Section -->
+    {% if top_players %}
+    <div class="top-players-section mt-5">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">
+                <i class="fas fa-crown text-warning me-3"></i>
+                <span class="gradient-text">Лучшие игроки</span>
+                <i class="fas fa-crown text-warning ms-3"></i>
+            </h2>
+            <p class="section-subtitle">Топ игроки в различных категориях</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Experience Leaders -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card experience-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h4 class="category-title">Опыт</h4>
+                        <p class="category-subtitle">Самые опытные воины</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.experience %}
+                        <div class="player-item rank-{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {{ player.nickname }}
+                                    </a>
+                                </div>
+                                <div class="player-level">Уровень {{ player.level }}</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.experience) }}</div>
+                                <div class="stat-label">XP</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kill Leaders -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card kills-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-sword"></i>
+                        </div>
+                        <h4 class="category-title">Убийства</h4>
+                        <p class="category-subtitle">Безжалостные убийцы</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.kills %}
+                        <div class="player-item rank-{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {{ player.nickname }}
+                                    </a>
+                                </div>
+                                <div class="player-stats-mini">K/D: {{ player.kd_ratio }}</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.kills) }}</div>
+                                <div class="stat-label">Киллов</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bed Breakers -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card beds-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <h4 class="category-title">Кровати</h4>
+                        <p class="category-subtitle">Разрушители снов</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.beds_broken %}
+                        <div class="player-item rank-{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {{ player.nickname }}
+                                    </a>
+                                </div>
+                                <div class="player-stats-mini">Побед: {{ player.wins }}</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.beds_broken) }}</div>
+                                <div class="stat-label">Кроватей</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Winners -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card wins-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h4 class="category-title">Победы</h4>
+                        <p class="category-subtitle">Непобедимые чемпионы</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.wins %}
+                        <div class="player-item rank-{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {{ player.nickname }}
+                                    </a>
+                                </div>
+                                <div class="player-stats-mini">Винрейт: {{ player.win_rate }}%</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.wins) }}</div>
+                                <div class="stat-label">Побед</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Kills -->
+            <div class="col-lg-4 col-md-6">
+                <div class="top-category-card final-kills-card">
+                    <div class="card-header-gradient">
+                        <div class="category-icon">
+                            <i class="fas fa-skull"></i>
+                        </div>
+                        <h4 class="category-title">Финальные</h4>
+                        <p class="category-subtitle">Завершители игр</p>
+                    </div>
+                    <div class="players-list">
+                        {% for player in top_players.final_kills %}
+                        <div class="player-item rank-{{ loop.index }}">
+                            <div class="player-rank">
+                                {% if loop.index == 1 %}
+                                    <div class="rank-crown">👑</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="rank-medal silver">🥈</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="rank-medal bronze">🥉</div>
+                                {% else %}
+                                    <div class="rank-number">#{{ loop.index }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="player-info">
+                                <div class="player-name">
+                                    <a href="{{ url_for('player_profile', player_id=player.id) }}" class="player-link">
+                                        {{ player.nickname }}
+                                    </a>
+                                </div>
+                                <div class="player-stats-mini">FK/D: {{ player.fkd_ratio }}</div>
+                            </div>
+
+                            <div class="player-stat">
+                                <div class="stat-value">{{ "{:,}".format(player.final_kills) }}</div>
+                                <div class="stat-label">Финальных</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Back to Leaderboard -->
+    <div class="text-center mt-5">
+        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>Назад к таблице лидеров
+        </a>
+        {% if is_admin %}
+        <a href="{{ url_for('admin') }}" class="btn btn-warning btn-lg ms-2">
+            <i class="fas fa-cog me-2"></i>Панель администратора
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Modern Statistics Styles */
+.modern-stat-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,193,7,0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    backdrop-filter: blur(15px);
+    height: 100%;
+}
+
+.modern-stat-card:hover {
+    transform: translateY(-12px) scale(1.03);
+    border-color: rgba(255,193,7,0.6);
+    box-shadow: 0 20px 50px rgba(255,193,7,0.3);
+}
+
+.stat-icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    z-index: 2;
+    filter: drop-shadow(0 0 10px rgba(255,193,7,0.5));
+}
+
+.stat-content {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #ffd700, #ffaa00, #ff6b35);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: #adb5bd;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.stat-change {
+    font-size: 0.9rem;
+    color: #28a745;
+    font-weight: 500;
+}
+
+/* Top Players Section Styles */
+.top-players-section {
+    margin-top: 4rem;
+}
+
+.section-header .section-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+.section-header .section-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 3rem;
+}
+
+.top-category-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.3));
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    border-radius: 20px;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    backdrop-filter: blur(15px);
+}
+
+.top-category-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    border-color: rgba(255, 193, 7, 0.6);
+    box-shadow: 0 25px 50px rgba(255, 193, 7, 0.3);
+}
+
+.card-header-gradient {
+    background: linear-gradient(135deg, rgba(255,193,7,0.8), rgba(255,140,0,0.6));
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: rgba(0,0,0,0.8);
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+}
+
+.category-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: rgba(0,0,0,0.9);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.category-subtitle {
+    font-size: 0.9rem;
+    color: rgba(0,0,0,0.7);
+    margin: 0;
+    font-weight: 600;
+}
+
+.players-list {
+    padding: 1.5rem;
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+}
+
+.player-item:hover {
+    transform: translateX(8px);
+    background: linear-gradient(90deg, rgba(255,193,7,0.1), rgba(255,140,0,0.05));
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.player-rank {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 1.2rem;
+    position: relative;
+}
+
+.rank-crown {
+    font-size: 2rem;
+    animation: bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(255,215,0,0.8));
+}
+
+.rank-medal {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+}
+
+.rank-number {
+    background: rgba(255,255,255,0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.player-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.player-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.player-link {
+    text-decoration: none;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.player-link:hover {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,215,0,0.6);
+}
+
+.player-level, .player-stats-mini {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+}
+
+.player-stat {
+    text-align: right;
+    min-width: 80px;
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #ffd700;
+    line-height: 1.2;
+    text-shadow: 0 0 10px rgba(255,215,0,0.4);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Category-specific colors */
+.experience-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(255,193,7,0.9), rgba(255,140,0,0.7));
+}
+
+.kills-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(220,53,69,0.9), rgba(255,107,53,0.7));
+}
+
+.beds-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(23,162,184,0.9), rgba(32,201,151,0.7));
+}
+
+.wins-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(40,167,69,0.9), rgba(32,201,151,0.7));
+}
+
+.final-kills-card .card-header-gradient {
+    background: linear-gradient(135deg, rgba(108,117,125,0.9), rgba(173,181,189,0.7));
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .modern-stat-card {
+        padding: 1.5rem;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    .section-header .section-title {
+        font-size: 2rem;
+    }
+
+    .top-category-card {
+        margin-bottom: 2rem;
+    }
+
+    .card-header-gradient {
+        padding: 1.5rem 1rem;
+    }
+
+    .category-icon {
+        font-size: 2.5rem;
+    }
+
+    .category-title {
+        font-size: 1.3rem;
+    }
+
+    .player-item {
+        padding: 0.8rem;
+    }
+
+    .player-rank {
+        width: 50px;
+        height: 50px;
+        margin-right: 0.8rem;
+    }
+
+    .rank-crown {
+        font-size: 1.8rem;
+    }
+
+    .rank-medal {
+        font-size: 1.6rem;
+    }
+
+    .player-name {
+        font-size: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize animations and effects
+    initializeStatAnimations();
+});
+
+function initializeStatAnimations() {
+    // Animate stat cards
+    const statBoxes = document.querySelectorAll('.stat-box');
+    statBoxes.forEach((box, index) => {
+        setTimeout(() => {
+            box.style.opacity = '1';
+            box.style.transform = 'translateY(0)';
+        }, index * 150);
+    });
+
+    // Animate player items
+    const playerItems = document.querySelectorAll('.player-item');
+    playerItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+        }, index * 100);
+    });
+}
+</script>
+{% endblock %}

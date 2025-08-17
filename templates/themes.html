@@ -1,0 +1,215 @@
+
+{% extends "base.html" %}
+
+{% block title %}Темы оформления{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="themes-header text-center mb-5">
+        <h1 class="display-4 fw-bold text-warning mb-3">
+            <i class="fas fa-palette me-3"></i>Темы оформления
+        </h1>
+        <p class="lead text-muted">Выберите тему оформления для персонализации интерфейса</p>
+    </div>
+
+    {% if current_theme %}
+    <div class="current-theme-info text-center mb-4">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Текущая тема: <strong>{{ current_theme.display_name }}</strong>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="themes-grid">
+        <div class="row g-4">
+            {% for theme in themes %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="theme-card {{ 'active' if current_theme and theme.id == current_theme.id else '' }}"
+                     data-theme-id="{{ theme.id }}">
+                    <div class="theme-preview" 
+                         style="background: linear-gradient(135deg, {{ theme.background_color }} 0%, {{ theme.card_background }} 100%);">
+                        <div class="theme-preview-header" 
+                             style="background: {{ theme.card_background }}; color: {{ theme.text_color }};">
+                            <div class="preview-title" style="color: {{ theme.primary_color }};">
+                                {{ theme.display_name }}
+                            </div>
+                        </div>
+                        
+                        <div class="theme-preview-content" style="color: {{ theme.text_color }};">
+                            <div class="preview-stat-card" 
+                                 style="background: {{ theme.card_background }}; border-color: {{ theme.primary_color }};">
+                                <div class="preview-stat-number" style="color: {{ theme.primary_color }};">1,337</div>
+                                <div class="preview-stat-label" style="color: {{ theme.text_color }}aa;">Киллы</div>
+                            </div>
+                            
+                            <div class="preview-button" 
+                                 style="background: {{ theme.primary_color }}; color: {{ theme.background_color }};">
+                                Кнопка
+                            </div>
+                            
+                            <div class="preview-accent" style="color: {{ theme.accent_color }};">
+                                Акцентный текст
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="theme-info">
+                        <h5 class="theme-name">{{ theme.display_name }}</h5>
+                        {% if theme.description %}
+                        <p class="theme-description text-muted">{{ theme.description }}</p>
+                        {% endif %}
+                        
+                        {% if current_theme and theme.id == current_theme.id %}
+                        <div class="badge bg-success mb-2">
+                            <i class="fas fa-check me-1"></i>Активная
+                        </div>
+                        {% endif %}
+                        
+                        <div class="theme-colors d-flex gap-2 mb-3">
+                            <div class="color-swatch" style="background: {{ theme.primary_color }};" 
+                                 title="Основной цвет"></div>
+                            <div class="color-swatch" style="background: {{ theme.secondary_color }};" 
+                                 title="Второстепенный цвет"></div>
+                            <div class="color-swatch" style="background: {{ theme.background_color }};" 
+                                 title="Фон"></div>
+                            <div class="color-swatch" style="background: {{ theme.accent_color }};" 
+                                 title="Акцентный цвет"></div>
+                        </div>
+                        
+                        {% if not current_theme or theme.id != current_theme.id %}
+                        <form method="POST" action="{{ url_for('select_theme', theme_id=theme.id) }}">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-check me-1"></i>Выбрать тему
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.themes-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.theme-card {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.theme-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.theme-card.active {
+    border-color: var(--warning-color);
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+}
+
+.theme-preview {
+    height: 200px;
+    position: relative;
+    border-radius: 10px;
+    margin: 15px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.theme-preview-header {
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview-title {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.theme-preview-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: calc(100% - 50px);
+}
+
+.preview-stat-card {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid;
+    text-align: center;
+}
+
+.preview-stat-number {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.preview-stat-label {
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+.preview-button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.preview-accent {
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.theme-info {
+    padding: 20px;
+}
+
+.theme-name {
+    color: var(--warning-color);
+    margin-bottom: 10px;
+}
+
+.theme-description {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.color-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: help;
+}
+
+@media (max-width: 768px) {
+    .theme-preview {
+        height: 150px;
+        margin: 10px;
+    }
+    
+    .theme-preview-content {
+        padding: 10px;
+        gap: 8px;
+    }
+    
+    .theme-info {
+        padding: 15px;
+    }
+}
+</style>
+{% endblock %}

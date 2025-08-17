@@ -1,0 +1,1575 @@
+{% extends "base.html" %}
+
+{% block title %}{{ player.nickname }} - Профиль игрока{% endblock %}
+
+{% block content %}
+<div class="player-profile">
+    <!-- Player Header -->
+    <div class="player-header text-center py-5 mb-4">
+        <div class="player-avatar mb-3">
+            <img src="{{ player.minecraft_skin_url }}" alt="{{ player.nickname }}"
+                 class="rounded-circle skin-avatar" style="width: 128px; height: 128px; image-rendering: pixelated;">
+        </div>
+        <h1 class="display-4 fw-bold">
+            <span class="player-nickname" data-player-id="{{ player.id }}">{{ player.nickname }}</span>
+        </h1>
+        <p class="lead">
+            <span class="player-role" data-player-id="{{ player.id }}">{{ player.display_role }}</span>
+        </p>
+
+        <!-- Star Rating -->
+        <div class="star-rating mb-3">
+            {% for i in range(1, 6) %}
+                <i class="fas fa-star {{ 'text-warning' if i <= player.star_rating else 'text-muted' }} fs-4"></i>
+            {% endfor %}
+        </div>
+
+        <!-- Level Info -->
+        <div class="level-display">
+            <div class="level-circle">
+                <span class="level-number">{{ player.level }}</span>
+            </div>
+            <div class="progress level-progress-large">
+                <div class="progress-bar bg-warning" style="width: {{ player.level_progress }}%"></div>
+            </div>
+            <p class="text-muted mt-2">{{ "{:,}".format(player.experience) }} XP</p>
+        </div>
+    </div>
+
+    <!-- Statistics Grid -->
+    <div class="row g-4 mb-5">
+        <!-- Combat Stats -->
+        <div class="col-md-6">
+            <div class="stat-section">
+                <h3 class="section-title">
+                    <i class="fas fa-sword text-danger me-2"></i>Боевая статистика
+                </h3>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-success player-stat" data-stat="kills" data-player-id="{{ player.id }}">{{ player.kills }}</div>
+                            <div class="stat-label">Киллы</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-warning player-stat" data-stat="final_kills" data-player-id="{{ player.id }}">{{ player.final_kills }}</div>
+                            <div class="stat-label">Финальные киллы</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-danger player-stat" data-stat="deaths" data-player-id="{{ player.id }}">{{ player.deaths }}</div>
+                            <div class="stat-label">Смерти</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-info player-stat" data-stat="final_deaths" data-player-id="{{ player.id }}">{{ player.final_deaths }}</div>
+                            <div class="stat-label">Финальные смерти</div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="stat-box">
+                            <div class="stat-value {{ 'text-success' if player.kd_ratio >= 1.5 else 'text-warning' if player.kd_ratio >= 1.0 else 'text-danger' }}">
+                                {{ player.kd_ratio }}
+                            </div>
+                            <div class="stat-label">K/D Ratio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Stats -->
+        <div class="col-md-6">
+            <div class="stat-section">
+                <h3 class="section-title">
+                    <i class="fas fa-gamepad text-info me-2"></i>Игровая статистика
+                </h3>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-primary player-stat" data-stat="games_played" data-player-id="{{ player.id }}">{{ player.games_played }}</div>
+                            <div class="stat-label">Игр сыграно</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-success player-stat" data-stat="wins" data-player-id="{{ player.id }}">{{ player.wins }}</div>
+                            <div class="stat-label">Победы</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-info player-stat" data-stat="beds_broken" data-player-id="{{ player.id }}">{{ player.beds_broken }}</div>
+                            <div class="stat-label">Кровати сломано</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value {{ 'text-success' if player.win_rate >= 70 else 'text-warning' if player.win_rate >= 50 else 'text-danger' }}">
+                                {{ player.win_rate }}%
+                            </div>
+                            <div class="stat-label">Процент побед</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="col-md-6">
+            <div class="stat-section">
+                <h3 class="section-title">
+                    <i class="fas fa-gem text-primary me-2"></i>Ресурсы
+                </h3>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-secondary">{{ player.iron_collected }}</div>
+                            <div class="stat-label">Железо</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-warning">{{ player.gold_collected }}</div>
+                            <div class="stat-label">Золото</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-info">{{ player.diamond_collected }}</div>
+                            <div class="stat-label">Алмазы</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-success">{{ player.emerald_collected }}</div>
+                            <div class="stat-label">Изумруды</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="col-md-6">
+            <div class="stat-section">
+                <h3 class="section-title">
+                    <i class="fas fa-info-circle text-secondary me-2"></i>Дополнительно
+                </h3>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-primary">{{ player.items_purchased }}</div>
+                            <div class="stat-label">Покупок</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-value text-warning">{{ player.total_resources }}</div>
+                            <div class="stat-label">Всего ресурсов</div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="stat-box">
+                            <div class="stat-value text-muted small">
+                                {{ player.created_at.strftime('%d.%m.%Y %H:%M') }}
+                            </div>
+                            <div class="stat-label">Дата регистрации</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ASCEND Performance Card -->
+    <div class="ascend-section mb-5">
+        <h3 class="section-title text-center mb-4">
+            <i class="fas fa-medal text-warning me-2"></i>ASCEND Performance Card
+        </h3>
+        {% include 'ascend_card.html' %}
+
+        {% if is_admin %}
+        <!-- Enhanced ASCEND Editor v3.0 -->
+        <div class="ascend-editor-v3 mt-4">
+            <div class="card bg-dark border-warning">
+                <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%) !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-edit me-2"></i>ASCEND Editor v3.0
+                            <span class="badge bg-danger ms-2">ADMIN</span>
+                        </h4>
+                        <div class="editor-tools">
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="toggleEditorMode()" title="Переключить режим">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="showASCENDHistory()" title="История изменений">
+                                <i class="fas fa-history"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form id="ascendEditForm" class="ascend-form-v3">
+                        <!-- Performance Breakdown Section -->
+                        <div class="editor-section mb-4">
+                            <div class="section-header mb-3">
+                                <h5 class="text-warning mb-0">
+                                    <i class="fas fa-chart-area me-2"></i>Performance Breakdown
+                                </h5>
+                                <small class="text-muted">Настройка индивидуальных показателей</small>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- PVP Skill -->
+                                <div class="col-md-6 col-xl-3">
+                                    <div class="skill-editor-card pvp-card">
+                                        <div class="skill-header">
+                                            <div class="skill-icon" style="color: #e74c3c;">
+                                                <i class="fas fa-sword"></i>
+                                            </div>
+                                            <div class="skill-info">
+                                                <h6 class="skill-name">PVP</h6>
+                                                <small class="skill-desc">Combat effectiveness</small>
+                                            </div>
+                                        </div>
+                                        <div class="skill-controls">
+                                            <div class="tier-selector mb-3">
+                                                <label class="form-label">Tier</label>
+                                                <select class="form-select tier-select" name="pvp_tier" data-skill="pvp">
+                                                    <option value="D">D</option>
+                                                    <option value="C">C</option>
+                                                    <option value="C+">C+</option>
+                                                    <option value="B">B</option>
+                                                    <option value="B+">B+</option>
+                                                    <option value="A">A</option>
+                                                    <option value="A+">A+</option>
+                                                    <option value="S">S</option>
+                                                    <option value="S+">S+</option>
+                                                </select>
+                                            </div>
+                                            <div class="score-slider">
+                                                <label class="form-label">Score: <span class="score-display" id="pvp_score_display">25</span>/100</label>
+                                                <input type="range" class="form-range score-range" name="pvp_score" id="pvp_score" min="0" max="100" value="25" data-skill="pvp">
+                                                <div class="score-markers">
+                                                    <span>0</span>
+                                                    <span>25</span>
+                                                    <span>50</span>
+                                                    <span>75</span>
+                                                    <span>100</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Clutching Skill -->
+                                <div class="col-md-6 col-xl-3">
+                                    <div class="skill-editor-card clutching-card">
+                                        <div class="skill-header">
+                                            <div class="skill-icon" style="color: #f39c12;">
+                                                <i class="fas fa-fire"></i>
+                                            </div>
+                                            <div class="skill-info">
+                                                <h6 class="skill-name">CLUTCHING</h6>
+                                                <small class="skill-desc">Pressure performance</small>
+                                            </div>
+                                        </div>
+                                        <div class="skill-controls">
+                                            <div class="tier-selector mb-3">
+                                                <label class="form-label">Tier</label>
+                                                <select class="form-select tier-select" name="clutching_tier" data-skill="clutching">
+                                                    <option value="D">D</option>
+                                                    <option value="C">C</option>
+                                                    <option value="C+">C+</option>
+                                                    <option value="B">B</option>
+                                                    <option value="B+">B+</option>
+                                                    <option value="A">A</option>
+                                                    <option value="A+">A+</option>
+                                                    <option value="S">S</option>
+                                                    <option value="S+">S+</option>
+                                                </select>
+                                            </div>
+                                            <div class="score-slider">
+                                                <label class="form-label">Score: <span class="score-display" id="clutching_score_display">25</span>/100</label>
+                                                <input type="range" class="form-range score-range" name="clutching_score" id="clutching_score" min="0" max="100" value="25" data-skill="clutching">
+                                                <div class="score-markers">
+                                                    <span>0</span>
+                                                    <span>25</span>
+                                                    <span>50</span>
+                                                    <span>75</span>
+                                                    <span>100</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Block Placement Skill -->
+                                <div class="col-md-6 col-xl-3">
+                                    <div class="skill-editor-card blocks-card">
+                                        <div class="skill-header">
+                                            <div class="skill-icon" style="color: #3498db;">
+                                                <i class="fas fa-cube"></i>
+                                            </div>
+                                            <div class="skill-info">
+                                                <h6 class="skill-name">BLOCKS</h6>
+                                                <small class="skill-desc">Strategic building</small>
+                                            </div>
+                                        </div>
+                                        <div class="skill-controls">
+                                            <div class="tier-selector mb-3">
+                                                <label class="form-label">Tier</label>
+                                                <select class="form-select tier-select" name="block_placement_tier" data-skill="blocks">
+                                                    <option value="D">D</option>
+                                                    <option value="C">C</option>
+                                                    <option value="C+">C+</option>
+                                                    <option value="B">B</option>
+                                                    <option value="B+">B+</option>
+                                                    <option value="A">A</option>
+                                                    <option value="A+">A+</option>
+                                                    <option value="S">S</option>
+                                                    <option value="S+">S+</option>
+                                                </select>
+                                            </div>
+                                            <div class="score-slider">
+                                                <label class="form-label">Score: <span class="score-display" id="block_placement_score_display">25</span>/100</label>
+                                                <input type="range" class="form-range score-range" name="block_placement_score" id="block_placement_score" min="0" max="100" value="25" data-skill="blocks">
+                                                <div class="score-markers">
+                                                    <span>0</span>
+                                                    <span>25</span>
+                                                    <span>50</span>
+                                                    <span>75</span>
+                                                    <span>100</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Gamesense Skill -->
+                                <div class="col-md-6 col-xl-3">
+                                    <div class="skill-editor-card gamesense-card">
+                                        <div class="skill-header">
+                                            <div class="skill-icon" style="color: #9b59b6;">
+                                                <i class="fas fa-brain"></i>
+                                            </div>
+                                            <div class="skill-info">
+                                                <h6 class="skill-name">GAMESENSE</h6>
+                                                <small class="skill-desc">Tactical awareness</small>
+                                            </div>
+                                        </div>
+                                        <div class="skill-controls">
+                                            <div class="tier-selector mb-3">
+                                                <label class="form-label">Tier</label>
+                                                <select class="form-select tier-select" name="gamesense_tier" data-skill="gamesense">
+                                                    <option value="D">D</option>
+                                                    <option value="C">C</option>
+                                                    <option value="C+">C+</option>
+                                                    <option value="B">B</option>
+                                                    <option value="B+">B+</option>
+                                                    <option value="A">A</option>
+                                                    <option value="A+">A+</option>
+                                                    <option value="S">S</option>
+                                                    <option value="S+">S+</option>
+                                                </select>
+                                            </div>
+                                            <div class="score-slider">
+                                                <label class="form-label">Score: <span class="score-display" id="gamesense_score_display">25</span>/100</label>
+                                                <input type="range" class="form-range score-range" name="gamesense_score" id="gamesense_score" min="0" max="100" value="25" data-skill="gamesense">
+                                                <div class="score-markers">
+                                                    <span>0</span>
+                                                    <span>25</span>
+                                                    <span>50</span>
+                                                    <span>75</span>
+                                                    <span>100</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Overall Assessment Section -->
+                        <div class="editor-section mb-4">
+                            <div class="section-header mb-3">
+                                <h5 class="text-info mb-0">
+                                    <i class="fas fa-trophy me-2"></i>Overall Assessment
+                                </h5>
+                                <small class="text-muted">Общая оценка и тир игрока</small>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="overall-tier-selector">
+                                        <label class="form-label">Overall Tier</label>
+                                        <select class="form-select form-select-lg" name="overall_tier" id="overall_tier_select">
+                                            <option value="D" class="tier-d">D TIER</option>
+                                            <option value="C" class="tier-c">C TIER</option>
+                                            <option value="C+" class="tier-c-plus">C+ TIER</option>
+                                            <option value="B" class="tier-b">B TIER</option>
+                                            <option value="B+" class="tier-b-plus">B+ TIER</option>
+                                            <option value="A" class="tier-a">A TIER</option>
+                                            <option value="A+" class="tier-a-plus">A+ TIER</option>
+                                            <option value="S" class="tier-s">S TIER</option>
+                                            <option value="S+" class="tier-s-plus">S+ TIER</option>
+                                        </select>
+                                        <div class="tier-preview" id="tierPreview">
+                                            <span class="tier-rank-preview tier-d">D TIER</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="evaluator-section">
+                                        <label class="form-label">Evaluator</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-user-tie"></i>
+                                            </span>
+                                            <input type="text" class="form-control" name="evaluator_name" id="evaluator_name" value="Elite Squad" placeholder="Имя оценщика">
+                                        </div>
+                                        <small class="text-muted">Кто проводил оценку</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Evaluation Comment Section -->
+                        <div class="editor-section mb-4">
+                            <div class="section-header mb-3">
+                                <h5 class="text-success mb-0">
+                                    <i class="fas fa-comment-alt me-2"></i>Evaluation Report
+                                </h5>
+                                <small class="text-muted">Подробный отчёт об оценке игрока</small>
+                            </div>
+
+                            <div class="comment-editor">
+                                <textarea class="form-control comment-textarea" name="comment" id="ascend_comment_field" rows="5" placeholder="Введите развёрнутый комментарий к оценке игрока...&#10;&#10;Пример:&#10;• Сильные стороны: Отличная реакция в PvP, хорошее понимание игры&#10;• Слабые стороны: Недостаточно быстрое строительство защиты&#10;• Рекомендации: Больше практики в соло-играх для развития клатчинга"></textarea>
+                                <div class="comment-tools">
+                                    <div class="comment-stats">
+                                        <span class="char-count">0 символов</span>
+                                        <span class="word-count">0 слов</span>
+                                    </div>
+                                    <div class="comment-templates">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-template me-1"></i>Шаблоны
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#" onclick="insertTemplate('positive')">Положительная оценка</a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="insertTemplate('neutral')">Нейтральная оценка</a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="insertTemplate('development')">Требует развития</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#" onclick="clearComment()">Очистить</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="editor-actions mt-4">
+                            <button type="button" class="btn btn-primary" onclick="saveASCENDData()">
+                                <i class="fas fa-save me-2"></i>Сохранить оценку
+                            </button>
+                            <button type="button" class="btn btn-success ms-2" onclick="showImportModal()">
+                                <i class="fas fa-upload me-2"></i>Импорт данных
+                            </button>
+                            <button type="button" class="btn btn-secondary ms-2" onclick="resetASCENDEditor()">
+                                <i class="fas fa-undo me-2"></i>Сбросить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if is_admin %}
+    <div class="admin-section">
+        <h3 class="section-title">
+            <i class="fas fa-edit text-warning me-2"></i>Редактирование (Админ)
+        </h3>
+        <form method="POST" action="{{ url_for('edit_player', player_id=player.id) }}" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Киллы</label>
+                <input type="number" class="form-control" name="kills" value="{{ player.kills }}" min="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Финальные киллы</label>
+                <input type="number" class="form-control" name="final_kills" value="{{ player.final_kills }}" min="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Смерти</label>
+                <input type="number" class="form-control" name="deaths" value="{{ player.deaths }}" min="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Финальные смерти</label>
+                <input type="number" class="form-control" name="final_deaths" value="{{ player.final_deaths }}" min="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Кровати</label>
+                <input type="number" class="form-control" name="beds_broken" value="{{ player.beds_broken }}" min="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Игры</label>
+                <input type="number" class="form-control" name="games_played" value="{{ player.games_played }}" min="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Победы</label>
+                <input type="number" class="form-control" name="wins" value="{{ player.wins }}" min="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Опыт</label>
+                <input type="number" class="form-control" name="experience" value="{{ player.experience }}" min="0">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Роль</label>
+                <input type="text" class="form-control" name="role" value="{{ player.role }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Железо</label>
+                <input type="number" class="form-control" name="iron_collected" value="{{ player.iron_collected }}" min="0">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Золото</label>
+                <input type="number" class="form-control" name="gold_collected" value="{{ player.gold_collected }}" min="0">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Алмазы</label>
+                <input type="number" class="form-control" name="diamond_collected" value="{{ player.diamond_collected }}" min="0">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Изумруды</label>
+                <input type="number" class="form-control" name="emerald_collected" value="{{ player.emerald_collected }}" min="0">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Покупки</label>
+                <input type="number" class="form-control" name="items_purchased" value="{{ player.items_purchased }}" min="0">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Сервер</label>
+                <input type="text" class="form-control" name="server_ip" value="{{ player.server_ip }}">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-warning">
+                    <i class="fas fa-save me-2"></i>Сохранить изменения
+                </button>
+                <button type="button" class="btn btn-danger ms-2"
+                        onclick="confirmDelete({{ player.id }}, '{{ player.nickname }}')">
+                    <i class="fas fa-trash me-2"></i>Удалить игрока
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить игрока <strong>{{ player.nickname }}</strong>?</p>
+                    <p class="text-muted small">Это действие нельзя отменить.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form method="POST" action="{{ url_for('delete_player', player_id=player.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Navigation -->
+    <div class="text-center mt-5">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+            <i class="fas fa-arrow-left me-2"></i>Назад к таблице лидеров
+        </a>
+    </div>
+</div>
+
+<!-- Import Data Modal -->
+<div class="modal fade" id="importDataModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">
+                    <i class="fas fa-upload text-success me-2"></i>Импорт ASCEND данных
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Формат данных</label>
+                    <select class="form-select" id="importFormat">
+                        <option value="json">JSON</option>
+                        <option value="csv">CSV (навык:балл)</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Данные для импорта</label>
+                    <textarea class="form-control" id="importData" rows="8" 
+                             placeholder='JSON: {"pvp": 75, "clutching": 80, "block_placement": 70, "gamesense": 85}
+или CSV: PVP:75,Clutching:80,Block Placement:70,Gamesense:85'></textarea>
+                    <div class="form-text">
+                        Введите данные в выбранном формате. Баллы должны быть от 0 до 100.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Комментарий</label>
+                    <input type="text" class="form-control" id="importComment" 
+                           placeholder="Комментарий к импорту данных" value="Импортированные данные">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Оценщик</label>
+                    <input type="text" class="form-control" id="importEvaluator" 
+                           placeholder="Имя оценщика" value="Elite Squad AI (Import)">
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-success" onclick="importASCENDData()">
+                    <i class="fas fa-upload me-2"></i>Импортировать
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Initialize ASCEND editor if admin
+{% if is_admin %}
+function confirmDelete(playerId, playerName) {
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+function initASCENDEditor() {
+    console.log('🎯 Initializing ASCEND Editor v3.0');
+
+    // Add event listeners for score sliders with enhanced functionality
+    const scoreSliders = ['pvp_score', 'clutching_score', 'block_placement_score', 'gamesense_score'];
+    scoreSliders.forEach(sliderId => {
+        const slider = document.getElementById(sliderId);
+        const display = document.getElementById(sliderId + '_display');
+        if (slider && display) {
+            // Real-time score updates
+            slider.addEventListener('input', function() {
+                display.textContent = this.value;
+                updateScoreColor(display, this.value);
+                updateTierSuggestion(this.dataset.skill, this.value);
+            });
+
+            // Auto-save on change
+            slider.addEventListener('change', function() {
+                autoSaveProgress();
+            });
+        }
+    });
+
+    // Tier selector changes
+    const tierSelects = document.querySelectorAll('.tier-select');
+    tierSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            updateOverallTierSuggestion();
+            autoSaveProgress();
+        });
+    });
+
+    // Overall tier preview
+    const overallTierSelect = document.getElementById('overall_tier_select');
+    if (overallTierSelect) {
+        overallTierSelect.addEventListener('change', function() {
+            updateTierPreview(this.value);
+        });
+    }
+
+    // Comment character counting
+    const commentTextarea = document.getElementById('ascend_comment_field');
+    if (commentTextarea) {
+        commentTextarea.addEventListener('input', function() {
+            updateCommentStats(this.value);
+        });
+    }
+
+    // Handle form submission
+    const form = document.getElementById('ascendEditForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveASCENDDataV3();
+        });
+    }
+
+    // Load current data on initialization
+    loadCurrentData();
+}
+
+function updateScoreColor(display, score) {
+    display.className = 'score-display';
+    if (score >= 80) {
+        display.classList.add('text-success');
+    } else if (score >= 60) {
+        display.classList.add('text-warning');
+    } else if (score >= 40) {
+        display.classList.add('text-info');
+    } else {
+        display.classList.add('text-danger');
+    }
+}
+
+function updateTierSuggestion(skill, score) {
+    const tierSelect = document.querySelector(`[name="${skill}_tier"]`);
+    if (!tierSelect) return;
+
+    // Suggest tier based on score
+    let suggestedTier;
+    if (score >= 90) suggestedTier = 'S+';
+    else if (score >= 85) suggestedTier = 'S';
+    else if (score >= 80) suggestedTier = 'A+';
+    else if (score >= 75) suggestedTier = 'A';
+    else if (score >= 70) suggestedTier = 'B+';
+    else if (score >= 60) suggestedTier = 'B';
+    else if (score >= 50) suggestedTier = 'C+';
+    else if (score >= 40) suggestedTier = 'C';
+    else suggestedTier = 'D';
+
+    // Highlight if different from current
+    if (tierSelect.value !== suggestedTier) {
+        tierSelect.style.border = '2px solid #f39c12';
+        tierSelect.title = `Рекомендуется: ${suggestedTier}`;
+    } else {
+        tierSelect.style.border = '';
+        tierSelect.title = '';
+    }
+}
+
+function updateOverallTierSuggestion() {
+    const tiers = ['pvp_tier', 'clutching_tier', 'block_placement_tier', 'gamesense_tier'];
+    const tierValues = tiers.map(tierName => {
+        const select = document.querySelector(`[name="${tierName}"]`);
+        return select ? select.value : 'D';
+    });
+
+    // Calculate suggested overall tier
+    const tierToNumber = {'D': 1, 'C': 2, 'C+': 3, 'B': 4, 'B+': 5, 'A': 6, 'A+': 7, 'S': 8, 'S+': 9};
+    const numberToTier = {1: 'D', 2: 'C', 3: 'C+', 4: 'B', 5: 'B+', 6: 'A', 7: 'A+', 8: 'S', 9: 'S+'};
+
+    const average = tierValues.reduce((sum, tier) => sum + tierToNumber[tier], 0) / tierValues.length;
+    const suggestedTier = numberToTier[Math.round(average)];
+
+    const overallSelect = document.getElementById('overall_tier_select');
+    if (overallSelect && overallSelect.value !== suggestedTier) {
+        overallSelect.style.border = '2px solid #f39c12';
+        overallSelect.title = `Рекомендуется: ${suggestedTier}`;
+    }
+}
+
+function updateTierPreview(tier) {
+    const preview = document.getElementById('tierPreview');
+    if (preview) {
+        const tierSpan = preview.querySelector('.tier-rank-preview');
+        if (tierSpan) {
+            tierSpan.textContent = `${tier} TIER`;
+            tierSpan.className = `tier-rank-preview tier-${tier.toLowerCase().replace('+', '-plus')}`;
+        }
+    }
+}
+
+function updateCommentStats(text) {
+    const charCount = text.length;
+    const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+
+    const charCountEl = document.querySelector('.char-count');
+    const wordCountEl = document.querySelector('.word-count');
+
+    if (charCountEl) charCountEl.textContent = `${charCount} символов`;
+    if (wordCountEl) wordCountEl.textContent = `${wordCount} слов`;
+}
+
+function autoSaveProgress() {
+    // Auto-save functionality (can be implemented later)
+    console.log('💾 Auto-saving ASCEND progress...');
+}
+
+function autoCalculateTiers() {
+    const scores = ['pvp_score', 'clutching_score', 'block_placement_score', 'gamesense_score'];
+    const tiers = ['pvp_tier', 'clutching_tier', 'block_placement_tier', 'gamesense_tier'];
+
+    scores.forEach((scoreId, index) => {
+        const scoreEl = document.getElementById(scoreId);
+        const tierEl = document.querySelector(`[name="${tiers[index]}"]`);
+
+        if (scoreEl && tierEl) {
+            const score = parseInt(scoreEl.value);
+            let tier;
+
+            if (score >= 90) tier = 'S+';
+            else if (score >= 85) tier = 'S';
+            else if (score >= 80) tier = 'A+';
+            else if (score >= 75) tier = 'A';
+            else if (score >= 70) tier = 'B+';
+            else if (score >= 60) tier = 'B';
+            else if (score >= 50) tier = 'C+';
+            else if (score >= 40) tier = 'C';
+            else tier = 'D';
+
+            tierEl.value = tier;
+            tierEl.style.border = '';
+            tierEl.title = '';
+        }
+    });
+
+    // Auto-calculate overall tier
+    updateOverallTierSuggestion();
+    const overallSelect = document.getElementById('overall_tier_select');
+    if (overallSelect && overallSelect.title) {
+        const suggestedTier = overallSelect.title.replace('Рекомендуется: ', '');
+        overallSelect.value = suggestedTier;
+        updateTierPreview(suggestedTier);
+        overallSelect.style.border = '';
+        overallSelect.title = '';
+    }
+
+    showAlert('Тиры автоматически рассчитаны на основе баллов!', 'success');
+}
+
+function toggleEditorMode() {
+    // Toggle between simple and advanced mode
+    showAlert('Переключение режимов в разработке', 'info');
+}
+
+function showASCENDHistory() {
+    // Show ASCEND history modal (if exists)
+    const historyModal = document.getElementById('ascendHistoryModalV3');
+    if (historyModal) {
+        new bootstrap.Modal(historyModal).show();
+    } else {
+        showAlert('История изменений в разработке', 'info');
+    }
+}
+
+function insertTemplate(type) {
+    const textarea = document.getElementById('ascend_comment_field');
+    if (!textarea) return;
+
+    let template = '';
+
+    switch (type) {
+        case 'positive':
+            template = `Отличный игрок с высоким потенциалом!\n\n• Сильные стороны: Превосходная реакция, хорошее понимание механик игры\n• Тактическое мышление: Умеет адаптироваться к ситуации\n• Рекомендации: Продолжать в том же духе, работать над командной игрой\n\nОбщая оценка: Высокая`;
+            break;
+        case 'neutral':
+            template = `Стабильный игрок со средними показателями.\n\n• Сильные стороны: Последовательность в игре, базовое понимание стратегии\n• Слабые стороны: Недостаточно быстрая реакция в критических ситуациях\n• Рекомендации: Больше практики в PvP, изучение продвинутых тактик\n\nОбщая оценка: Средняя`;
+            break;
+        case 'development':
+            template = `Игрок нуждается в развитии основных навыков.\n\n• Слабые стороны: Низкая скорость реакции, слабое понимание игровых механик\n• Потенциал: Есть задатки, но требуется много практики\n• Рекомендации: Тренировки в одиночном режиме, изучение гайдов, больше игрового времени\n\nОбщая оценка: Требует развития`;
+            break;
+    }
+
+    textarea.value = template;
+    updateCommentStats(template);
+    textarea.focus();
+}
+
+function clearComment() {
+    const textarea = document.getElementById('ascend_comment_field');
+    if (textarea) {
+        textarea.value = '';
+        updateCommentStats('');
+        textarea.focus();
+    }
+}
+
+function resetASCENDEditor() {
+    if (confirm('Сбросить все данные к значениям по умолчанию?')) {
+        // Reset all scores to 25
+        ['pvp_score', 'clutching_score', 'block_placement_score', 'gamesense_score'].forEach(scoreId => {
+            const scoreEl = document.getElementById(scoreId);
+            const displayEl = document.getElementById(scoreId + '_display');
+            if (scoreEl && displayEl) {
+                scoreEl.value = 25;
+                displayEl.textContent = '25';
+                updateScoreColor(displayEl, 25);
+            }
+        });
+
+        // Reset all tiers to D
+        ['pvp_tier', 'clutching_tier', 'block_placement_tier', 'gamesense_tier'].forEach(tierName => {
+            const tierEl = document.querySelector(`[name="${tierName}"]`);
+            if (tierEl) {
+                tierEl.value = 'D';
+                tierEl.style.border = '';
+                tierEl.title = '';
+            }
+        });
+
+        // Reset overall tier
+        const overallSelect = document.getElementById('overall_tier_select');
+        if (overallSelect) {
+            overallSelect.value = 'D';
+            updateTierPreview('D');
+        }
+
+        // Reset evaluator
+        const evaluatorInput = document.getElementById('evaluator_name');
+        if (evaluatorInput) {
+            evaluatorInput.value = 'Elite Squad';
+        }
+
+        // Clear comment
+        clearComment();
+
+        showAlert('Данные сброшены к значениям по умолчанию', 'success');
+    }
+}
+
+function confirmResetASCEND() {
+    if (confirm('ВНИМАНИЕ! Это полностью удалит все ASCEND данные игрока.\n\nПродолжить?')) {
+        fetch(`/api/ascend/reset/{{ player.id }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('ASCEND данные полностью сброшены!', 'success');
+                loadCurrentData();
+                // Trigger card update
+                window.dispatchEvent(new CustomEvent('ascend-updated'));
+            } else {
+                showAlert('Ошибка при сбросе: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error resetting ASCEND data:', error);
+            showAlert('Произошла ошибка при сбросе данных', 'error');
+        });
+    }
+}
+
+function showAlert(message, type = 'info') {
+    // Create and show alert
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    document.body.appendChild(alertDiv);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+function loadCurrentData() {
+    const playerId = {{ player.id }};
+    fetch(`/api/player/${playerId}/ascend-data`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.ascend) {
+                loadASCENDEditorData(data.ascend);
+            } else {
+                console.error('Failed to load ASCEND data or data is missing:', data);
+                showAlert('Не удалось загрузить данные ASCEND.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading current ASCEND data:', error);
+            showAlert('Ошибка при загрузке данных ASCEND.', 'error');
+        });
+}
+
+function loadASCENDEditorData(ascendData) {
+    console.log('🎯 Loading ASCEND v3.0 editor data:', ascendData);
+
+    // Populate tier selectors
+    const tierSelectors = {
+        'pvp_tier': ascendData.pvp_tier || 'D',
+        'clutching_tier': ascendData.clutching_tier || 'D',
+        'block_placement_tier': ascendData.block_placement_tier || 'D',
+        'gamesense_tier': ascendData.gamesense_tier || 'D',
+        'overall_tier': ascendData.overall_tier || 'D'
+    };
+
+    Object.entries(tierSelectors).forEach(([name, value]) => {
+        const selector = document.querySelector(`[name="${name}"]`);
+        if (selector) {
+            selector.value = value;
+            selector.style.border = '';
+            selector.title = '';
+        }
+    });
+
+    // Populate score sliders and displays with enhanced updates
+    const scores = {
+        'pvp_score': ascendData.pvp_score || 25,
+        'clutching_score': ascendData.clutching_score || 25,
+        'block_placement_score': ascendData.block_placement_score || 25,
+        'gamesense_score': ascendData.gamesense_score || 25
+    };
+
+    Object.entries(scores).forEach(([scoreId, value]) => {
+        const slider = document.getElementById(scoreId);
+        const display = document.getElementById(scoreId + '_display');
+
+        if (slider && display) {
+            slider.value = value;
+            display.textContent = value;
+            updateScoreColor(display, value);
+        }
+    });
+
+    // Update tier preview
+    updateTierPreview(ascendData.overall_tier || 'D');
+
+    // Populate text fields
+    const evaluatorInput = document.getElementById('evaluator_name');
+    if (evaluatorInput) {
+        evaluatorInput.value = ascendData.evaluator_name || 'Elite Squad';
+    }
+
+    const commentField = document.getElementById('ascend_comment_field');
+    if (commentField) {
+        commentField.value = ascendData.comment || '';
+        updateCommentStats(ascendData.comment || '');
+    }
+
+    console.log('✅ ASCEND v3.0 editor data loaded successfully');
+}
+
+function saveASCENDDataV3() {
+    const form = document.getElementById('ascendEditForm');
+    const formData = new FormData(form);
+
+    const data = {
+        player_id: {{ player.id }},
+        pvp_tier: formData.get('pvp_tier'),
+        clutching_tier: formData.get('clutching_tier'),
+        block_placement_tier: formData.get('block_placement_tier'),
+        gamesense_tier: formData.get('gamesense_tier'),
+        overall_tier: formData.get('overall_tier'),
+        pvp_score: parseInt(formData.get('pvp_score')) || 25,
+        clutching_score: parseInt(formData.get('clutching_score')) || 25,
+        block_placement_score: parseInt(formData.get('block_placement_score')) || 25,
+        gamesense_score: parseInt(formData.get('gamesense_score')) || 25,
+        evaluator_name: formData.get('evaluator_name') || 'Elite Squad',
+        comment: formData.get('comment') || ''
+    };
+
+    fetch('/api/ascend/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            showAlert('ASCEND данные успешно сохранены!', 'success');
+            loadCurrentData(); // Reload data to reflect changes
+            // Trigger event to update ASCEND card if necessary
+            window.dispatchEvent(new CustomEvent('ascend-updated'));
+        } else {
+            showAlert('Ошибка сохранения: ' + result.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error saving ASCEND data:', error);
+        showAlert('Произошла ошибка при сохранении данных', 'error');
+    });
+}
+
+function importASCENDData() {
+    const format = document.getElementById('importFormat').value;
+    const dataString = document.getElementById('importData').value;
+    const comment = document.getElementById('importComment').value;
+    const evaluator = document.getElementById('importEvaluator').value;
+
+    let parsedData = {};
+
+    try {
+        if (format === 'json') {
+            parsedData = JSON.parse(dataString);
+        } else if (format === 'csv') {
+            const lines = dataString.split('\n');
+            lines.forEach(line => {
+                const [skill, scoreStr] = line.split(':');
+                if (skill && scoreStr) {
+                    const skillName = skill.trim().toLowerCase().replace(/\s+/g, '_');
+                    const score = parseInt(scoreStr.trim());
+                    if (['pvp', 'clutching', 'block_placement', 'gamesense'].includes(skillName) && !isNaN(score)) {
+                        parsedData[`${skillName}_score`] = Math.max(0, Math.min(100, score));
+                        // Optionally set tier based on score here
+                        if (score >= 80) parsedData[`${skillName}_tier`] = 'A';
+                        else if (score >= 60) parsedData[`${skillName}_tier`] = 'B';
+                        else if (score >= 40) parsedData[`${skillName}_tier`] = 'C';
+                        else parsedData[`${skillName}_tier`] = 'D';
+                    }
+                }
+            });
+        } else {
+            throw new Error("Неподдерживаемый формат");
+        }
+    } catch (error) {
+        console.error("Ошибка парсинга данных:", error);
+        showAlert("Ошибка парсинга данных. Проверьте формат.", "error");
+        return;
+    }
+
+    // Check if we have scores to import
+    const skillScores = Object.entries(parsedData).filter(([key, value]) => key.endsWith('_score'));
+    if (skillScores.length === 0) {
+        showAlert("Нет данных для импорта. Убедитесь, что вы ввели корректные значения.", "warning");
+        return;
+    }
+
+    // Update editor fields
+    skillScores.forEach(([key, value]) => {
+        const scoreId = key;
+        const slider = document.getElementById(scoreId);
+        const display = document.getElementById(scoreId + '_display');
+        const skillName = key.replace('_score', '');
+        const tierSelect = document.querySelector(`[name="${skillName}_tier"]`);
+
+        if (slider && display) {
+            slider.value = value;
+            display.textContent = value;
+            updateScoreColor(display, value);
+            updateTierSuggestion(skillName, value); // Suggest tier
+        } else if (tierSelect && parsedData[`${skillName}_tier`]) {
+            tierSelect.value = parsedData[`${skillName}_tier`];
+            tierSelect.style.border = ''; // Clear any previous highlights
+            tierSelect.title = '';
+        }
+    });
+
+    // Update comment and evaluator
+    if (comment) document.getElementById('ascend_comment_field').value = comment;
+    if (evaluator) document.getElementById('evaluator_name').value = evaluator;
+
+    updateOverallTierSuggestion(); // Recalculate based on imported tiers
+    updateCommentStats(document.getElementById('ascend_comment_field').value);
+
+    // Close the modal
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('importDataModal')).hide();
+    showAlert("Данные успешно импортированы. Не забудьте сохранить!", "success");
+}
+
+
+function showImportModal() {
+    const importModal = document.getElementById('importDataModal');
+    if (importModal) {
+        bootstrap.Modal.getOrCreateInstance(importModal).show();
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('ascendEditForm')) {
+        initASCENDEditor();
+    }
+});
+{% endif %}
+
+// Load player gradients on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadPlayerGradients({{ player.id }});
+});
+</script>
+<style>
+/* Enhanced ASCEND Editor Styles */
+.ascend-editor-v3 .card {
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.1);
+}
+
+.ascend-editor-v3 .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.ascend-editor-v3 .editor-tools .btn {
+    background-color: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.ascend-editor-v3 .editor-tools .btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+}
+
+.ascend-editor-v3 .editor-section {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.ascend-editor-v3 .editor-section:hover {
+    border-color: rgba(255, 193, 7, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.ascend-editor-v3 .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.ascend-editor-v3 .section-header h5 {
+    font-weight: 700;
+}
+
+.ascend-editor-v3 .skill-editor-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.2rem;
+    transition: all 0.3s ease;
+    height: 100%; /* Ensure cards take full height in rows */
+}
+
+.ascend-editor-v3 .skill-editor-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.ascend-editor-v3 .skill-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ascend-editor-v3 .skill-icon {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.ascend-editor-v3 .skill-info {
+    flex-grow: 1;
+}
+
+.ascend-editor-v3 .skill-name {
+    margin: 0;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+}
+
+.ascend-editor-v3 .skill-desc {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+}
+
+.ascend-editor-v3 .skill-controls {
+    margin-top: 0.5rem;
+}
+
+.ascend-editor-v3 .tier-selector .form-label,
+.ascend-editor-v3 .score-slider .form-label {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.ascend-editor-v3 .tier-selector .form-select,
+.ascend-editor-v3 .score-slider .form-range {
+    border-radius: 8px;
+}
+
+.ascend-editor-v3 .score-display {
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+.ascend-editor-v3 .score-markers {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 5px;
+}
+
+.ascend-editor-v3 .form-range {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ascend-editor-v3 .form-range:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.3);
+}
+
+/* Custom thumb for range slider */
+.ascend-editor-v3 .form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -5px; /* Adjust to center thumb */
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
+    transition: all 0.2s ease-in-out;
+}
+
+.ascend-editor-v3 .form-range::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.6);
+}
+
+.ascend-editor-v3 .form-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.4);
+}
+
+.ascend-editor-v3 .form-range::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.6);
+}
+
+/* Overall Tier Preview */
+.ascend-editor-v3 .overall-tier-selector {
+    position: relative;
+}
+
+.ascend-editor-v3 .tier-preview {
+    margin-top: 0.5rem;
+    text-align: center;
+    padding: 0.6rem 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.ascend-editor-v3 .tier-rank-preview {
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* Tier-specific preview styles */
+.tier-d { background-color: rgba(231, 76, 60, 0.8); color: #fff; } /* Red */
+.tier-c { background-color: rgba(243, 156, 18, 0.8); color: #fff; } /* Orange */
+.tier-c-plus { background-color: rgba(241, 196, 15, 0.8); color: #000; } /* Yellow-Orange */
+.tier-b { background-color: rgba(52, 152, 219, 0.8); color: #fff; } /* Blue */
+.tier-b-plus { background-color: rgba(41, 128, 185, 0.8); color: #fff; } /* Darker Blue */
+.tier-a { background-color: rgba(46, 204, 113, 0.8); color: #fff; } /* Green */
+.tier-a-plus { background-color: rgba(39, 174, 96, 0.8); color: #fff; } /* Darker Green */
+.tier-s { background-color: rgba(155, 89, 182, 0.8); color: #fff; } /* Purple */
+.tier-s-plus { background-color: rgba(142, 68, 173, 0.8); color: #fff; } /* Darker Purple */
+
+/* Evaluator Input */
+.ascend-editor-v3 .evaluator-section .input-group-text {
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+    color: #000;
+    border-color: #ffc107;
+    border-radius: 8px 0 0 8px;
+}
+
+/* Comment Editor */
+.ascend-editor-v3 .comment-editor {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ascend-editor-v3 .comment-textarea {
+    background: transparent;
+    border: none;
+    color: #fff;
+    resize: vertical;
+    font-family: inherit;
+    width: 100%;
+    outline: none;
+}
+
+.ascend-editor-v3 .comment-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.ascend-editor-v3 .comment-tools {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ascend-editor-v3 .comment-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Action Buttons */
+.ascend-editor-v3 .editor-actions .primary-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.ascend-editor-v3 .editor-actions .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+.ascend-editor-v3 .editor-actions .btn-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border-color: #28a745;
+}
+.ascend-editor-v3 .editor-actions .btn-success:hover {
+    background: linear-gradient(45deg, #218838, #1a9e77);
+    border-color: #1e7e34;
+}
+
+.ascend-editor-v3 .editor-actions .btn-warning {
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+    border-color: #ffc107;
+}
+.ascend-editor-v3 .editor-actions .btn-warning:hover {
+    background: linear-gradient(45deg, #d39e00, #b88a00);
+    border-color: #d39e00;
+}
+
+.ascend-editor-v3 .editor-actions .btn-info {
+    background: linear-gradient(45deg, #17a2b8, #117a8b);
+    border-color: #17a2b8;
+}
+.ascend-editor-v3 .editor-actions .btn-info:hover {
+    background: linear-gradient(45deg, #117a8b, #0d5f6a);
+    border-color: #117a8b;
+}
+
+.ascend-editor-v3 .editor-actions .btn-outline-secondary {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
+}
+.ascend-editor-v3 .editor-actions .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+    color: #fff;
+}
+
+.ascend-editor-v3 .editor-actions .btn-outline-danger {
+    border-color: rgba(220, 53, 69, 0.8);
+    color: rgba(220, 53, 69, 0.8);
+}
+.ascend-editor-v3 .editor-actions .btn-outline-danger:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.9);
+    color: rgba(220, 53, 69, 0.9);
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .ascend-editor-v3 .col-xl-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 768px) {
+    .ascend-editor-v3 .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .ascend-editor-v3 .col-md-8,
+    .ascend-editor-v3 .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        text-align: center;
+    }
+    .ascend-editor-v3 .primary-actions,
+    .ascend-editor-v3 .secondary-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .ascend-editor-v3 .btn-lg {
+        width: 80%;
+    }
+    .ascend-editor-v3 .editor-tools {
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .ascend-editor-v3 .card-body {
+        padding: 1rem;
+    }
+    .ascend-editor-v3 .editor-section {
+        padding: 1rem;
+    }
+    .ascend-editor-v3 .skill-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    .ascend-editor-v3 .skill-info {
+        width: 100%;
+    }
+    .ascend-editor-v3 .skill-name {
+        font-size: 1rem;
+    }
+    .ascend-editor-v3 .score-slider {
+        margin-top: 0.5rem;
+    }
+    .ascend-editor-v3 .comment-tools {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+{% endblock %}

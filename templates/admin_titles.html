@@ -1,0 +1,308 @@
+
+{% extends "base.html" %}
+
+{% block title %}Управление титулами - ᴇʟɪᴛᴇ ꜱQᴜᴀᴅ Bedwars{% endblock %}
+
+{% block extra_head %}
+<style>
+.title-card {
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    border: 1px solid #444;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+
+.title-card:hover {
+    transform: translateY(-5px);
+}
+
+.title-preview {
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    margin: 10px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.title-preview::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, transparent 30%, rgba(255,255,255,0.1) 70%);
+    animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.assign-section {
+    background: rgba(33, 37, 41, 0.8);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.player-with-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin: 10px 0;
+    background: rgba(52, 58, 64, 0.6);
+    border-radius: 10px;
+    border-left: 4px solid #ffd700;
+}
+
+.color-preview {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    display: inline-block;
+    margin: 0 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title">
+            <i class="fas fa-crown text-warning me-2 glow-effect"></i>Управление титулами
+        </h2>
+        <div class="btn-group">
+            <button class="btn btn-success" data-bs-target="#createTitleModal" data-bs-toggle="modal">
+                <i class="fas fa-plus me-2"></i>Создать титул
+            </button>
+            <button class="btn btn-warning" onclick="removeAllTitles()">
+                <i class="fas fa-crown me-2"></i>Снять все титулы
+            </button>
+            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+    </div>
+
+    <!-- Assign Title Section -->
+    <div class="assign-section">
+        <h4 class="text-warning mb-3">
+            <i class="fas fa-user-tag me-2"></i>Присвоить титул игроку
+        </h4>
+        <form method="POST" action="{{ url_for('assign_title') }}">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Игрок</label>
+                    <select name="player_id" class="form-select" required>
+                        <option value="">Выберите игрока</option>
+                        {% for player in players %}
+                        <option value="{{ player.id }}">
+                            {{ player.nickname }} (Уровень {{ player.level }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Титул</label>
+                    <select name="title_id" class="form-select" required>
+                        <option value="">Выберите титул</option>
+                        {% for title in titles %}
+                        <option value="{{ title.id }}">{{ title.display_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-warning d-block">
+                        <i class="fas fa-award me-2"></i>Присвоить
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Current Players with Titles -->
+    <div class="mb-4">
+        <h4 class="text-info mb-3">
+            <i class="fas fa-users me-2"></i>Игроки с титулами
+        </h4>
+        {% for player in players %}
+        {% if player.active_custom_title %}
+        <div class="player-with-title">
+            <div>
+                <strong>{{ player.nickname }}</strong>
+                <span class="title-preview" 
+                      style="background: linear-gradient(45deg, {{ player.active_custom_title.color }}, {{ player.active_custom_title.glow_color }}); 
+                             color: #fff; text-shadow: 0 0 10px {{ player.active_custom_title.glow_color }};">
+                    {{ player.active_custom_title.display_name }}
+                </span>
+            </div>
+            <button class="btn btn-sm btn-outline-danger" onclick="removeTitle({{ player.id }})">
+                <i class="fas fa-times"></i> Убрать
+            </button>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Available Titles -->
+    <div class="row">
+        <div class="col-12">
+            <h4 class="text-success mb-3">
+                <i class="fas fa-list me-2"></i>Доступные титулы
+            </h4>
+        </div>
+        {% for title in titles %}
+        <div class="col-lg-6 col-xl-4">
+            <div class="title-card">
+                <div class="text-center mb-3">
+                    <h5>{{ title.name|title }}</h5>
+                    <div class="title-preview" 
+                         style="background: linear-gradient(45deg, {{ title.color }}, {{ title.glow_color }}); 
+                                color: #fff; text-shadow: 0 0 10px {{ title.glow_color }};">
+                        {{ title.display_name }}
+                    </div>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col-6">
+                        <small class="text-muted">Основной цвет</small>
+                        <div class="color-preview" style="background: {{ title.color }};"></div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Цвет свечения</small>
+                        <div class="color-preview" style="background: {{ title.glow_color }};"></div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Создан: {{ title.created_at.strftime('%d.%m.%Y') }}
+                    </small>
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editTitle({{ title.id }})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteTitle({{ title.id }})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Create Title Modal -->
+<div class="modal fade" id="createTitleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <form method="POST" action="{{ url_for('create_title') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus me-2"></i>Создать новый титул
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Системное название</label>
+                        <input type="text" name="name" class="form-control" required 
+                               placeholder="legend, champion, master...">
+                        <small class="text-muted">Используется в системе (только латиница, без пробелов)</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Отображаемое название</label>
+                        <input type="text" name="display_name" class="form-control" required 
+                               placeholder="🏆 Легенда, 👑 Чемпион...">
+                        <small class="text-muted">Как будет отображаться игрокам</small>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label">Основной цвет</label>
+                            <input type="color" name="color" class="form-control form-control-color" value="#ffd700">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Цвет свечения</label>
+                            <input type="color" name="glow_color" class="form-control form-control-color" value="#ffaa00">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Предварительный просмотр</label>
+                        <div id="titlePreview" class="title-preview" style="background: linear-gradient(45deg, #ffd700, #ffaa00); color: #fff;">
+                            Пример титула
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-success">Создать титул</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function removeTitle(playerId) {
+    if (confirm('Убрать титул у этого игрока?')) {
+        fetch(`/admin/remove_title/${playerId}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        }).then(() => location.reload());
+    }
+}
+
+function editTitle(titleId) {
+    alert('Редактирование титула ID: ' + titleId + ' (функция в разработке)');
+}
+
+function deleteTitle(titleId) {
+    if (confirm('Удалить этот титул? Он будет убран у всех игроков.')) {
+        alert('Функция удаления в разработке');
+    }
+}
+
+function removeAllTitles() {
+    if (confirm('Снять все кастомные титулы у всех игроков?')) {
+        fetch('/admin/remove_all_titles', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        }).then(() => location.reload());
+    }
+}
+
+// Preview update
+document.addEventListener('DOMContentLoaded', function() {
+    const displayNameInput = document.querySelector('input[name="display_name"]');
+    const colorInput = document.querySelector('input[name="color"]');
+    const glowColorInput = document.querySelector('input[name="glow_color"]');
+    const preview = document.getElementById('titlePreview');
+    
+    function updatePreview() {
+        const displayName = displayNameInput.value || 'Пример титула';
+        const color = colorInput.value;
+        const glowColor = glowColorInput.value;
+        
+        preview.textContent = displayName;
+        preview.style.background = `linear-gradient(45deg, ${color}, ${glowColor})`;
+        preview.style.textShadow = `0 0 10px ${glowColor}`;
+    }
+    
+    displayNameInput.addEventListener('input', updatePreview);
+    colorInput.addEventListener('change', updatePreview);
+    glowColorInput.addEventListener('change', updatePreview);
+});
+</script>
+{% endblock %}

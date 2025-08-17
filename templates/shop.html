@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}Магазин - Minecraft Bedwars Leaderboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="hero-section p-4 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-store text-warning me-3 glow-effect"></i>
+                    <span class="gradient-text">Магазин</span>
+                </h1>
+                <p class="lead text-light">Покупайте титулы, бустеры, темы и кастомизацию</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                {% if current_player %}
+                <div class="d-flex flex-column gap-2">
+                    <div class="coins-display">
+                        <i class="fas fa-coins me-2"></i>{{ current_player.coins }} койнов
+                    </div>
+                    <div class="reputation-display">
+                        <i class="fas fa-star me-2"></i>{{ current_player.reputation }} репутации
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if not current_player %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Необходимо <a href="{{ url_for('player_login') }}" class="alert-link">войти в систему</a> для доступа к магазину!
+    </div>
+    {% else %}
+
+    <!-- Categories -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-warning active" data-category="all">
+                    <i class="fas fa-th me-1"></i>Все
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="title">
+                    <i class="fas fa-crown me-1"></i>Титулы
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="booster">
+                    <i class="fas fa-rocket me-1"></i>Бустеры
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="theme">
+                    <i class="fas fa-palette me-1"></i>Темы
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="gradient">
+                    <i class="fas fa-brush me-1"></i>Градиенты
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="custom_role">
+                    <i class="fas fa-user-tag me-1"></i>Роли
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Items -->
+    <div class="row" id="shop-items">
+        {% for category, items in shop_data.items() %}
+            {% for item_data in items %}
+                {% set item = item_data.item %}
+                {% set can_buy = item_data.can_purchase %}
+                {% set reason = item_data.purchase_error %}
+                {% set is_purchased = item_data.already_purchased %}
+        <div class="col-lg-4 col-md-6 mb-4 shop-item-container" data-category="{{ item.category }}" data-rarity="{{ item.rarity }}">
+
+            <div class="shop-item-card shop-item-rarity-{{ item.rarity }} {% if is_purchased %}purchased{% elif not can_buy %}locked{% endif %}">
+                <!-- Rarity indicator -->
+                <div class="position-absolute top-0 end-0 p-2">
+                    <span class="badge rarity-{{ item.rarity }}">
+                        {% if item.rarity == 'common' %}Обычный
+                        {% elif item.rarity == 'uncommon' %}Необычный
+                        {% elif item.rarity == 'rare' %}Редкий
+                        {% elif item.rarity == 'epic' %}Эпический
+                        {% elif item.rarity == 'legendary' %}Легендарный
+                        {% elif item.rarity == 'mythic' %}Мифический
+                        {% else %}{{ item.rarity.title() }}
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="text-center mb-3">
+                    <div class="shop-item-icon">
+                        <i class="{{ item.icon }} rarity-{{ item.rarity }}"></i>
+                    </div>
+                    <h5 class="mb-2">{{ item.display_name }}</h5>
+                    <p class="text-muted mb-0">{{ item.description }}</p>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex flex-wrap gap-1">
+                        {% if item.price_coins > 0 %}
+                        <span class="badge bg-warning text-dark">
+                            <i class="fas fa-coins me-1"></i>{{ "{:,}".format(item.price_coins) }}
+                        </span>
+                        {% endif %}
+                        {% if item.price_reputation > 0 %}
+                        <span class="badge bg-info">
+                            <i class="fas fa-star me-1"></i>{{ item.price_reputation }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if item.unlock_level > 1 %}
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-level-up-alt me-1"></i>{{ item.unlock_level }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    {% if is_purchased %}
+                    <button class="btn btn-success w-100" disabled>
+                        <i class="fas fa-check me-2"></i>Куплено
+                    </button>
+                    {% elif can_buy and current_player %}
+                    <button class="btn btn-primary w-100 purchase-btn rarity-{{ item.rarity }}" 
+                                    data-item-id="{{ item.id }}" 
+                                    data-item-name="{{ item.display_name }}"
+                                    data-cost-coins="{{ item.price_coins }}" 
+                                    data-cost-reputation="{{ item.price_reputation }}"
+                                    data-rarity="{{ item.rarity }}"
+                                    onclick="purchaseItem({{ item.id }})"
+                                    {% if not can_buy %}disabled{% endif %}>
+                                <i class="fas fa-shopping-cart me-2"></i>
+                                <span class="btn-text">
+                                    {% if can_buy %}
+                                        Купить за 
+                                        {% if item.price_coins > 0 %}{{ item.price_coins }} <i class="fas fa-coins"></i>{% endif %}
+                                        {% if item.price_reputation > 0 %}{{ item.price_reputation }} <i class="fas fa-heart"></i>{% endif %}
+                                    {% else %}
+                                        {{ reason }}
+                                    {% endif %}
+                                </span>
+                            </button>
+                    {% else %}
+                    <button class="btn btn-secondary w-100" disabled title="{{ reason }}">
+                        <i class="fas fa-lock me-2"></i>{{ reason.split()[:2] | join(' ') }}
+                    </button>
+                    {% endif %}
+                </div>
+
+                <!-- Limited time indicator -->
+                {% if item.is_limited_time %}
+                <div class="mt-3 text-center">
+                    <small class="text-warning">
+                        <i class="fas fa-clock me-1"></i>Ограниченное предложение
+                    </small>
+                </div>
+                {% endif %}
+
+                <!-- Category indicator -->
+                <div class="mt-2 text-center">
+                    <small class="text-muted">
+                        {% if item.category == 'title' %}
+                            <i class="fas fa-crown me-1"></i>Титул
+                        {% elif item.category == 'booster' %}
+                            <i class="fas fa-rocket me-1"></i>Бустер
+                        {% elif item.category == 'theme' %}
+                            <i class="fas fa-palette me-1"></i>Тема
+                        {% elif item.category == 'gradient' %}
+                            <i class="fas fa-brush me-1"></i>Градиент
+                        {% elif item.category == 'avatar' %}
+                            <i class="fas fa-user-circle me-1"></i>Аватар
+                        {% elif item.category == 'cursor' %}
+                            <i class="fas fa-mouse-pointer me-1"></i>Курсор
+                        {% elif item.category == 'custom_role' %}
+                            <i class="fas fa-user-tag me-1"></i>Кастомная роль
+                        {% else %}
+                            {{ item.category.title() }}
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+
+    {% if not shop_items %}
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-bag fa-5x text-muted mb-3"></i>
+        <h3 class="text-muted">Магазин пуст</h3>
+        <p class="text-muted">Товары скоро появятся!</p>
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Category filtering
+    const categoryButtons = document.querySelectorAll('[data-category]');
+    const shopItems = document.querySelectorAll('.shop-item-container');
+
+    categoryButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const category = this.dataset.category;
+
+            // Update active button
+            categoryButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            // Filter items
+            shopItems.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = '';
+                    item.style.animation = 'fadeInUp 0.3s ease';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+
+async function purchaseItem(itemId) {
+    const button = document.querySelector(`[data-item-id="${itemId}"]`);
+    const itemName = button.dataset.itemName;
+    const itemRarity = button.dataset.rarity;
+    const costCoins = parseInt(button.dataset.costCoins);
+    const costReputation = parseInt(button.dataset.costReputation);
+
+    let confirmationMessage = `Подтвердите покупку:\n\n${itemName}\nЦена: `;
+    if (costCoins > 0) {
+        confirmationMessage += `${costCoins} койнов `;
+    }
+    if (costReputation > 0) {
+        confirmationMessage += `${costReputation} репутации`;
+    }
+    confirmationMessage += '\n\nПродолжить?';
+
+    // Check if the player has enough currency
+    const currentPlayerCoins = parseInt("{{ current_player.coins if current_player else 0 }}");
+    const currentPlayerReputation = parseInt("{{ current_player.reputation if current_player else 0 }}");
+
+    let hasEnoughCurrency = true;
+    if (costCoins > 0 && currentPlayerCoins < costCoins) {
+        hasEnoughCurrency = false;
+    }
+    if (costReputation > 0 && currentPlayerReputation < costReputation) {
+        hasEnoughCurrency = false;
+    }
+
+    if (!hasEnoughCurrency) {
+        alert(`Недостаточно средств для покупки ${itemName}!`);
+        return;
+    }
+
+    // Show confirmation
+    const confirmed = confirm(confirmationMessage);
+
+    if (confirmed) {
+        // Add loading state
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Покупка...';
+        
+        try {
+            const response = await fetch('/shop/purchase', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    item_id: itemId
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Update UI
+                button.innerHTML = '<i class="fas fa-check me-2"></i>Куплено';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-success');
+                
+                // Update currency displays if they exist
+                if (result.new_coins !== undefined) {
+                    const coinsDisplay = document.querySelector('.coins-display');
+                    if (coinsDisplay) {
+                        coinsDisplay.innerHTML = `<i class="fas fa-coins me-2"></i>${result.new_coins} койнов`;
+                    }
+                }
+                
+                if (result.new_reputation !== undefined) {
+                    const repDisplay = document.querySelector('.reputation-display');
+                    if (repDisplay) {
+                        repDisplay.innerHTML = `<i class="fas fa-star me-2"></i>${result.new_reputation} репутации`;
+                    }
+                }
+
+                // Show success message
+                alert(result.message || 'Покупка совершена успешно!');
+                
+                // Refresh page after short delay to show updated data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                // Show error
+                alert(result.error || 'Ошибка при покупке');
+                // Restore button
+                button.disabled = false;
+                button.innerHTML = `<i class="fas fa-shopping-cart me-2"></i>Купить`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Произошла ошибка при покупке');
+            // Restore button
+            button.disabled = false;
+            button.innerHTML = `<i class="fas fa-shopping-cart me-2"></i>Купить`;
+        }
+    }
+}
+</script>
+{% endblock %}

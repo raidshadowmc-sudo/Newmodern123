@@ -1,0 +1,65 @@
+
+{% extends "base.html" %}
+
+{% block title %}Импорт базы данных{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0" style="background: var(--bg-secondary);">
+                <div class="card-header bg-transparent border-0">
+                    <h4 class="mb-0">
+                        <i class="fas fa-upload me-2 text-warning"></i>
+                        Импорт базы данных
+                    </h4>
+                    <p class="text-muted mb-0">Восстановление данных из резервной копии</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Внимание!</strong> Импорт может перезаписать существующие данные. 
+                        Рекомендуется создать резервную копию перед импортом.
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Файл резервной копии (JSON)</label>
+                            <input type="file" class="form-control" name="database_file" 
+                                   accept=".json" required>
+                            <div class="form-text">
+                                Выберите JSON файл, созданный функцией экспорта базы данных
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" 
+                                       name="clear_existing" id="clear_existing">
+                                <label class="form-check-label text-danger" for="clear_existing">
+                                    <i class="fas fa-trash me-1"></i>
+                                    Очистить существующие данные перед импортом
+                                </label>
+                                <div class="form-text">
+                                    Если отмечено, все текущие данные будут удалены!
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-upload me-2"></i>
+                                Импортировать базу данных
+                            </button>
+                            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Назад к админ-панели
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

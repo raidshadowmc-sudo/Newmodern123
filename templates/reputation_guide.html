@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'reputation_guide_title'|t }} - Bedwars Leaderboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center">
+            <div class="hero-section animate-fade-in">
+                <div class="display-4 mb-3">
+                    <i class="fas fa-star text-warning me-3 animate-pulse"></i>
+                    {{ 'reputation_guide_title'|t }}
+                </div>
+                <p class="lead text-light mb-4">
+                    {{ 'reputation'|t }} - это показатель вашего авторитета в сообществе. Высокая репутация открывает доступ к эксклюзивным функциям и возможностям.
+                </p>
+                <div class="hero-stats d-flex justify-content-center gap-4">
+                    <div class="stat-item">
+                        <div class="h4 text-warning mb-0">⭐</div>
+                        <small class="text-muted">Авторитет</small>
+                    </div>
+                    <div class="stat-item">
+                        <div class="h4 text-warning mb-0">6+</div>
+                        <small class="text-muted">Способов</small>
+                    </div>
+                    <div class="stat-item">
+                        <div class="h4 text-success mb-0">VIP</div>
+                        <small class="text-muted">Привилегии</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Methods Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.1s;">
+                <div class="method-icon bg-warning">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Высокие достижения</h5>
+                    <p class="method-description">
+                        Особо сложные и редкие достижения дают большое количество репутации.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-warning">10-500 <i class="fas fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.2s;">
+                <div class="method-icon bg-success">
+                    <i class="fas fa-flag-checkered"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Победы в турнирах</h5>
+                    <p class="method-description">
+                        Высокие места в турнирах значительно увеличивают вашу репутацию.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-success">50-1000 <i class="fas fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.3s;">
+                <div class="method-icon bg-primary">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Лидерство в кланах</h5>
+                    <p class="method-description">
+                        Лидеры успешных кланов получают бонусы к репутации за достижения своего клана.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-primary">25-200 <i class="fas fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.4s;">
+                <div class="method-icon bg-info">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Долгосрочная активность</h5>
+                    <p class="method-description">
+                        Игроки с длительной историей активности получают бонусы к репутации.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-info">5-50 <i class="fas fa-star"></i> / месяц</span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in" style="animation-delay: 0.5s;">
+                <div class="method-icon bg-purple">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Помощь сообществу</h5>
+                    <p class="method-description">
+                        Помогайте новичкам, участвуйте в жизни сообщества, делитесь знаниями.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-purple">1-100 <i class="fas fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6">
+            <div class="method-card animate-slide-in special-method" style="animation-delay: 0.6s;">
+                <div class="method-icon bg-gradient-danger">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="method-content">
+                    <h5 class="method-title">Особые заслуги</h5>
+                    <p class="method-description">
+                        Администраторы могут наградить репутацией за особые заслуги перед сообществом.
+                    </p>
+                    <div class="method-reward">
+                        <span class="badge bg-gradient-danger">100-2000 <i class="fas fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="method-hover-effect"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reputation Benefits -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="benefits-section animate-fade-in" style="animation-delay: 0.8s;">
+                <div class="benefits-header text-center mb-4">
+                    <h3 class="text-warning">
+                        <i class="fas fa-unlock me-2"></i>
+                        Что открывает репутация
+                    </h3>
+                </div>
+                <div class="row g-3">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="benefit-card">
+                            <div class="benefit-level bg-info">1000+</div>
+                            <div class="benefit-icon">🎨</div>
+                            <h6>Эксклюзивные темы</h6>
+                            <p>Доступ к премиум темам оформления</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="benefit-card">
+                            <div class="benefit-level bg-success">2500+</div>
+                            <div class="benefit-icon">👑</div>
+                            <h6>Особый статус</h6>
+                            <p>Уважаемый член сообщества</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="benefit-card">
+                            <div class="benefit-level bg-purple">5000+</div>
+                            <div class="benefit-icon">💎</div>
+                            <h6>VIP привилегии</h6>
+                            <p>Доступ к эксклюзивным функциям</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="tips-section animate-fade-in" style="animation-delay: 1s;">
+                <div class="tips-header text-center mb-4">
+                    <h3 class="text-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Важные советы
+                    </h3>
+                </div>
+                <div class="alert alert-info border-info">
+                    <div class="row g-3">
+                        <div class="col-md-4 text-center">
+                            <div class="tip-icon-large">⏳</div>
+                            <h6 class="text-info">Терпение</h6>
+                            <p class="mb-0 small">Репутация зарабатывается медленно, но дает ценные преимущества</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="tip-icon-large">🤝</div>
+                            <h6 class="text-info">Взаимодействие</h6>
+                            <p class="mb-0 small">Активно участвуйте в жизни сообщества</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="tip-icon-large">🎯</div>
+                            <h6 class="text-info">Качество</h6>
+                            <p class="mb-0 small">Лучше выполнить одно сложное достижение, чем много простых</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+            <div class="cta-section animate-bounce-in" style="animation-delay: 1.2s;">
+                <h4 class="text-light mb-3">Начните зарабатывать репутацию!</h4>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="{{ url_for('achievements') }}" class="btn btn-warning btn-lg">
+                        <i class="fas fa-medal me-2"></i>{{ 'achievements'|t }}
+                    </a>
+                    <a href="{{ url_for('tournaments') }}" class="btn btn-outline-success btn-lg">
+                        <i class="fas fa-flag-checkered me-2"></i>{{ 'tournaments'|t }}
+                    </a>
+                    <a href="{{ url_for('clans') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-shield-alt me-2"></i>{{ 'clans'|t }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hero-section {
+    padding: 2rem 0;
+    position: relative;
+}
+
+.hero-stats .stat-item {
+    text-align: center;
+}
+
+.method-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1rem;
+    padding: 2rem;
+    height: 100%;
+    position: relative;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.method-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.method-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffc107, #ff8c00);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.method-icon.bg-warning { background: linear-gradient(135deg, #ffc107, #ff8c00); }
+.method-icon.bg-success { background: linear-gradient(135deg, #198754, #157347); }
+.method-icon.bg-primary { background: linear-gradient(135deg, #0d6efd, #0056b3); }
+.method-icon.bg-info { background: linear-gradient(135deg, #0dcaf0, #0987a0); }
+.method-icon.bg-purple { background: linear-gradient(135deg, #8e44ad, #7f3c98); }
+.method-icon.bg-gradient-danger { background: linear-gradient(135deg, #dc3545, #b02a37, #e74c3c); }
+
+.method-title {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.method-description {
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.method-reward {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.method-hover-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.method-card:hover .method-hover-effect {
+    opacity: 1;
+}
+
+.special-method {
+    border: 2px solid #dc3545;
+    animation: special-glow-red 3s ease-in-out infinite alternate;
+}
+
+@keyframes special-glow-red {
+    0% { box-shadow: 0 0 20px rgba(220, 53, 69, 0.3); }
+    100% { box-shadow: 0 0 30px rgba(220, 53, 69, 0.6); }
+}
+
+.benefits-section, .tips-section {
+    background: rgba(255,255,255,0.05);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.benefit-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+    height: 100%;
+    position: relative;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+}
+
+.benefit-level {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.benefit-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.benefit-card h6 {
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+}
+
+.benefit-card p {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.tip-icon-large {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.cta-section {
+    background: linear-gradient(135deg, rgba(220,53,69,0.1), rgba(255,0,0,0.1));
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(220,53,69,0.3);
+}
+
+/* Animations */
+@keyframes animate-fade-in {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes animate-slide-in {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes animate-bounce-in {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes animate-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.animate-fade-in { animation: animate-fade-in 0.8s ease-out forwards; }
+.animate-slide-in { animation: animate-slide-in 0.8s ease-out forwards; }
+.animate-bounce-in { animation: animate-bounce-in 1s ease-out forwards; }
+.animate-pulse { animation: animate-pulse 2s infinite; }
+</style>
+{% endblock %}

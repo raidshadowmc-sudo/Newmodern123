@@ -1,0 +1,88 @@
+
+{% extends "base.html" %}
+
+{% block title %}Создать клан - Bedwars Leaderboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Создать новый клан
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="name" class="form-label">Название клана *</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       placeholder="Введите название клана" maxlength="100" required>
+                                <div class="form-text">От 3 до 100 символов</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="tag" class="form-label">Тег клана *</label>
+                                <input type="text" class="form-control" id="tag" name="tag" 
+                                       placeholder="TAG" maxlength="10" style="text-transform: uppercase;" required>
+                                <div class="form-text">От 2 до 10 символов</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Описание клана</label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="3" placeholder="Опишите ваш клан..."></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="clan_type" class="form-label">Тип клана</label>
+                                <select class="form-select" id="clan_type" name="clan_type">
+                                    <option value="open">Открытый - любой может вступить</option>
+                                    <option value="invite_only">По приглашениям - только по приглашению</option>
+                                    <option value="closed">Закрытый - новые участники не принимаются</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="max_members" class="form-label">Максимум участников</label>
+                                <input type="number" class="form-control" id="max_members" name="max_members" 
+                                       value="50" min="5" max="100">
+                                <div class="form-text">От 5 до 100 участников</div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Важная информация:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Стоимость создания клана: <strong>50,000 койнов</strong></li>
+                                <li>Требуется минимум <strong>100 уровень</strong></li>
+                                <li>Вы автоматически станете лидером клана</li>
+                                <li>Название и тег клана должны быть уникальными</li>
+                                <li>Лидер не может покинуть клан, только передать лидерство</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('clans') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>Создать клан
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('tag').addEventListener('input', function(e) {
+    e.target.value = e.target.value.toUpperCase();
+});
+</script>
+{% endblock %}

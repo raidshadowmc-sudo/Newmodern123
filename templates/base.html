@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="{{ current_language }}" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Elite Squad - {{ 'best_minecraft_bedwars_players'|t }}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <!-- Dynamic Theme Styles -->
+    <style>
+        :root {
+            {% if session.current_theme %}
+            --primary-color: {{ session.current_theme.primary_color }};
+            --secondary-color: {{ session.current_theme.secondary_color }};
+            --bg-primary: {{ session.current_theme.background_color }};
+            --bg-secondary: {{ session.current_theme.card_background }};
+            --text-color: {{ session.current_theme.text_color }};
+            --accent-color: {{ session.current_theme.accent_color }};
+            {% set primary_hex = session.current_theme.primary_color.lstrip('#') %}
+            --primary-color-rgb: {{ primary_hex[:2]|int(base=16) }}, {{ primary_hex[2:4]|int(base=16) }}, {{ primary_hex[4:]|int(base=16) }};
+            {% set accent_hex = session.current_theme.accent_color.lstrip('#') %}
+            --accent-color-rgb: {{ accent_hex[:2]|int(base=16) }}, {{ accent_hex[2:4]|int(base=16) }}, {{ accent_hex[4:]|int(base=16) }};
+            {% else %}
+            --primary-color: #ffc107;
+            --secondary-color: #17a2b8;
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-color: #ffffff;
+            --accent-color: #28a745;
+            --primary-color-rgb: 255, 193, 7;
+            --accent-color-rgb: 40, 167, 69;
+            {% endif %}
+
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+
+            --glow-color: var(--primary-color);
+            --glow-secondary: var(--accent-color);
+
+            /* Default player icon color */
+            --player-icon-color: #ffffff;
+        }
+
+        body {
+            background: var(--bg-primary) !important;
+            color: var(--text-color) !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: var(--bg-secondary) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar::before {
+            background: linear-gradient(90deg, transparent, rgba(var(--primary-color-rgb, 255, 193, 7), 0.1), transparent) !important;
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: bold;
+        }
+
+        .elite-squad-text {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color)) !important;
+            background-size: 300% 300% !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            filter: drop-shadow(0 0 10px rgba(var(--primary-color-rgb), 0.6)) !important;
+        }
+
+        /* Gradient text theming */
+        .gradient-text {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color)) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text-color) !important;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .card {
+            background: var(--bg-secondary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--bg-primary) !important;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+        }
+
+        .table-dark {
+            --bs-table-bg: var(--bg-secondary);
+            --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
+            --bs-table-hover-bg: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .alert {
+            background: var(--bg-secondary) !important;
+            border: 1px solid var(--primary-color) !important;
+            color: var(--text-color) !important;
+        }
+
+        .form-control {
+            background: var(--bg-secondary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: var(--text-color) !important;
+        }
+
+        .form-control:focus {
+            background: var(--bg-secondary) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--text-color) !important;
+            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+        }
+
+        .badge {
+            color: var(--bg-primary) !important;
+        }
+
+        .text-muted {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        .dropdown-menu {
+            background: var(--bg-secondary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .dropdown-item {
+            color: var(--text-color) !important;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: var(--primary-color) !important;
+        }
+
+        /* Chart container styling */
+        .chart-card {
+            background: var(--bg-secondary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .stat-box {
+            background: var(--bg-secondary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Statistics cards theming */
+        .stat-card {
+            background: var(--bg-secondary) !important;
+            border: 1px solid rgba(var(--primary-color-rgb), 0.3) !important;
+            border-radius: 15px;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.3) !important;
+        }
+
+        .stat-number {
+            color: var(--primary-color) !important;
+        }
+
+        /* Table headers theming */
+        .table-warning th {
+            background: rgba(var(--primary-color-rgb), 0.8) !important;
+            color: var(--bg-primary) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .leaderboard-table thead th {
+            background: var(--primary-color) !important;
+            color: var(--bg-primary) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .top-list-card {
+            background: var(--bg-secondary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .reputation-display {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .reputation-display:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 123, 255, 0.6);
+            border-color: rgba(0, 123, 255, 0.5);
+        }
+        
+        .karma-display {
+            background: linear-gradient(45deg, #28a745, #218838); /* Example colors for karma */
+            color: white;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.4); /* Example shadow */
+            margin-left: 10px; /* Space between reputation and karma */
+        }
+
+        .karma-display:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.6); /* Example hover shadow */
+            border-color: rgba(40, 167, 69, 0.5); /* Example hover border */
+        }
+
+        /* Footer theming */
+        footer {
+            background: var(--bg-secondary) !important;
+            border-top: 3px solid var(--primary-color) !important;
+        }
+
+        .footer-social-link:hover {
+            border-color: var(--primary-color) !important;
+        }
+
+        /* Warning color overrides */
+        .text-warning {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color)) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--bg-primary) !important;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color)) !important;
+            border-color: var(--accent-color) !important;
+        }
+
+        .bg-warning {
+            background: var(--primary-color) !important;
+        }
+
+        .badge.bg-warning {
+            background: var(--primary-color) !important;
+            color: var(--bg-primary) !important;
+        }
+
+        /* Server badge styling */
+        .server-badge {
+            background: rgba(var(--primary-color-rgb, 0, 123, 255), 0.1);
+            border-radius: 12px;
+            padding: 2px 8px;
+            border: 1px solid rgba(var(--primary-color-rgb, 0, 123, 255), 0.3);
+        }
+
+        /* Glow Effects */
+        .glow-effect {
+            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 30px var(--accent-color) !important;
+        }
+
+        .btn-primary.glow-effect {
+            box-shadow: 0 0 15px var(--primary-color), 0 0 25px var(--accent-color) !important;
+        }
+
+        .user-panel-item i, .user-panel-item span {
+            transition: transform 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+        }
+
+        .user-panel-item:hover i, .user-panel-item:hover span {
+            transform: scale(1.1);
+            text-shadow: 0 0 15px var(--primary-color), 0 0 25px var(--accent-color) !important;
+        }
+
+        .shop-icon, .shop-link:hover .shop-icon {
+            text-shadow: 0 0 12px var(--primary-color) !important;
+        }
+
+        .admin-crown-icon {
+            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 30px var(--primary-color) !important;
+        }
+
+        .player-profile-link:hover, .player-login-link:hover, .admin-login-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        /* Beautiful Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            background: radial-gradient(circle, rgba(255,193,7,0.3), transparent 70%);
+            backdrop-filter: blur(2px);
+            mix-blend-mode: screen;
+        }
+
+        .custom-cursor::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: cursorPulse 2s ease-in-out infinite;
+            opacity: 0.8;
+        }
+
+        .custom-cursor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        @keyframes cursorPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 0.8; 
+            }
+            50% { 
+                transform: scale(1.2); 
+                opacity: 0.4; 
+            }
+        }
+
+        .custom-cursor--visible {
+            opacity: 1;
+        }
+
+        .custom-cursor--hidden {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .custom-cursor--hover {
+            transform: scale(1.8);
+            background: radial-gradient(circle, rgba(255,193,7,0.5), rgba(255,140,0,0.3) 50%, transparent 70%);
+        }
+
+        .custom-cursor--hover::before {
+            border-color: var(--accent-color);
+            animation: cursorHoverPulse 1s ease-in-out infinite;
+        }
+
+        .custom-cursor--hover::after {
+            background: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-color);
+            transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        @keyframes cursorHoverPulse {
+            0%, 100% { 
+                transform: scale(1.2); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(1.5); 
+                opacity: 0.6; 
+            }
+        }
+
+        .custom-cursor--click {
+            transform: scale(0.8);
+            background: radial-gradient(circle, rgba(255,255,255,0.6), rgba(255,193,7,0.4) 50%, transparent 70%);
+        }
+
+        .custom-cursor--click::before {
+            border-color: #fff;
+            animation: cursorClickRipple 0.6s ease-out;
+        }
+
+        @keyframes cursorClickRipple {
+            0% { 
+                transform: scale(0.8); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: scale(2); 
+                opacity: 0; 
+            }
+        }
+
+        /* Custom Emoji Styling */
+        .emoji {
+          width: 24px;
+          height: 24px;
+          vertical-align: middle;
+          border-radius: 4px;
+        }
+
+        /* Navigation Player Avatar Styles */
+        .player-nav-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-avatar-nav {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 25px;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .player-avatar-nav:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .player-avatar-circle {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-nav-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-status-indicator {
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            border: 2px solid var(--bg-secondary);
+        }
+
+        .player-nav-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-nav-name {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .player-nav-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .clan-tag {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .level-badge {
+            background: rgba(var(--accent-color-rgb), 0.2);
+            color: var(--accent-color);
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .player-nav-arrow {
+            margin-left: 5px;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .player-avatar-nav[aria-expanded="true"] .player-nav-arrow {
+            transform: rotate(180deg);
+        }
+
+        .player-dropdown {
+            min-width: 300px;
+            padding: 15px;
+            transform-origin: top center;
+            transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
+            opacity: 0;
+            visibility: hidden;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: dropdownFadeIn 0.2s ease forwards;
+        }
+
+        .player-avatar-nav[aria-expanded="true"] + .player-dropdown {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .player-dropdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px; /* Added padding for better spacing */
+            border-radius: 8px; /* Slightly rounded corners */
+            background-color: rgba(255, 255, 255, 0.05); /* Subtle background */
+            /* Custom banner styles will be applied via inline style or JS */
+        }
+
+        /* Styles for custom banners and avatars */
+        .dropdown-user-header.custom-banner {
+            background-image: var(--custom-banner-url);
+            background-size: cover;
+            background-position: center;
+            height: 100px; /* Adjust height as needed */
+            display: flex;
+            align-items: flex-end; /* Align content to the bottom */
+            justify-content: center;
+            padding-bottom: 10px;
+        }
+
+        .dropdown-user-header.animated-banner {
+            /* Add specific animation properties if needed */
+        }
+
+        .dropdown-user-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.4); /* Semi-transparent background for content */
+            padding: 10px 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .dropdown-user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color); /* Highlight avatar */
+            background-image: var(--custom-avatar-url); /* Set custom avatar */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .dropdown-user-avatar.custom-avatar {
+            /* Additional styles for custom avatars if necessary */
+        }
+
+        .dropdown-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dropdown-username {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .dropdown-user-level {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-currency {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px; /* Increased gap */
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .currency-item {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Slightly larger gap */
+            font-size: 1rem; /* Larger font size */
+            color: var(--text-color);
+        }
+
+        .currency-item i {
+            font-size: 1.1rem; /* Larger icons */
+        }
+
+        .currency-item span {
+            font-weight: bold;
+        }
+
+        /* Dropdown divider style */
+        .dropdown-item.dropdown-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.15); /* Slightly stronger divider */
+            margin: 8px 0; /* More spacing */
+        }
+
+        /* User panel container */
+        .user-panel {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-left: auto;
+            padding-right: 12px;
+            position: relative;
+        }
+
+        /* Animation for dropdown menu */
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <i class="fas fa-cube text-warning me-2 glow-effect"></i>
+                <span class="fw-bold elite-squad-text">ᴇʟɪᴛᴇ ꜱQᴜᴀᴅ</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Main navigation - icon only -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}" title="Лидеры" data-i18n="leaders">
+                            <i class="fas fa-trophy"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('statistics') }}" title="Статистика" data-i18n="statistics">
+                            <i class="fas fa-chart-bar"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('quests') }}" title="Квесты" data-i18n="quests">
+                            <i class="fas fa-scroll"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('achievements') }}" title="Достижения" data-i18n="achievements">
+                            <i class="fas fa-medal"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('compare_players') }}" title="Сравнение игроков" data-i18n="compare_players">
+                            <i class="fas fa-balance-scale"></i>
+                        </a>
+                    </li>
+                    <!-- Clans and Tournaments organized block -->
+                    <div class="clan-tournaments-block">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('clans') }}" title="Кланы" data-i18n="clans">
+                                <i class="fas fa-shield-alt"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('tournaments') }}" title="Турниры" data-i18n="tournaments">
+                                <i class="fas fa-trophy"></i>
+                            </a>
+                        </li>
+                    </div>
+                </ul>
+
+                <div class="user-panel">
+                    <!-- Active Boosters Display -->
+                    {% if current_player and current_player.active_boosters %}
+                    <div class="dropdown">
+                        <a class="user-panel-item dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown" title="Активные бустеры">
+                            <i class="fas fa-fire"></i>
+                            <span class="badge bg-warning text-dark rounded-pill ms-1">{{ current_player.active_boosters|length }}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for booster in current_player.active_boosters %}
+                            {% if not booster.is_expired %}
+                            <li class="dropdown-item-text">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <i class="fas fa-fire me-2 text-warning"></i>
+                                        x{{ booster.multiplier }}
+                                        {% if booster.booster_type == 'active_coins_booster' %}коины
+                                        {% elif booster.booster_type == 'active_reputation_booster' %}репутация
+                                        {% else %}всё{% endif %}
+                                    </span>
+                                    <small class="text-muted">{{ (booster.time_remaining // 60) }}м {{ (booster.time_remaining % 60) }}с</small>
+                                </div>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <a href="{{ url_for('shop') }}" class="user-panel-item shop-link" title="Магазин" aria-label="Магазин">
+                        <i class="fas fa-shopping-cart shop-icon"></i>
+                    </a>
+
+                    <!-- Player Profile/Login Links -->
+                {% if current_player %}
+                <div class="player-nav-container">
+                    <div class="player-avatar-nav" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="player-avatar-circle">
+                            <img src="{{ current_player.minecraft_skin_url }}" 
+                                 alt="{{ current_player.nickname }}" 
+                                 class="player-nav-avatar">
+                            <div class="player-status-indicator"></div>
+                        </div>
+                        <div class="player-nav-info">
+                            <div class="player-nav-name">{{ current_player.nickname }}</div>
+                            <div class="player-nav-subtitle">
+                                {% if current_player.clan %}
+                                    <span class="clan-tag">[{{ current_player.clan.tag }}]</span>
+                                {% else %}
+                                    <span class="level-badge">Ур. {{ current_player.level }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down player-nav-arrow"></i>
+                    </div>
+
+                    <!-- Enhanced dropdown -->
+                    <ul class="dropdown-menu player-dropdown" 
+                        id="user-dropdown-menu" 
+                        {% if current_player.custom_banner_url %}
+                        style="--custom-banner-url: url('{{ current_player.custom_banner_url }}');"
+                        {% endif %}
+                    >
+                        <!-- Custom Header with Banner Support -->
+                        <li class="dropdown-user-header {% if current_player.custom_banner_url %}custom-banner{% endif %} {% if current_player.banner_is_animated %}animated-banner{% endif %}">
+                            <div class="dropdown-user-content">
+                                <img src="{{ current_player.custom_avatar_url or current_player.minecraft_skin_url }}" 
+                                     alt="{{ current_player.nickname }}" 
+                                     class="dropdown-user-avatar {% if current_player.custom_avatar_url %}custom-avatar{% endif %}"
+                                     {% if current_player.custom_avatar_url %}
+                                     style="--custom-avatar-url: url('{{ current_player.custom_avatar_url }}');"
+                                     {% endif %}>
+                                <div class="dropdown-user-info">
+                                    <div class="dropdown-username">{{ current_player.nickname }}</div>
+                                    <div class="dropdown-user-level">
+                                        <i class="fas fa-star me-1"></i>Уровень {{ current_player.level }}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Currency Display -->
+                        <li class="px-3">
+                            <div class="dropdown-currency">
+                                <div class="currency-item">
+                                    <i class="fas fa-coins text-warning"></i>
+                                    <span>{{ current_player.coins }}</span>
+                                </div>
+                                <div class="currency-item">
+                                    <i class="fas fa-heart me-1"></i>{{ current_player.reputation }}
+                                </div>
+                                <div class="currency-item">
+                                    <i class="fas fa-yin-yang me-1 text-karma"></i>{{ current_player.karma }}
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Menu Items -->
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('my_profile') }}">
+                            <i class="fas fa-user me-2"></i>Мой профиль
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('inventory') }}">
+                            <i class="fas fa-backpack me-2"></i>Инвентарь
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('quests') }}">
+                            <i class="fas fa-tasks me-2"></i>Квесты
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('public_profile', player_id=current_player.id) }}">
+                            <i class="fas fa-eye me-2"></i>Публичный профиль
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('achievements') }}">
+                            <i class="fas fa-trophy me-2"></i>Достижения
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('player_logout') }}">
+                            <i class="fas fa-sign-out-alt me-2"></i>Выход
+                        </a></li>
+                    </ul>
+                </div>
+                {% else %}
+                    <a href="{{ url_for('player_login') }}" class="user-panel-item player-login-link">
+                        <i class="fas fa-sign-in-alt" style="color: var(--player-icon-color) !important;"></i>
+                        <span class="d-none d-lg-inline">{{ 'login'|t }}</span>
+                    </a>
+                {% endif %}
+
+                    {% if session.get('is_admin') %}
+                    <div class="dropdown">
+                        <a class="user-panel-item dropdown-toggle admin-crown-link" href="#" role="button" data-bs-toggle="dropdown" title="Администратор">
+                            <i class="fas fa-crown admin-crown-icon"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('admin') }}">
+                                <i class="fas fa-cogs me-2"></i>Панель админа
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_shop') }}">
+                                <i class="fas fa-store me-2"></i>Управление магазином
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('admin_reputation') }}">
+                                <i class="fas fa-star me-2"></i>Управление репутацией
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Выйти из админки
+                            </a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('login') }}" class="user-panel-item admin-login-link" title="Вход администратора">
+                        <i class="fas fa-shield-alt"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% if error_message %}
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle text-warning display-1"></i>
+                    <h2 class="mt-3">{{ error_message }}</h2>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">
+                        <i class="fas fa-home me-2"></i>На главную
+                    </a>
+                </div>
+            {% else %}
+                {% block content %}{% endblock %}
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+                        <!-- Logo and title -->
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-cube text-warning me-2 glow-effect"></i>
+                            <span class="elite-squad-text fw-bold">ᴇʟɪᴛᴇ ꜱQᴜᴀᴅ</span>
+                        </div>
+
+                        <!-- FAQ Section -->
+                        <div class="col-md-3">
+                            <h6 class="footer-title text-warning">ЧаВо</h6>
+                            <ul class="list-unstyled footer-links">
+                                <li><a href="{{ url_for('experience_guide') }}" class="footer-link">
+                                    <i class="fas fa-star me-2"></i>ЧаВо по опыту
+                                </a></li>
+                                <li><a href="{{ url_for('karma_guide') }}" class="footer-link">
+                                    <i class="fas fa-yin-yang me-2"></i>ЧаВо по карме
+                                </a></li>
+                                <li><a href="{{ url_for('coins_guide') }}" class="footer-link">
+                                    <i class="fas fa-coins me-2"></i>ЧаВо по койнам
+                                </a></li>
+                                <li><a href="{{ url_for('reputation_guide') }}" class="footer-link">
+                                    <i class="fas fa-heart me-2"></i>ЧаВо по репутации
+                                </a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Social Links -->
+                        <div class="col-md-3 text-center text-md-end">
+                            <div class="footer-social-links">
+                                <a href="https://discord.gg/Gc9uSb6xkk" target="_blank" rel="noopener noreferrer" class="footer-social-link" title="Discord">
+                                    <i class="fab fa-discord"></i>
+                                </a>
+                                <a href="https://vk.com/fury20" target="_blank" rel="noopener noreferrer" class="footer-social-link" title="ВКонтакте">
+                                    <i class="fab fa-vk"></i>
+                                </a>
+                                <!-- Theme Selector -->
+                                <a href="{{ url_for('themes') }}" class="footer-social-link" title="Темы оформления" aria-label="Выбор темы">
+                                    <i class="fas fa-palette"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script>
+        // Beautiful Custom Cursor Logic
+        const cursor = document.getElementById('customCursor');
+        let cursorVisible = false;
+        let cursorScaled = false;
+        let isClicking = false;
+
+        const updateCursorPosition = (e) => {
+            const rect = cursor.getBoundingClientRect();
+            cursor.style.left = `${e.clientX - rect.width / 2}px`;
+            cursor.style.top = `${e.clientY - rect.height / 2}px`;
+        };
+
+        const showCursor = () => {
+            if (!cursorVisible) {
+                cursor.classList.add('custom-cursor--visible');
+                cursor.classList.remove('custom-cursor--hidden');
+                cursorVisible = true;
+            }
+        };
+
+        const hideCursor = () => {
+            if (cursorVisible) {
+                cursor.classList.remove('custom-cursor--visible');
+                cursor.classList.add('custom-cursor--hidden');
+                cursorVisible = false;
+            }
+        };
+
+        const scaleCursor = (isHovering) => {
+            if (isHovering && !cursorScaled && !isClicking) {
+                cursor.classList.add('custom-cursor--hover');
+                cursorScaled = true;
+            } else if (!isHovering && cursorScaled) {
+                cursor.classList.remove('custom-cursor--hover');
+                cursorScaled = false;
+            }
+        };
+
+        const clickCursor = () => {
+            if (!isClicking) {
+                cursor.classList.add('custom-cursor--click');
+                isClicking = true;
+                setTimeout(() => {
+                    cursor.classList.remove('custom-cursor--click');
+                    isClicking = false;
+                }, 200);
+            }
+        };
+
+        // Mouse events
+        document.addEventListener('mousemove', (e) => {
+            requestAnimationFrame(() => {
+                updateCursorPosition(e);
+                showCursor();
+            });
+        });
+
+        document.addEventListener('mouseleave', () => {
+            hideCursor();
+        });
+
+        document.addEventListener('mouseenter', () => {
+            showCursor();
+        });
+
+        document.addEventListener('mousedown', () => {
+            clickCursor();
+        });
+
+        // Hover effects for interactive elements
+        const interactiveElements = 'a, button, .btn, input, select, textarea, .user-panel-item, .dropdown-item, .footer-social-link, .card, .stat-box, .player-item, .top-category-card';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll(interactiveElements).forEach(el => {
+                el.addEventListener('mouseenter', () => scaleCursor(true));
+                el.addEventListener('mouseleave', () => scaleCursor(false));
+            });
+        });
+
+        // Handle dynamically added elements
+        document.addEventListener('mouseenter', (e) => {
+            if (e.target.matches(interactiveElements)) {
+                scaleCursor(true);
+            }
+        }, true);
+
+        document.addEventListener('mouseleave', (e) => {
+            if (e.target.matches(interactiveElements)) {
+                scaleCursor(false);
+            }
+        }, true);
+
+        // Initial state
+        hideCursor();
+
+        // File upload preview
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('emoji_file');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Validate file size
+                        if (file.size > 200 * 1024) {
+                            alert('Файл слишком большой! Максимум 200KB');
+                            this.value = '';
+                            return;
+                        }
+
+                        // Validate file type
+                        const allowedTypes = ['image/png', 'image/svg+xml', 'image/webp'];
+                        if (!allowedTypes.includes(file.type)) {
+                            alert('Недопустимый тип файла! Разрешены: PNG, SVG, WEBP');
+                            this.value = '';
+                            return;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+        // Pass server-side data to JavaScript
+        window.currentLanguage = '{{ current_language }}';
+        window.isAdmin = {{ 'true' if session.get('is_admin', False) else 'false' }};
+        {% if current_player %}
+        window.currentPlayer = {
+            nickname: '{{ current_player.nickname }}',
+            level: {{ current_player.level }},
+            coins: {{ current_player.coins }},
+            reputation: {{ current_player.reputation }},
+            karma: {{ current_player.karma }}, 
+            minecraft_skin_url: '{{ current_player.minecraft_skin_url }}',
+            clan: {{ current_player.clan | tojson if current_player.clan else 'null' }},
+            custom_banner_url: '{{ current_player.custom_banner_url if current_player.custom_banner_url else "" }}',
+            custom_avatar_url: '{{ current_player.custom_avatar_url if current_player.custom_avatar_url else "" }}',
+            banner_is_animated: {{ 'true' if current_player.banner_is_animated else 'false' }}
+        };
+        {% endif %}
+
+        {% if session.get('current_theme') %}
+        window.sessionTheme = {
+            primary_color: '{{ session.current_theme.primary_color }}',
+            secondary_color: '{{ session.current_theme.secondary_color }}',
+            background_color: '{{ session.current_theme.background_color }}',
+            card_background: '{{ session.current_theme.card_background }}',
+            text_color: '{{ session.current_theme.text_color }}',
+            accent_color: '{{ session.current_theme.accent_color }}'
+        };
+        {% endif %}
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+
+<script>
+// Ensure scripts are properly contained
+document.addEventListener('DOMContentLoaded', function() {
+    // Clean up any stray text nodes that might have been inserted
+    const textNodes = [];
+    const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+
+    let node;
+    while (node = walker.nextNode()) {
+        if (node.nodeValue.includes('function confirmDelete') || 
+            node.nodeValue.includes('toggleNameMCField') ||
+            node.nodeValue.includes('operationRadios')) {
+            textNodes.push(node);
+        }
+    }
+
+    textNodes.forEach(node => {
+        node.parentNode.removeChild(node);
+    });
+});
+</script>
+</body>
+</html>

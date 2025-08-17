@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}Управление градиентами{% endblock %}
+
+{% block extra_head %}
+<style>
+.gradient-preview {
+    padding: 15px 25px;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+
+.gradient-animated {
+    background-size: 300% 300%;
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+.gradient-card {
+    background: rgba(33, 37, 41, 0.9);
+    border: 1px solid #495057;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.gradient-card:hover {
+    transform: translateY(-5px);
+    border-color: #ffd700;
+}
+
+.element-type-section {
+    background: rgba(52, 58, 64, 0.8);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.color-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.color-preview-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid #fff;
+}
+
+.player-gradient-item {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    padding: 15px;
+    margin: 10px 0;
+    background: rgba(52, 58, 64, 0.6);
+    border-radius: 10px;
+    border-left: 4px solid #ffd700;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title">
+            <i class="fas fa-palette text-warning me-2 glow-effect"></i>Управление градиентами
+        </h2>
+        <div class="btn-group">
+            <button class="btn btn-success" data-bs-target="#createGradientModal" data-bs-toggle="modal">
+                <i class="fas fa-plus me-2"></i>Создать градиент
+            </button>
+            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+    </div>
+
+    <!-- Assign Gradient Section -->
+    <div class="element-type-section">
+        <h4 class="text-warning mb-3">
+            <i class="fas fa-user-edit me-2"></i>Присвоить градиент игроку
+        </h4>
+        <form method="POST" action="{{ url_for('assign_gradient') }}">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Игрок</label>
+                    <select name="player_id" class="form-select" required>
+                        <option value="">Выберите игрока</option>
+                        {% for player in players %}
+                        <option value="{{ player.id }}">
+                            {{ player.nickname }} (Уровень {{ player.level }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Тип элемента</label>
+                    <select name="element_type" class="form-select" required>
+                        <option value="">Выберите тип</option>
+                        <option value="nickname">Никнейм</option>
+                        <option value="stats">Статистика</option>
+                        <option value="title">Титул</option>
+                        <option value="role">Роль</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Готовый градиент</label>
+                    <select name="gradient_theme_id" class="form-select">
+                        <option value="">Готовый градиент (опционально)</option>
+                        {% for element_type, themes in grouped_themes.items() %}
+                            <optgroup label="{{ element_type|title }}">
+                                {% for theme in themes %}
+                                <option value="{{ theme.id }}">{{ theme.display_name }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Или кастомные цвета</label>
+                    <div class="d-flex gap-2">
+                        <input type="color" class="form-control form-control-color" name="custom_color1" value="#ff6b35" title="Цвет 1">
+                        <input type="color" class="form-control form-control-color" name="custom_color2" value="#ffd700" title="Цвет 2">
+                        <input type="color" class="form-control form-control-color" name="custom_color3" value="#ff1744" title="Цвет 3 (опционально)">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-paint-brush me-1"></i>Применить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Available Gradients by Type -->
+    {% for element_type, themes in grouped_themes.items() %}
+    <div class="element-type-section">
+        <h4 class="text-info mb-3">
+            <i class="fas fa-swatchbook me-2"></i>Градиенты для: {{ element_type|title }}
+        </h4>
+        <div class="row">
+            {% for theme in themes %}
+            <div class="col-lg-6 col-xl-4">
+                <div class="gradient-card">
+                    <div class="text-center mb-3">
+                        <h6>{{ theme.display_name }}</h6>
+                        <div class="gradient-preview {{ 'gradient-animated' if theme.animation_enabled else '' }}" 
+                             style="background: {{ theme.css_gradient }};">
+                            Пример текста
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">{{ theme.css_gradient }}</small>
+                        </div>
+                        {% if theme.animation_enabled %}
+                        <span class="badge bg-info">Анимированный</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Players with Gradients -->
+    <div class="element-type-section">
+        <h4 class="text-success mb-3">
+            <i class="fas fa-users me-2"></i>Игроки с градиентами
+        </h4>
+        {% for player in players %}
+            {% set player_gradients = player.gradient_settings %}
+            {% if player_gradients %}
+            <div class="player-gradient-item">
+                <div>
+                    <strong>{{ player.nickname }}</strong>
+                    <div class="mt-1">
+                        {% for setting in player_gradients %}
+                        {% if setting.is_enabled %}
+                        <span class="badge me-2" style="background: {{ setting.css_gradient }}; color: white;">
+                            {{ setting.element_type|title }}
+                        </span>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="btn-group btn-group-sm">
+                    {% for setting in player_gradients %}
+                    {% if setting.is_enabled %}
+                    <button class="btn btn-outline-danger btn-sm" 
+                            onclick="removeGradient({{ player.id }}, '{{ setting.element_type }}')">
+                        <i class="fas fa-times"></i> {{ setting.element_type|title }}
+                    </button>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Create Gradient Modal -->
+<div class="modal fade" id="createGradientModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-palette text-warning me-2"></i>Создать новый градиент
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('create_gradient') }}">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Название (латиницей)</label>
+                            <input type="text" class="form-control" name="name" required 
+                                   placeholder="fire_nickname" pattern="[a-z_]+">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Отображаемое название</label>
+                            <input type="text" class="form-control" name="display_name" required 
+                                   placeholder="🔥 Огненный градиент">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Тип элемента</label>
+                            <select name="element_type" class="form-select" required>
+                                <option value="">Выберите тип</option>
+                                <option value="nickname">Никнейм</option>
+                                <option value="stats">Статистика</option>
+                                <option value="title">Титул</option>
+                                <option value="role">Роль</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Направление градиента</label>
+                            <select name="gradient_direction" class="form-select">
+                                <option value="45deg">45° (по диагонали)</option>
+                                <option value="90deg">90° (вертикально)</option>
+                                <option value="180deg">180° (горизонтально)</option>
+                                <option value="135deg">135° (обратная диагональ)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Цвет 1</label>
+                            <div class="color-input-group">
+                                <input type="color" class="form-control form-control-color" 
+                                       name="color1" value="#ff6b35" required>
+                                <input type="text" class="form-control" value="#ff6b35" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Цвет 2</label>
+                            <div class="color-input-group">
+                                <input type="color" class="form-control form-control-color" 
+                                       name="color2" value="#ffd700" required>
+                                <input type="text" class="form-control" value="#ffd700" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Цвет 3 (опционально)</label>
+                            <div class="color-input-group">
+                                <input type="color" class="form-control form-control-color" 
+                                       name="color3" value="#ff1744">
+                                <input type="text" class="form-control" value="#ff1744" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="animation_enabled">
+                                <label class="form-check-label">
+                                    Включить анимацию градиента
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Предварительный просмотр</label>
+                            <div id="gradientPreview" class="gradient-preview" 
+                                 style="background: linear-gradient(45deg, #ff6b35, #ffd700);">
+                                Пример текста
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Создать градиент
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function removeGradient(playerId, elementType) {
+    if (confirm(`Удалить градиент для ${elementType}?`)) {
+        fetch(`/admin/remove_gradient/${playerId}/${elementType}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Ошибка при удалении градиента');
+            }
+        });
+    }
+}
+
+// Update gradient preview in modal
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('createGradientModal');
+    const preview = document.getElementById('gradientPreview');
+
+    function updatePreview() {
+        const color1 = modal.querySelector('input[name="color1"]').value;
+        const color2 = modal.querySelector('input[name="color2"]').value;
+        const color3 = modal.querySelector('input[name="color3"]').value;
+        const direction = modal.querySelector('select[name="gradient_direction"]').value;
+
+        let gradient;
+        if (color3) {
+            gradient = `linear-gradient(${direction}, ${color1}, ${color2}, ${color3})`;
+        } else {
+            gradient = `linear-gradient(${direction}, ${color1}, ${color2})`;
+        }
+
+        preview.style.background = gradient;
+
+        // Update text inputs
+        modal.querySelector('input[name="color1"]').nextElementSibling.value = color1;
+        modal.querySelector('input[name="color2"]').nextElementSibling.value = color2;
+        modal.querySelector('input[name="color3"]').nextElementSibling.value = color3;
+    }
+
+    // Add event listeners
+    modal.querySelectorAll('input[type="color"], select[name="gradient_direction"]').forEach(input => {
+        input.addEventListener('change', updatePreview);
+    });
+});
+</script>
+{% endblock %}

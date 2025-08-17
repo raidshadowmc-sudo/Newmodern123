@@ -1,0 +1,522 @@
+
+{% extends "base.html" %}
+
+{% block title %}Управление квестами - Bedwars Leaderboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .quest-card {
+        background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+        border: 1px solid #444;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .quest-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+    }
+    
+    .quest-difficulty {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    
+    .difficulty-easy { background-color: #28a745; }
+    .difficulty-medium { background-color: #ffc107; color: #000; }
+    .difficulty-hard { background-color: #dc3545; }
+    .difficulty-epic { background-color: #6f42c1; }
+    .difficulty-mythic { background: linear-gradient(45deg, #ff6b35, #f7931e); }
+    
+    .quest-stats {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+    }
+    
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+    
+    .progress-bar-container {
+        background-color: #333;
+        border-radius: 10px;
+        overflow: hidden;
+        height: 6px;
+        margin-top: 5px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #f39c12, #e74c3c);
+        transition: width 0.3s ease;
+    }
+    
+    .quest-category-badge {
+        background: rgba(0, 123, 255, 0.2);
+        color: #007bff;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.7em;
+        text-transform: uppercase;
+    }
+    
+    .quest-category-badge.daily { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+    .quest-category-badge.weekly { background: rgba(23, 162, 184, 0.2); color: #17a2b8; }
+    .quest-category-badge.monthly { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+    .quest-category-badge.permanent { background: rgba(40, 167, 69, 0.2); color: #28a745; }
+    .quest-category-badge.seasonal { background: rgba(102, 16, 242, 0.2); color: #6610f2; }
+    
+    .admin-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .filter-section {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .filter-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .filter-tab {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 20px;
+        padding: 8px 16px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-tab.active,
+    .filter-tab:hover {
+        background: var(--warning-color);
+        color: #000;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="page-title">
+            <i class="fas fa-tasks text-warning me-2"></i>Управление квестами
+        </h2>
+        <div class="btn-group">
+            <button class="btn btn-success" data-bs-target="#createQuestModal" data-bs-toggle="modal">
+                <i class="fas fa-plus me-2"></i>Создать квест
+            </button>
+            <div class="btn-group" role="group">
+                <button class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-magic me-2"></i>Генерировать
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="generateQuests('daily')">
+                        <i class="fas fa-calendar-day me-2"></i>Ежедневные
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="generateQuests('weekly')">
+                        <i class="fas fa-calendar-week me-2"></i>Еженедельные
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="generateQuests('monthly')">
+                        <i class="fas fa-calendar-alt me-2"></i>Ежемесячные
+                    </a></li>
+                </ul>
+            </div>
+            <button class="btn btn-warning" onclick="refreshAllQuests()">
+                <i class="fas fa-sync me-2"></i>Обновить все
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h5><i class="fas fa-filter me-2"></i>Фильтры</h5>
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">Все квесты</button>
+            <button class="filter-tab" data-filter="daily">Ежедневные</button>
+            <button class="filter-tab" data-filter="weekly">Еженедельные</button>
+            <button class="filter-tab" data-filter="monthly">Ежемесячные</button>
+            <button class="filter-tab" data-filter="permanent">Постоянные</button>
+            <button class="filter-tab" data-filter="seasonal">Сезонные</button>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <select class="form-select" id="difficultyFilter">
+                    <option value="all">Все сложности</option>
+                    <option value="easy">Легкие</option>
+                    <option value="medium">Средние</option>
+                    <option value="hard">Сложные</option>
+                    <option value="epic">Эпические</option>
+                    <option value="mythic">Мифические</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="statusFilter">
+                    <option value="all">Все статусы</option>
+                    <option value="active">Активные</option>
+                    <option value="inactive">Неактивные</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="searchQuests" placeholder="Поиск по названию...">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-secondary w-100" onclick="resetFilters()">
+                    <i class="fas fa-times"></i> Сброс
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quest Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card bg-dark border-primary">
+                <div class="card-body text-center">
+                    <h3 class="text-primary">{{ quest_stats|length }}</h3>
+                    <p class="mb-0">Всего квестов</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-dark border-warning">
+                <div class="card-body text-center">
+                    <h3 class="text-warning">{{ quest_stats|selectattr('quest.quest_category', 'equalto', 'daily')|list|length }}</h3>
+                    <p class="mb-0">Ежедневных</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-dark border-info">
+                <div class="card-body text-center">
+                    <h3 class="text-info">{{ quest_stats|selectattr('quest.quest_category', 'equalto', 'weekly')|list|length }}</h3>
+                    <p class="mb-0">Еженедельных</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-dark border-danger">
+                <div class="card-body text-center">
+                    <h3 class="text-danger">{{ quest_stats|selectattr('quest.quest_category', 'equalto', 'monthly')|list|length }}</h3>
+                    <p class="mb-0">Ежемесячных</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-dark border-success">
+                <div class="card-body text-center">
+                    <h3 class="text-success">{{ quest_stats|selectattr('quest.quest_category', 'equalto', 'permanent')|list|length }}</h3>
+                    <p class="mb-0">Постоянных</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card bg-dark border-secondary">
+                <div class="card-body text-center">
+                    <h3 class="text-secondary">{{ quest_stats|selectattr('quest.is_active', 'equalto', False)|list|length }}</h3>
+                    <p class="mb-0">Неактивных</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quests Grid -->
+    <div class="row" id="questsGrid">
+        {% for quest_stat in quest_stats %}
+        <div class="col-lg-6 col-xl-4 quest-item" 
+             data-category="{{ quest_stat.quest.quest_category }}"
+             data-difficulty="{{ quest_stat.quest.difficulty }}"
+             data-status="{{ 'active' if quest_stat.quest.is_active else 'inactive' }}"
+             data-title="{{ quest_stat.quest.title|lower }}">
+            <div class="quest-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="text-warning mb-1">{{ quest_stat.quest.title }}</h5>
+                        <div class="d-flex gap-2 align-items-center">
+                            <span class="quest-category-badge {{ quest_stat.quest.quest_category }}">
+                                {{ quest_stat.quest.quest_category }}
+                            </span>
+                            <span class="quest-difficulty difficulty-{{ quest_stat.quest.difficulty }}">
+                                {{ quest_stat.quest.difficulty }}
+                            </span>
+                            {% if not quest_stat.quest.is_active %}
+                            <span class="badge bg-secondary">Неактивен</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="quest-icon">
+                        <i class="{{ quest_stat.quest.icon }} fa-2x text-warning"></i>
+                    </div>
+                </div>
+                
+                <p class="text-muted mb-3">{{ quest_stat.quest.description }}</p>
+                
+                <div class="quest-stats">
+                    <div class="stat-item">
+                        <span><i class="fas fa-users me-1"></i>Участников:</span>
+                        <span class="text-info">{{ quest_stat.total_players }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span><i class="fas fa-check me-1"></i>Завершили:</span>
+                        <span class="text-success">{{ quest_stat.completed }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span><i class="fas fa-percentage me-1"></i>Процент:</span>
+                        <span class="text-warning">{{ "%.1f"|format(quest_stat.completion_rate) }}%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: {{ quest_stat.completion_rate }}%"></div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-target me-1"></i>Цель: {{ quest_stat.quest.target_value }}
+                            | <i class="fas fa-star me-1"></i>Награда: {{ quest_stat.quest.reward_xp }} XP
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="admin-controls mt-3">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editQuest({{ quest_stat.quest.id }})">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-{{ 'success' if quest_stat.quest.is_active else 'warning' }}" 
+                            onclick="toggleQuestStatus({{ quest_stat.quest.id }})">
+                        <i class="fas fa-{{ 'pause' if quest_stat.quest.is_active else 'play' }}"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-info" onclick="resetQuestProgress({{ quest_stat.quest.id }})">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteQuest({{ quest_stat.quest.id }})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="duplicateQuest({{ quest_stat.quest.id }})">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Create Quest Modal -->
+<div class="modal fade" id="createQuestModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title text-warning">
+                    <i class="fas fa-plus me-2"></i>Создать новый квест
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('create_quest') }}">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Название квеста</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Описание</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Тип квеста</label>
+                            <select class="form-select" name="quest_type" required>
+                                <option value="kills">Убийства</option>
+                                <option value="final_kills">Финальные убийства</option>
+                                <option value="beds_broken">Сломанные кровати</option>
+                                <option value="wins">Победы</option>
+                                <option value="games_played">Игры сыграны</option>
+                                <option value="iron_collected">Железо собрано</option>
+                                <option value="gold_collected">Золото собрано</option>
+                                <option value="diamond_collected">Алмазы собраны</option>
+                                <option value="emerald_collected">Изумруды собраны</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Категория</label>
+                            <select class="form-select" name="quest_category" required>
+                                <option value="daily">Ежедневный</option>
+                                <option value="weekly">Еженедельный</option>
+                                <option value="monthly">Ежемесячный</option>
+                                <option value="permanent">Постоянный</option>
+                                <option value="seasonal">Сезонный</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Сложность</label>
+                            <select class="form-select" name="difficulty" required>
+                                <option value="easy">Легкий</option>
+                                <option value="medium">Средний</option>
+                                <option value="hard">Сложный</option>
+                                <option value="epic">Эпический</option>
+                                <option value="mythic">Мифический</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Цель</label>
+                            <input type="number" class="form-control" name="target_value" min="1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Награда (опыт)</label>
+                            <input type="number" class="form-control" name="reward_xp" min="0" value="100">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Награда (койны)</label>
+                            <input type="number" class="form-control" name="reward_coins" min="0" value="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Награда (репутация)</label>
+                            <input type="number" class="form-control" name="reward_reputation" min="0" value="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Иконка (Font Awesome)</label>
+                            <input type="text" class="form-control" name="icon" value="fas fa-trophy" placeholder="fas fa-trophy">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Титул за выполнение</label>
+                            <input type="text" class="form-control" name="reward_title" placeholder="Например: Мастер PvP">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-success">Создать квест</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Filter functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const difficultyFilter = document.getElementById('difficultyFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    const searchInput = document.getElementById('searchQuests');
+    
+    function filterQuests() {
+        const activeCategory = document.querySelector('.filter-tab.active').dataset.filter;
+        const selectedDifficulty = difficultyFilter.value;
+        const selectedStatus = statusFilter.value;
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        const questItems = document.querySelectorAll('.quest-item');
+        
+        questItems.forEach(item => {
+            const category = item.dataset.category;
+            const difficulty = item.dataset.difficulty;
+            const status = item.dataset.status;
+            const title = item.dataset.title;
+            
+            const categoryMatch = activeCategory === 'all' || category === activeCategory;
+            const difficultyMatch = selectedDifficulty === 'all' || difficulty === selectedDifficulty;
+            const statusMatch = selectedStatus === 'all' || status === selectedStatus;
+            const searchMatch = searchTerm === '' || title.includes(searchTerm);
+            
+            if (categoryMatch && difficultyMatch && statusMatch && searchMatch) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+    
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            filterTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            filterQuests();
+        });
+    });
+    
+    difficultyFilter.addEventListener('change', filterQuests);
+    statusFilter.addEventListener('change', filterQuests);
+    searchInput.addEventListener('input', filterQuests);
+});
+
+function resetFilters() {
+    document.querySelector('.filter-tab[data-filter="all"]').click();
+    document.getElementById('difficultyFilter').value = 'all';
+    document.getElementById('statusFilter').value = 'all';
+    document.getElementById('searchQuests').value = '';
+}
+
+function generateQuests(type) {
+    if (confirm(`Создать новые ${type === 'daily' ? 'ежедневные' : type === 'weekly' ? 'еженедельные' : 'ежемесячные'} квесты? Это заменит текущие квесты этого типа.`)) {
+        fetch('/admin/generate_quests', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({type: type})
+        }).then(() => location.reload());
+    }
+}
+
+function refreshAllQuests() {
+    if (confirm('Обновить все временные квесты (ежедневные, еженедельные, ежемесячные)?')) {
+        fetch('/admin/refresh_all_quests', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        }).then(() => location.reload());
+    }
+}
+
+function editQuest(questId) {
+    // TODO: Implement edit functionality
+    alert('Редактирование квеста ID: ' + questId);
+}
+
+function toggleQuestStatus(questId) {
+    fetch(`/admin/toggle_quest/${questId}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    }).then(() => location.reload());
+}
+
+function deleteQuest(questId) {
+    if (confirm('Удалить этот квест? Это действие нельзя отменить.')) {
+        fetch('/admin/delete_quest/' + questId, {method: 'DELETE'})
+            .then(() => location.reload());
+    }
+}
+
+function resetQuestProgress(questId) {
+    if (confirm('Сбросить прогресс этого квеста у всех игроков?')) {
+        fetch('/admin/reset_quest/' + questId, {method: 'POST'})
+            .then(() => location.reload());
+    }
+}
+
+function duplicateQuest(questId) {
+    if (confirm('Создать копию этого квеста?')) {
+        fetch(`/admin/duplicate_quest/${questId}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        }).then(() => location.reload());
+    }
+}
+</script>
+{% endblock %}

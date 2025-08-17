@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+
+{% block title %}Квесты - Minecraft Bedwars Leaderboard{% endblock %}
+
+{% block extra_head %}
+<style>
+.quest-card {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(40, 167, 69, 0.1));
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.quest-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--warning-color);
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+}
+
+.quest-card.completed {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(13, 202, 240, 0.1));
+    border-color: var(--success-color);
+}
+
+.quest-difficulty {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.difficulty-easy { background: rgba(40, 167, 69, 0.8); }
+.difficulty-medium { background: rgba(255, 193, 7, 0.8); }
+.difficulty-hard { background: rgba(220, 53, 69, 0.8); }
+.difficulty-epic { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); }
+
+.quest-progress {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.quest-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--warning-color), var(--success-color));
+    border-radius: 10px;
+    transition: width 0.8s ease;
+    position: relative;
+}
+
+.quest-progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.quest-reward {
+    background: rgba(255, 193, 7, 0.2);
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 10px;
+}
+
+.quest-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--warning-color);
+}
+
+.completed-badge {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    background: var(--success-color);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 0 0 15px 0;
+    font-size: 0.75rem;
+    font-weight: bold;
+    transform: rotate(-5deg);
+}
+
+.quest-stats {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.animate-bounce {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* Added style for pointer cursor on clickable elements */
+.clickable {
+    cursor: pointer;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">
+                    <i class="fas fa-scroll text-warning me-2"></i>
+                    Система квестов
+                </h1>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('achievements') }}" class="btn btn-outline-info">
+                        <i class="fas fa-medal"></i> Достижения
+                    </a>
+                    {% if is_admin %}
+                    <a href="{{ url_for('admin_quests') }}" class="btn btn-outline-warning">
+                        <i class="fas fa-cogs"></i> Управление
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quest Categories Navigation -->
+            <div class="quest-categories-nav mb-4">
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="all">
+                        <i class="fas fa-list-ul"></i>
+                        <span>Все квесты</span>
+                    </button>
+                    <button class="category-tab" data-category="daily">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>Ежедневные</span>
+                        <div class="quest-count">{{ daily_quests|length if daily_quests else 0 }}</div>
+                    </button>
+                    <button class="category-tab" data-category="weekly">
+                        <i class="fas fa-calendar-week"></i>
+                        <span>Еженедельные</span>
+                        <div class="quest-count">{{ weekly_quests|length if weekly_quests else 0 }}</div>
+                    </button>
+                    <button class="category-tab" data-category="monthly">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Ежемесячные</span>
+                        <div class="quest-count">{{ monthly_quests|length if monthly_quests else 0 }}</div>
+                    </button>
+                    <button class="category-tab" data-category="permanent">
+                        <i class="fas fa-infinity"></i>
+                        <span>Постоянные</span>
+                        <div class="quest-count">{{ permanent_quests|length if permanent_quests else 0 }}</div>
+                    </button>
+                    <button class="category-tab" data-category="seasonal">
+                        <i class="fas fa-snowflake"></i>
+                        <span>Сезонные</span>
+                        <div class="quest-count">{{ seasonal_quests|length if seasonal_quests else 0 }}</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quest Refresh Timers -->
+            <div class="quest-timers-section mb-4">
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="timer-card daily-timer">
+                            <div class="timer-icon">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <div class="timer-content">
+                                <h6>Ежедневные квесты</h6>
+                                <div class="timer-display" id="dailyTimer">Обновление через: --:--:--</div>
+                                <div class="timer-progress">
+                                    <div class="progress-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="timer-card weekly-timer">
+                            <div class="timer-icon">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                            <div class="timer-content">
+                                <h6>Еженедельные квесты</h6>
+                                <div class="timer-display" id="weeklyTimer">Обновление через: --:--:--</div>
+                                <div class="timer-progress">
+                                    <div class="progress-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="timer-card monthly-timer">
+                            <div class="timer-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="timer-content">
+                                <h6>Ежемесячные квесты</h6>
+                                <div class="timer-display" id="monthlyTimer">Обновление через: --:--:--</div>
+                                <div class="timer-progress">
+                                    <div class="progress-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quest Categories Display -->
+            <div class="quests-container">
+                <!-- All Quests View -->
+                <div class="quest-category" data-category="all">
+                    <div class="category-header mb-4">
+                        <h4><i class="fas fa-list text-info me-2"></i>Все квесты</h4>
+                        <p class="text-muted">Полный список доступных квестов</p>
+                    </div>
+                    <div class="row">
+                        {% for quest in quests %}
+                        <div class="col-lg-4 col-md-6 mb-4 quest-item" data-category="{{ quest.quest_category }}">
+                            {% include 'quest_card.html' %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Daily Quests -->
+                <div class="quest-category" data-category="daily" style="display: none;">
+                    <div class="category-header mb-4">
+                        <h4><i class="fas fa-sun text-warning me-2"></i>Ежедневные квесты</h4>
+                        <p class="text-muted">Обновляются каждый день в 00:00 UTC</p>
+                    </div>
+                    <div class="row">
+                        {% for quest in daily_quests %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            {% with quest=quest %}{% include 'quest_card.html' %}{% endwith %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Weekly Quests -->
+                <div class="quest-category" data-category="weekly" style="display: none;">
+                    <div class="category-header mb-4">
+                        <h4><i class="fas fa-calendar-week text-info me-2"></i>Еженедельные квесты</h4>
+                        <p class="text-muted">Обновляются каждый понедельник в 00:00 UTC</p>
+                    </div>
+                    <div class="row">
+                        {% for quest in weekly_quests %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            {% with quest=quest %}{% include 'quest_card.html' %}{% endwith %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Monthly Quests -->
+                <div class="quest-category" data-category="monthly" style="display: none;">
+                    <div class="category-header mb-4">
+                        <h4><i class="fas fa-calendar-alt text-danger me-2"></i>Ежемесячные квесты</h4>
+                        <p class="text-muted">Обновляются 1 числа каждого месяца в 00:00 UTC</p>
+                    </div>
+                    <div class="row">
+                        {% for quest in monthly_quests %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            {% with quest=quest %}{% include 'quest_card.html' %}{% endwith %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Permanent Quests -->
+                <div class="quest-category" data-category="permanent" style="display: none;">
+                    <div class="category-header mb-4">
+                        <h4><i class="fas fa-infinity text-success me-2"></i>Постоянные квесты</h4>
+                        <p class="text-muted">Доступны всегда, выполняются один раз</p>
+                    </div>
+                    <div class="row">
+                        {% for quest in permanent_quests %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            {% with quest=quest %}{% include 'quest_card.html' %}{% endwith %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Seasonal Quests -->
+                <div class="quest-category" data-category="seasonal" style="display: none;">
+                    <div class="category-header mb-4">
+                        <h4><i class="fas fa-snowflake text-primary me-2"></i>Сезонные квесты</h4>
+                        <p class="text-muted">Специальные квесты для праздников и событий</p>
+                    </div>
+                    <div class="row">
+                        {% for quest in seasonal_quests %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            {% with quest=quest %}{% include 'quest_card.html' %}{% endwith %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {% if current_player %}
+            <div class="quest-stats">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <i class="fas fa-user text-info fa-2x mb-2"></i>
+                            <h4>{{ current_player.nickname }}</h4>
+                            <p class="text-muted">{{ current_player.role }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <i class="fas fa-star text-warning fa-2x mb-2"></i>
+                            <h4>{{ current_player.level }}</h4>
+                            <p class="text-muted">Уровень</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <i class="fas fa-trophy text-success fa-2x mb-2"></i>
+                            <h4>{{ player_progress|length }}</h4>
+                            <p class="text-muted">Активных квестов</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <i class="fas fa-check-circle text-info fa-2x mb-2"></i>
+                            <h4>{{ player_progress.values() | selectattr('is_completed') | list | length }}</h4>
+                            <p class="text-muted">Выполнено</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center">
+                <h4><i class="fas fa-info-circle me-2"></i>Вход требуется</h4>
+                <p>Чтобы просматривать свои квесты и прогресс, войдите в систему с вашим игровым ником.</p>
+                <a href="{{ url_for('player_login') }}" class="btn btn-info">
+                    <i class="fas fa-sign-in-alt me-2"></i>Войти
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="row">
+                {% for quest in quests %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="quest-card h-100 p-4 {% if quest.id in player_progress and player_progress[quest.id].is_completed %}completed{% endif %}">
+                        {% if quest.id in player_progress and player_progress[quest.id].is_completed %}
+                        <div class="completed-badge">
+                            <i class="fas fa-check"></i> Выполнено
+                        </div>
+                        {% endif %}
+
+                        <div class="quest-difficulty difficulty-{{ quest.difficulty }}">
+                            {{ quest.difficulty|title }}
+                            {% if quest.difficulty == 'medium' %}
+                                <small class="d-block">Уровень 10+</small>
+                            {% elif quest.difficulty == 'hard' %}
+                                <small class="d-block">Уровень 20+</small>
+                            {% elif quest.difficulty == 'epic' %}
+                                <small class="d-block">Уровень 40+</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <div class="quest-icon {% if quest.id in player_progress and player_progress[quest.id].is_completed %}animate-bounce{% endif %}">
+                                <i class="{{ quest.icon }}"></i>
+                            </div>
+                            <h4 class="mb-2">{{ quest.title }}</h4>
+                            <p class="text-muted mb-3">{{ quest.description }}</p>
+                        </div>
+
+                        {% if quest.id in player_progress %}
+                        {% set progress = player_progress[quest.id] %}
+                        <div class="quest-progress mb-3">
+                            {% if progress.is_accepted %}
+                                <div class="quest-progress-bar" style="width: {{ progress.progress_percentage }}%"></div>
+                                <div class="quest-progress-text">
+                                    {{ progress.current_progress }} / {{ quest.target_value }}
+                                    ({{ progress.progress_percentage }}%)
+                                </div>
+                            {% else %}
+                                <div class="quest-progress-bar" style="width: 0%"></div>
+                                <div class="quest-progress-text">Не принят</div>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <div class="quest-progress mb-3">
+                            <div class="quest-progress-bar" style="width: 0%"></div>
+                            <div class="quest-progress-text">Не принят</div>
+                        </div>
+                        {% endif %}
+
+
+                        <div class="quest-rewards">
+                                {% if quest.reward_xp > 0 %}
+                                <div class="reward-item">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <strong>{{ quest.reward_xp }} XP</strong>
+                                </div>
+                                {% endif %}
+                                {% if quest.reward_coins > 0 %}
+                                <div class="reward-item">
+                                    <i class="fas fa-coins text-warning"></i>
+                                    <strong>{{ quest.reward_coins }} койнов</strong>
+                                </div>
+                                {% endif %}
+                                {% if quest.reward_reputation > 0 %}
+                                <div class="reward-item">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <strong>{{ quest.reward_reputation }} репутации</strong>
+                                </div>
+                                {% endif %}
+                            </div>
+
+
+                        {% if current_player %}
+                            {% if quest.id in player_progress %}
+                                {% set progress = player_progress[quest.id] %}
+                                {% if not progress.is_accepted %}
+                                    <form method="POST" action="{{ url_for('accept_quest', quest_id=quest.id) }}" class="mt-3">
+                                        <button type="submit" class="btn btn-sm btn-warning w-100 clickable">
+                                            <i class="fas fa-play"></i> Принять квест
+                                        </button>
+                                    </form>
+                                {% elif progress.is_completed %}
+                                    <div class="mt-3">
+                                        <button class="btn btn-sm btn-success w-100" disabled>
+                                            <i class="fas fa-check"></i> Выполнен
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <div class="mt-3">
+                                        <button class="btn btn-sm btn-info w-100" disabled>
+                                            <i class="fas fa-hourglass-half"></i> В процессе
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <form method="POST" action="{{ url_for('accept_quest', quest_id=quest.id) }}" class="mt-3">
+                                    <button type="submit" class="btn btn-sm btn-warning w-100 clickable">
+                                        <i class="fas fa-play"></i> Принять квест
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if is_admin and quest.id in player_progress and player_progress[quest.id].is_accepted and not player_progress[quest.id].is_completed %}
+                        <form method="POST" action="{{ url_for('complete_quest', quest_id=quest.id) }}" class="mt-2">
+                            <button type="submit" class="btn btn-sm btn-success w-100 clickable">
+                                <i class="fas fa-check"></i> Завершить (Админ)
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if not quests %}
+            <div class="text-center py-5">
+                <i class="fas fa-scroll fa-5x text-muted mb-3"></i>
+                <h3 class="text-muted">Квесты не найдены</h3>
+                <p class="text-muted">Система квестов временно недоступна</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Locked Quests -->
+        {% if locked_quests and current_player %}
+        <div class="locked-quests-section mt-5">
+            <h4 class="text-warning mb-4">
+                <i class="fas fa-lock me-2"></i>Заблокированные квесты
+            </h4>
+            <div class="row g-4">
+                {% for quest in all_quests %}
+                {% if quest.id in locked_quests %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="quest-card locked-quest">
+                        <div class="quest-overlay">
+                            <i class="fas fa-lock fa-3x text-danger mb-3"></i>
+                            <h6 class="text-danger">Заблокировано</h6>
+                            <p class="text-muted small">
+                                Требуется {{ locked_quests[quest.id] }} уровень
+                                <br>
+                                Ваш уровень: {{ current_player.level }}
+                                <br>
+                                Осталось: {{ locked_quests[quest.id] - current_player.level }} уровней
+                            </p>
+                        </div>
+
+                        <div class="quest-content blurred">
+                            <div class="quest-header d-flex align-items-center justify-content-between">
+                                <div class="quest-icon">
+                                    <i class="{{ quest.icon }} fa-2x"></i>
+                                </div>
+                                <div class="quest-difficulty difficulty-{{ quest.difficulty }}">
+                                    {{ quest.difficulty.title() }}
+                                </div>
+                            </div>
+
+                            <h5 class="quest-title mt-3">{{ quest.title }}</h5>
+                            <p class="quest-description text-muted">{{ quest.description }}</p>
+
+                            <div class="quest-rewards">
+                                <div class="reward-item">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <span>{{ quest.reward_xp }} XP</span>
+                                </div>
+                                {% if quest.reward_title %}
+                                <div class="reward-item">
+                                    <i class="fas fa-crown text-warning"></i>
+                                    <span>{{ quest.reward_title }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.locked-quest {
+    position: relative;
+    opacity: 0.6;
+    transform: scale(0.95);
+    transition: all 0.3s ease;
+}
+
+.locked-quest:hover {
+    transform: scale(0.97);
+    opacity: 0.8;
+}
+
+.quest-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.9), rgba(108, 117, 125, 0.8));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    border-radius: 15px;
+    backdrop-filter: blur(2px);
+}
+
+.quest-overlay i {
+    animation: lockPulse 2s ease-in-out infinite;
+}
+
+@keyframes lockPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.blurred {
+    filter: blur(3px) grayscale(50%);
+}
+
+.locked-quests-section {
+    border-top: 2px solid rgba(220, 53, 69, 0.3);
+    padding-top: 2rem;
+}
+
+.locked-quests-section h4 {
+    position: relative;
+    padding-left: 40px;
+}
+
+.locked-quests-section h4::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(90deg, #dc3545, transparent);
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Countdown timers for quest refresh
+function formatTime(seconds) {
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    if (days > 0) {
+        return `${days}д ${hours}ч ${minutes}м ${secs}с`;
+    } else if (hours > 0) {
+        return `${hours}ч ${minutes}м ${secs}с`;
+    } else if (minutes > 0) {
+        return `${minutes}м ${secs}с`;
+    } else {
+        return `${secs}с`;
+    }
+}
+
+let dailySeconds, weeklySeconds, monthlySeconds;
+
+function updateCountdowns() {
+    const dailyElement = document.getElementById('daily-countdown');
+    const weeklyElement = document.getElementById('weekly-countdown');
+    const monthlyElement = document.getElementById('monthly-countdown');
+
+    if (dailyElement) {
+        if (dailySeconds === undefined) {
+            dailySeconds = parseInt(dailyElement.textContent) || 0;
+        }
+        if (dailySeconds > 0) {
+            dailySeconds--;
+            dailyElement.textContent = formatTime(dailySeconds);
+        } else {
+            dailyElement.textContent = 'Обновляется...';
+        }
+    }
+
+    if (weeklyElement) {
+        if (weeklySeconds === undefined) {
+            weeklySeconds = parseInt(weeklyElement.textContent) || 0;
+        }
+        if (weeklySeconds > 0) {
+            weeklySeconds--;
+            weeklyElement.textContent = formatTime(weeklySeconds);
+        } else {
+            weeklyElement.textContent = 'Обновляется...';
+        }
+    }
+
+    if (monthlyElement) {
+        if (monthlySeconds === undefined) {
+            monthlySeconds = parseInt(monthlyElement.textContent) || 0;
+        }
+        if (monthlySeconds > 0) {
+            monthlySeconds--;
+            monthlyElement.textContent = formatTime(monthlySeconds);
+        } else {
+            monthlyElement.textContent = 'Обновляется...';
+        }
+    }
+}
+
+// Initialize countdown display
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize countdown values immediately
+    const dailyElement = document.getElementById('daily-countdown');
+    const weeklyElement = document.getElementById('weekly-countdown');
+    const monthlyElement = document.getElementById('monthly-countdown');
+
+    if (dailyElement) {
+        dailySeconds = parseInt(dailyElement.textContent) || 0;
+        dailyElement.textContent = formatTime(dailySeconds);
+    }
+    if (weeklyElement) {
+        weeklySeconds = parseInt(weeklyElement.textContent) || 0;
+        weeklyElement.textContent = formatTime(weeklySeconds);
+    }
+    if (monthlyElement) {
+        monthlySeconds = parseInt(monthlyElement.textContent) || 0;
+        monthlyElement.textContent = formatTime(monthlySeconds);
+    }
+
+    setInterval(updateCountdowns, 1000);
+});
+
+// Auto-refresh quest progress every 30 seconds
+setInterval(() => {
+    if (document.querySelector('.quest-progress')) {
+        location.reload();
+    }
+}, 30000);
+</script>
+{% endblock %}

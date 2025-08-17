@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Вход игрока{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="login-card">
+                <div class="login-header text-center mb-4">
+                    <i class="fas fa-user text-info display-1 mb-3"></i>
+                    <h2 class="fw-bold">Вход игрока</h2>
+                    <p class="text-muted">Введите ваш игровой ник для просмотра квестов и достижений</p>
+                </div>
+
+                <form method="POST" class="login-form">
+                    <div class="mb-3">
+                        <label for="nickname" class="form-label">Игровой ник</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-gamepad"></i>
+                            </span>
+                            <input type="text" class="form-control" id="nickname" name="nickname" 
+                                   required placeholder="Введите ваш ник в Minecraft" autocomplete="username">
+                        </div>
+                        <small class="form-text text-muted">
+                            Ваш ник должен быть в таблице лидеров
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Введите пароль (для первого входа - установка пароля)" required>
+                        <div class="form-text">При первом входе введите желаемый пароль для установки</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-info w-100 fw-bold">
+                        <i class="fas fa-sign-in-alt me-2"></i>Войти
+                    </button>
+                </form>
+
+                <div class="login-footer text-center mt-4">
+                    <a href="{{ url_for('index') }}" class="text-muted text-decoration-none">
+                        <i class="fas fa-arrow-left me-1"></i>Назад к таблице лидеров
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Auto-focus nickname field
+document.getElementById('nickname').focus();
+
+// Add animation to login card
+document.querySelector('.login-card').style.animation = 'fadeInUp 0.6s ease';
+</script>
+{% endblock %}
+
+<style>
+.login-card {
+    background: rgba(33, 37, 41, 0.9);
+    border-radius: 15px;
+    padding: 3rem;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(10px);
+    border: 1px solid #495057;
+    width: 100%;
+    max-width: 600px;
+    min-height: 400px;
+}
+
+@media (max-width: 768px) {
+    .login-card {
+        max-width: 400px;
+        padding: 2rem;
+        min-height: auto;
+    }
+}
+</style>
