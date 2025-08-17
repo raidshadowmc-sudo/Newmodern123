@@ -193,13 +193,13 @@
         {% include 'ascend_card.html' %}
 
         {% if is_admin %}
-        <!-- Enhanced ASCEND Editor v3.0 -->
+        <!-- Enhanced ASCEND Editor v4.0 -->
         <div class="ascend-editor-v3 mt-4">
             <div class="card bg-dark border-warning">
                 <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%) !important;">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">
-                            <i class="fas fa-edit me-2"></i>ASCEND Editor v3.0
+                            <i class="fas fa-edit me-2"></i>ASCEND Editor v4.0
                             <span class="badge bg-danger ms-2">ADMIN</span>
                         </h4>
                         <div class="editor-tools">
@@ -662,7 +662,7 @@ function confirmDelete(playerId, playerName) {
 }
 
 function initASCENDEditor() {
-    console.log('🎯 Initializing ASCEND Editor v3.0');
+    console.log('🎯 Initializing ASCEND Editor v4.0');
 
     // Add event listeners for score sliders with enhanced functionality
     const scoreSliders = ['pvp_score', 'clutching_score', 'block_placement_score', 'gamesense_score'];
@@ -715,6 +715,14 @@ function initASCENDEditor() {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             saveASCENDDataV3();
+        });
+    }
+
+    // React to gamemode changes from the ASCEND card selector
+    const gamemodeSelector = document.getElementById('gamemode-selector');
+    if (gamemodeSelector) {
+        gamemodeSelector.addEventListener('change', function() {
+            loadCurrentData();
         });
     }
 
@@ -989,7 +997,8 @@ function showAlert(message, type = 'info') {
 
 function loadCurrentData() {
     const playerId = {{ player.id }};
-    fetch(`/api/player/${playerId}/ascend-data`)
+    const gamemode = getSelectedGamemode();
+    fetch(`/api/player/${playerId}/ascend-data?gamemode=${gamemode}`)
         .then(response => response.json())
         .then(data => {
             if (data.success && data.ascend) {
@@ -1005,8 +1014,25 @@ function loadCurrentData() {
         });
 }
 
+function getSelectedGamemode() {
+    const sel = document.getElementById('gamemode-selector');
+    return sel ? sel.value : 'bedwars';
+}
+
 function loadASCENDEditorData(ascendData) {
-    console.log('🎯 Loading ASCEND v3.0 editor data:', ascendData);
+    console.log('🎯 Loading ASCEND v4.0 editor data:', ascendData);
+
+    // Update editor skill names to match current gamemode
+    const nameMap = [
+        ['.pvp-card .skill-name', ascendData.skill1_name || 'PVP'],
+        ['.clutching-card .skill-name', ascendData.skill2_name || 'Clutching'],
+        ['.blocks-card .skill-name', ascendData.skill3_name || 'Block Placement'],
+        ['.gamesense-card .skill-name', ascendData.skill4_name || 'Gamesense']
+    ];
+    nameMap.forEach(([selector, name]) => {
+        const el = document.querySelector(selector);
+        if (el) el.textContent = name;
+    });
 
     // Populate tier selectors
     const tierSelectors = {
@@ -1060,29 +1086,43 @@ function loadASCENDEditorData(ascendData) {
         updateCommentStats(ascendData.comment || '');
     }
 
-    console.log('✅ ASCEND v3.0 editor data loaded successfully');
+    console.log('✅ ASCEND v4.0 editor data loaded successfully');
 }
 
 function saveASCENDDataV3() {
     const form = document.getElementById('ascendEditForm');
     const formData = new FormData(form);
+    const playerId = {{ player.id }};
+    const gamemode = getSelectedGamemode();
 
     const data = {
-        player_id: {{ player.id }},
-        pvp_tier: formData.get('pvp_tier'),
-        clutching_tier: formData.get('clutching_tier'),
-        block_placement_tier: formData.get('block_placement_tier'),
-        gamesense_tier: formData.get('gamesense_tier'),
-        overall_tier: formData.get('overall_tier'),
+        gamemode: gamemode,
+        // Dynamic skills mapping to ensure card uses updated values
+        skill1_tier: formData.get('pvp_tier') || 'D',
+        skill2_tier: formData.get('clutching_tier') || 'D',
+        skill3_tier: formData.get('block_placement_tier') || 'D',
+        skill4_tier: formData.get('gamesense_tier') || 'D',
+        skill1_score: parseInt(formData.get('pvp_score')) || 25,
+        skill2_score: parseInt(formData.get('clutching_score')) || 25,
+        skill3_score: parseInt(formData.get('block_placement_score')) || 25,
+        skill4_score: parseInt(formData.get('gamesense_score')) || 25,
+
+        // Legacy fields for backward compatibility
+        pvp_tier: formData.get('pvp_tier') || 'D',
+        clutching_tier: formData.get('clutching_tier') || 'D',
+        block_placement_tier: formData.get('block_placement_tier') || 'D',
+        gamesense_tier: formData.get('gamesense_tier') || 'D',
         pvp_score: parseInt(formData.get('pvp_score')) || 25,
         clutching_score: parseInt(formData.get('clutching_score')) || 25,
         block_placement_score: parseInt(formData.get('block_placement_score')) || 25,
         gamesense_score: parseInt(formData.get('gamesense_score')) || 25,
+
+        overall_tier: formData.get('overall_tier') || 'D',
         evaluator_name: formData.get('evaluator_name') || 'Elite Squad',
         comment: formData.get('comment') || ''
     };
 
-    fetch('/api/ascend/update', {
+    fetch(`/api/player/${playerId}/ascend-data`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -1104,6 +1144,11 @@ function saveASCENDDataV3() {
         console.error('Error saving ASCEND data:', error);
         showAlert('Произошла ошибка при сохранении данных', 'error');
     });
+}
+
+function saveASCENDData() {
+    // Backward-compatible wrapper for the Save button
+    saveASCENDDataV3();
 }
 
 function importASCENDData() {
